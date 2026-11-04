@@ -4,273 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Investment Plans | TOP</title>
-    
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-        }
-
-        .container { width: 92%; max-width: 800px; margin: 0 auto; }
-
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .profile-area { display: flex; align-items: center; gap: 12px; }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        .wallet-bar {
-            background: var(--secondary-bg);
-            padding: 15px; border-radius: 15px;
-            margin: 20px 0; display: flex;
-            justify-content: space-between; align-items: center;
-            border: 1px solid var(--glass-border);
-        }
-
-        .wallet-info p { font-size: 12px; color: var(--text-muted); }
-        .wallet-info h4 { font-size: 18px; color: var(--success); }
-
-        .plans-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-
-        .plan-card {
-            background: var(--card-bg);
-            border-radius: 24px; padding: 25px;
-            border: 1px solid var(--glass-border);
-            position: relative; overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .plan-card:active { transform: scale(0.98); }
-
-        .plan-badge {
-            position: absolute; top: 15px; right: 15px;
-            background: rgba(59, 130, 246, 0.2);
-            color: var(--accent-color);
-            padding: 4px 12px; border-radius: 20px;
-            font-size: 11px; font-weight: 700;
-        }
-
-        .plan-card h3 { font-size: 22px; margin-bottom: 5px; color: var(--gold); }
-        .plan-card .profit-tag { font-size: 14px; color: var(--success); font-weight: 600; margin-bottom: 20px; }
-
-        .plan-specs {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 15px; margin-bottom: 25px;
-        }
-
-        .spec-item p { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
-        .spec-item h5 { font-size: 14px; }
-
-        .btn-invest {
-            width: 100%; padding: 14px;
-            background: var(--accent-color);
-            color: white; border: none; border-radius: 12px;
-            font-weight: 700; font-size: 15px; cursor: pointer;
-        }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none; align-items: center; justify-content: center;
-            z-index: 2000; padding: 20px; backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--secondary-bg);
-            width: 100%; max-width: 450px;
-            padding: 30px; border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } }
-
-        .calc-box {
-            background: rgba(0,0,0,0.2);
-            padding: 20px; border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .calc-row {
-            display: flex; justify-content: space-between;
-            margin-bottom: 10px; font-size: 14px;
-        }
-
-        .calc-row.total {
-            border-top: 1px solid var(--glass-border);
-            padding-top: 10px; font-weight: 700; color: var(--success);
-        }
-
-        input.amount-input {
-            width: 100%; padding: 15px;
-            background: var(--primary-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px; color: white;
-            font-size: 18px; font-weight: 700;
-            margin-top: 10px; text-align: center;
-        }
-
-        .comparison-section { margin-top: 40px; }
-        .comp-table {
-            width: 100%; border-collapse: collapse;
-            font-size: 13px; margin-top: 15px;
-        }
-        .comp-table th { text-align: left; color: var(--text-muted); padding: 10px; border-bottom: 1px solid var(--glass-border); }
-        .comp-table td { padding: 15px 10px; border-bottom: 1px solid var(--glass-border); }
-
-        .faq-section { margin-top: 40px; }
-        .faq-item { margin-bottom: 15px; background: var(--card-bg); padding: 15px; border-radius: 12px; }
-        .faq-item h4 { font-size: 14px; margin-bottom: 5px; color: var(--accent-color); }
-        .faq-item p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        .skeleton { height: 150px; background: #1f2937; border-radius: 24px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-        .hidden { display: none; }
-        .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; display: none; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Dashboard
-            </a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Investment Plans</h1>
+                    <p class="page-sub">Grow your money every day</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <div class="wallet-bar">
-            <div class="wallet-info">
-                <p>Wallet Balance</p>
-                <h4 id="walletDisplay">₦0.00</h4>
+    <main class="container app-main">
+        <!-- Wallet balance -->
+        <section class="card-hero fade-up">
+            <div class="balance-top">
+                <p class="balance-label">Wallet Balance</p>
+                <span class="balance-chip"><i class="fas fa-shield-halved"></i> Ready to invest</span>
             </div>
-            <a href="deposit.html" class="back-btn" style="color: var(--accent-color); font-weight: 700;">+ Deposit</a>
-        </div>
+            <h2 class="balance-amount" id="walletDisplay">₦0.00</h2>
+            <p class="hero-sub">Invest straight from your wallet. Profits are credited daily at 12:00 AM (Lagos).</p>
+            <div class="cluster" style="margin-top:18px;">
+                <a href="deposit.html" class="btn btn-white btn-sm"><i class="fas fa-plus"></i> Deposit</a>
+                <a href="investment.html" class="btn btn-on-red btn-sm"><i class="fas fa-chart-line"></i> My Investments</a>
+            </div>
+        </section>
 
-        <section>
-            <h2 style="margin-bottom: 20px; font-size: 20px;">Available Plans</h2>
+        <section class="fade-up d1">
+            <div class="section-head">
+                <h3>Available <em>Plans</em></h3>
+            </div>
             <div id="plansList" class="plans-grid">
                 <div class="skeleton"></div>
                 <div class="skeleton"></div>
             </div>
         </section>
 
-        <!-- Comparison Table -->
-        <section class="comparison-section">
-            <h3 style="font-size: 16px;">Quick Comparison</h3>
-            <table class="comp-table">
-                <thead>
-                    <tr>
-                        <th>Plan</th>
-                        <th>Daily Profit</th>
-                        <th>Min</th>
-                    </tr>
-                </thead>
-                <tbody id="comparisonBody">
-                    <!-- Dynamic -->
-                </tbody>
-            </table>
-        </section>
+        <div class="page-cols">
+            <!-- Comparison Table -->
+            <section class="fade-up d2">
+                <div class="section-head"><h3>Quick Comparison</h3></div>
+                <div class="table-wrap">
+                    <table class="table table-stack comp-table">
+                        <thead>
+                            <tr>
+                                <th>Plan</th>
+                                <th>Daily Profit</th>
+                                <th>Min</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonBody">
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Investment FAQ -->
-        <section class="faq-section">
-            <h3 style="font-size: 16px; margin-bottom: 15px;">Investment FAQ</h3>
-            <div class="faq-item">
-                <h4>When do I receive earnings?</h4>
-                <p>Earnings are credited automatically to your wallet balance every day at 12:00 AM Africa/Lagos time.</p>
-            </div>
-            <div class="faq-item">
-                <h4>Can I invest with my balance?</h4>
-                <p>Yes! If you have enough funds in your wallet, you can invest directly without depositing again.</p>
-            </div>
-        </section>
+            <!-- Investment FAQ -->
+            <section class="fade-up d3">
+                <div class="section-head"><h3>Investment FAQ</h3></div>
+                <div class="card faq-static">
+                    <div>
+                        <h4 class="faq-q">When do I receive earnings?</h4>
+                        <p>Earnings are credited automatically to your wallet balance every day at 12:00 AM Africa/Lagos time.</p>
+                    </div>
+                    <div>
+                        <h4 class="faq-q">Can I invest with my balance?</h4>
+                        <p>Yes! If you have enough funds in your wallet, you can invest directly without depositing again.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Investment Modal -->
     <div class="modal-overlay" id="investModal">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="modal-card is-form">
+            <div class="modal-head">
                 <h3 id="mPlanName">Starter Plan</h3>
-                <i class="fas fa-times" style="cursor:pointer" onclick="closeModal()"></i>
+                <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
-            
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: 15px;">Enter investment amount:</p>
+
+            <label class="form-label" for="investAmount">Enter investment amount</label>
             <input type="number" id="investAmount" class="amount-input" placeholder="0.00">
-            <p id="limitText" style="font-size: 11px; text-align: center; margin-top: 5px; color: var(--text-muted);"></p>
+            <p id="limitText" class="form-hint text-center"></p>
 
             <div class="calc-box">
                 <div class="calc-row"><span>Daily Profit</span> <span id="cDaily">₦0.00</span></div>
@@ -278,31 +113,37 @@
                 <div class="calc-row total"><span>Total Return</span> <span id="cTotal">₦0.00</span></div>
             </div>
 
-            <p id="errorMsg" style="color: var(--danger); font-size: 12px; margin-bottom: 15px; text-align: center; display: none;"></p>
+            <p id="errorMsg" class="alert alert-error" style="display: none;"></p>
 
-            <button class="btn-invest" id="confirmBtn" onclick="processInvestment()">
+            <button class="btn btn-primary btn-lg btn-block btn-invest" id="confirmBtn" onclick="processInvestment()">
                 <span id="btnText">Confirm Investment</span>
                 <div class="spinner" id="btnSpinner"></div>
             </button>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item active">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
         <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="earnings.html" class="nav-item">
-            <i class="fas fa-chart-bar"></i><span>Earnings</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 

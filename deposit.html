@@ -4,325 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Deposit Funds | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-        }
-
-        .container { width: 92%; max-width: 600px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        /* --- Wallet Summary --- */
-        .summary-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;
-        }
-
-        .summary-card {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .summary-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .summary-card h4 { font-size: 16px; font-weight: 700; }
-
-        /* --- Deposit Form --- */
-        .deposit-section {
-            background: var(--secondary-bg); padding: 25px; border-radius: 24px;
-            border: 1px solid var(--glass-border); margin-bottom: 25px;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
-
-        .input-box {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 15px; display: flex; align-items: center;
-            gap: 10px;
-        }
-
-        .input-box span { font-weight: 700; color: var(--accent-color); }
-        .input-box input {
-            background: transparent; border: none; color: white; width: 100%;
-            font-size: 18px; font-weight: 700; outline: none;
-        }
-
-        .method-box {
-            background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent-color);
-            border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center;
-        }
-
-        /* --- Bank Details --- */
-        .bank-details {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 20px; border-radius: 18px; margin: 20px 0;
-            border: 1px solid var(--glass-border);
-        }
-
-        .detail-item {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .detail-item:last-child { border: none; margin: 0; padding: 0; }
-
-        .detail-item span { font-size: 11px; color: var(--text-muted); }
-        .detail-item h5 { font-size: 14px; font-weight: 600; }
-
-        .copy-btn {
-            background: var(--accent-color); color: white; border: none;
-            padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;
-            cursor: pointer;
-        }
-
-        .instructions {
-            background: rgba(245, 158, 11, 0.05); border-radius: 12px;
-            padding: 15px; border: 1px dashed var(--warning); margin-bottom: 25px;
-        }
-        .instructions li { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; margin-left: 15px; }
-
-        .btn-paid {
-            width: 100%; padding: 16px; background: var(--accent-color);
-            color: white; border: none; border-radius: 15px; font-weight: 700;
-            font-size: 16px; cursor: pointer; transition: 0.3s;
-        }
-        .btn-paid:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* --- Deposit History --- */
-        .history-section h3 { font-size: 16px; margin-bottom: 15px; }
-        
-        .history-item {
-            background: var(--card-bg); padding: 15px; border-radius: 15px;
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .hist-info h5 { font-size: 14px; margin-bottom: 4px; }
-        .hist-info p { font-size: 11px; color: var(--text-muted); }
-
-        .hist-status { text-align: right; }
-        .hist-status h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-        
-        .badge {
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase;
-        }
-        .pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .approved { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        /* --- Spinner --- */
-        .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; display: none; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- Toast --- */
-        #toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--success); color: white; padding: 12px 25px;
-            border-radius: 30px; font-size: 14px; font-weight: 600; display: none;
-            z-index: 3000; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.method-box { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: var(--r-md); border: 1.5px solid var(--red); background: var(--red-50); }
+        .bank-details { margin: 6px 0 18px; padding: 6px 18px; border-radius: var(--r-lg); background: #fff; border: 1px dashed var(--line-strong); }
+        .steps-list { list-style: none; margin: 0 0 20px; display: grid; gap: 9px; }
+        .steps-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); }
+        .steps-list i { color: var(--red); margin-top: 3px; }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <div id="toast">Copied to clipboard!</div>
-
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Deposit</a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px; margin-right: 12px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Deposit</h1>
+                    <p class="page-sub">Fund your wallet by bank transfer</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <div id="toast">Copied to clipboard!</div>
+
+    <main class="container app-main">
         <!-- Summary -->
-        <div class="summary-row">
-            <div class="summary-card">
-                <p>Wallet Balance</p>
-                <h4 id="walletBal">₦0.00</h4>
+        <section class="grid grid-2c fade-up">
+            <div class="stat-card is-hero">
+                <span class="stat-icon"><i class="fas fa-wallet"></i></span>
+                <h3 class="stat-value" id="walletBal">₦0.00</h3>
+                <p class="stat-label">Wallet Balance</p>
             </div>
-            <div class="summary-card">
-                <p>Pending Deposit</p>
-                <h4 id="pendingBal" style="color: var(--warning);">₦0.00</h4>
+            <div class="stat-card is-warn">
+                <span class="stat-icon"><i class="fas fa-hourglass-half"></i></span>
+                <h3 class="stat-value" id="pendingBal">₦0.00</h3>
+                <p class="stat-label">Pending Deposit</p>
             </div>
-        </div>
+        </section>
 
-        <!-- Deposit Interface -->
-        <section class="deposit-section">
-            <div class="form-group">
-                <label>Deposit Amount (₦)</label>
-                <div class="input-box">
-                    <span>₦</span>
-                    <input type="number" id="depositAmount" placeholder="5,000" min="1000">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Name on Your Bank Account</label>
-                <div class="input-box">
-                    <i class="fas fa-user" style="color: var(--accent-color);"></i>
-                    <input type="text" id="senderAccountName" placeholder="Enter the name on your bank account" autocomplete="name">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Your Bank Name</label>
-                <div class="input-box">
-                    <i class="fas fa-building-columns" style="color: var(--accent-color);"></i>
-                    <input type="text" id="senderBankName" placeholder="Enter your bank name" autocomplete="organization">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Payment Method</label>
-                <div class="method-box">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <i class="fas fa-university" style="color: var(--accent-color);"></i>
-                        <span style="font-weight:600; font-size:14px;">OPay</span>
+        <div class="page-cols">
+            <!-- Deposit Interface -->
+            <section class="card card-pad-lg deposit-section fade-up d1">
+                <h3 class="section-card-title"><i class="fas fa-circle-plus"></i> New Deposit</h3>
+                <div class="form-group">
+                    <label for="depositAmount">Deposit Amount (₦)</label>
+                    <div class="amount-field">
+                        <span class="cur">₦</span>
+                        <input type="number" id="depositAmount" class="form-control" placeholder="5,000" min="1000">
                     </div>
-                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
                 </div>
-            </div>
 
-            <!-- OPay Details -->
-            <div class="bank-details">
-                <div class="detail-item">
-                    <div><span>Account Name</span><h5 id="kudaName">GLORY MICHAEL</h5></div>
-                </div>
-                <div class="detail-item">
-                    <div><span>Account Number</span><h5 id="kudaNumber">6578299180</h5></div>
-                    <button class="copy-btn" onclick="copyNumber()">Copy</button>
-                </div>
-                <div class="detail-item">
-                    <div><span>Bank Name</span><h5 id="kudaBank">OPay</h5></div>
-                </div>
-            </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="senderAccountName">Name on Your Bank Account</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="senderAccountName" class="form-control" placeholder="Account holder name" autocomplete="name">
+                        </div>
+                    </div>
 
-            <div class="instructions">
-                <ul style="list-style: none;">
-                    <li><i class="fas fa-info-circle"></i> Transfer the exact amount to the account above.</li>
-                    <li><i class="fas fa-info-circle"></i> Click <b>"I Have Paid"</b> after the transfer.</li>
-                    <li><i class="fas fa-info-circle"></i> Your wallet will update once confirmed.</li>
+                    <div class="form-group">
+                        <label for="senderBankName">Your Bank Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-building-columns"></i>
+                            <input type="text" id="senderBankName" class="form-control" placeholder="Enter your bank name" autocomplete="organization">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <div class="method-box">
+                        <div class="cluster" style="gap:10px;">
+                            <span class="li-icon" style="width:34px;height:34px;"><i class="fas fa-university"></i></span>
+                            <span style="font-weight:700; font-size:14px;">OPay</span>
+                        </div>
+                        <i class="fas fa-check-circle text-red"></i>
+                    </div>
+                </div>
+
+                <!-- OPay Details -->
+                <div class="bank-details">
+                    <div class="copy-row">
+                        <div><span>Account Name</span><h5 id="kudaName">GLORY MICHAEL</h5></div>
+                    </div>
+                    <div class="copy-row">
+                        <div><span>Account Number</span><h5 id="kudaNumber">6578299180</h5></div>
+                        <button class="btn btn-primary btn-sm" onclick="copyNumber()"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                    <div class="copy-row">
+                        <div><span>Bank Name</span><h5 id="kudaBank">OPay</h5></div>
+                    </div>
+                </div>
+
+                <ul class="steps-list">
+                    <li><i class="fas fa-circle-check"></i><span>Transfer the exact amount to the account above.</span></li>
+                    <li><i class="fas fa-circle-check"></i><span>Click <b>"I Have Paid"</b> after the transfer.</span></li>
+                    <li><i class="fas fa-circle-check"></i><span>Your wallet will update once confirmed.</span></li>
                 </ul>
+
+                <button class="btn btn-primary btn-lg btn-block" id="paidBtn" onclick="submitDeposit()">
+                    <span id="btnText">I Have Paid</span>
+                    <div class="spinner" id="btnSpinner"></div>
+                </button>
+            </section>
+
+            <div class="stack-col">
+                <!-- History -->
+                <section class="history-section fade-up d2">
+                    <div class="section-head"><h3>Deposit <em>History</em></h3></div>
+                    <div id="depositList">
+                        <!-- Skeleton -->
+                        <div class="history-item skeleton" style="height: 60px;"></div>
+                    </div>
+                </section>
+
+                <!-- Extra Actions -->
+                <section class="tiles cols-2 fade-up d3">
+                    <a href="investment.html" class="tile"><i class="fas fa-rocket"></i><span>Invest</span></a>
+                    <a href="withdraw.html" class="tile"><i class="fas fa-wallet"></i><span>Withdraw</span></a>
+                </section>
             </div>
-
-            <button class="btn-paid" id="paidBtn" onclick="submitDeposit()">
-                <span id="btnText">I Have Paid</span>
-                <div class="spinner" id="btnSpinner"></div>
-            </button>
-        </section>
-
-        <!-- History -->
-        <section class="history-section">
-            <h3>Deposit History</h3>
-            <div id="depositList">
-                <!-- Skeleton -->
-                <div class="history-item" style="height: 60px; background: #1f2937;"></div>
-            </div>
-        </section>
-
-        <!-- Extra Actions -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
-            <a href="investment.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-rocket"></i><br><span style="font-size:12px;">Invest</span></a>
-            <a href="withdraw.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-wallet"></i><br><span style="font-size:12px;">Withdraw</span></a>
         </div>
     </main>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
-        <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+        <a href="wallet.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="deposit.html" class="nav-item active">
-            <i class="fas fa-plus-circle"></i><span>Deposit</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 

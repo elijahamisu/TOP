@@ -4,264 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Wallet | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 800px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .profile-area { display: flex; align-items: center; gap: 12px; }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        /* --- Wallet Main Card --- */
-        .wallet-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 30px; border-radius: 24px;
-            margin: 20px 0; border: 1px solid var(--glass-border);
-            text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .wallet-card p { font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-bottom: 5px; }
-        .wallet-card h1 { font-size: 36px; font-weight: 800; margin-bottom: 25px; }
-
-        .wallet-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-
-        .w-action {
-            display: flex; flex-direction: column; align-items: center; gap: 6px;
-            color: white; text-decoration: none; font-size: 10px; font-weight: 500;
-        }
-
-        .w-icon {
-            width: 45px; height: 45px; background: rgba(255, 255, 255, 0.15);
-            border-radius: 14px; display: flex; align-items: center;
-            justify-content: center; font-size: 18px; transition: 0.3s;
-        }
-
-        .w-action:hover .w-icon { background: var(--accent-color); transform: translateY(-2px); }
-
-        /* --- Overview Stats --- */
-        .overview-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;
-        }
-
-        .stat-box {
-            background: var(--card-bg); padding: 15px;
-            border-radius: 15px; border: 1px solid var(--glass-border);
-        }
-
-        .stat-box p { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .stat-box h4 { font-size: 15px; font-weight: 600; }
-
-        /* --- Activity Filter --- */
-        .filter-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding: 5px 0 15px;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
-        .filter-scroll::-webkit-scrollbar { display: none; }
-
-        .filter-btn {
-            white-space: nowrap; padding: 8px 16px; border-radius: 20px;
-            background: var(--secondary-bg); border: 1px solid var(--glass-border);
-            color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer;
-        }
-
-        .filter-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
-
-        /* --- Transaction List --- */
-        .activity-section h3 { font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; }
-
-        .tx-item {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .tx-info h5 { font-size: 14px; margin-bottom: 4px; text-transform: capitalize; }
-        .tx-info p { font-size: 11px; color: var(--text-muted); }
-
-        .tx-amount { text-align: right; }
-        .tx-amount h4 { font-size: 14px; font-weight: 700; }
-        .tx-amount p { font-size: 10px; font-weight: 600; text-transform: uppercase; }
-
-        /* --- Empty State --- */
-        .empty-state {
-            text-align: center; padding: 50px 20px; color: var(--text-muted);
-        }
-        .empty-state i { font-size: 40px; margin-bottom: 15px; opacity: 0.3; }
-
-        /* --- Quick Action Cards --- */
-        .quick-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 30px; }
-        .quick-card {
-            background: var(--secondary-bg); padding: 15px; border-radius: 12px;
-            display: flex; align-items: center; gap: 15px; text-decoration: none; color: white;
-            border: 1px solid var(--glass-border);
-        }
-        .quick-card i { font-size: 20px; color: var(--accent-color); width: 30px; text-align: center; }
-        .quick-card span { font-size: 14px; font-weight: 500; }
-
-        /* --- Skeleton --- */
-        .skeleton { background: #1f2937; border-radius: 12px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.split-2 > .grid { align-content: start; }
+        @media (min-width: 1100px) { .split-2 > .card-hero { min-height: 100%; display: flex; flex-direction: column; justify-content: space-between; } }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Wallet</a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Wallet</h1>
+                    <p class="page-sub">Balance, totals and activity</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Wallet Card -->
-        <section class="wallet-card">
-            <p>Total Available Balance</p>
-            <h1 id="mainBalance">₦0.00</h1>
-            <div class="wallet-actions">
-                <a href="deposit.html" class="w-action"><div class="w-icon"><i class="fas fa-plus"></i></div><span>Deposit</span></a>
-                <a href="withdraw.html" class="w-action"><div class="w-icon"><i class="fas fa-arrow-down"></i></div><span>Withdraw</span></a>
-                <a href="investment.html" class="w-action"><div class="w-icon"><i class="fas fa-chart-line"></i></div><span>Invest</span></a>
-                <a href="giftcode.html" class="w-action"><div class="w-icon"><i class="fas fa-gift"></i></div><span>Gift</span></a>
-            </div>
-        </section>
+    <main class="container app-main">
+        <div class="split-2">
+            <!-- Wallet Card -->
+            <section class="card-hero fade-up">
+                <div class="balance-top">
+                    <p class="balance-label">Total Available Balance</p>
+                    <span class="balance-chip"><i class="fas fa-shield-halved"></i> NGN Wallet</span>
+                </div>
+                <h1 class="balance-amount" id="mainBalance">₦0.00</h1>
+                <div class="hero-actions">
+                    <a href="deposit.html" class="hero-action"><span class="ha-icon"><i class="fas fa-plus"></i></span><span>Deposit</span></a>
+                    <a href="withdraw.html" class="hero-action"><span class="ha-icon"><i class="fas fa-arrow-down"></i></span><span>Withdraw</span></a>
+                    <a href="investment.html" class="hero-action"><span class="ha-icon"><i class="fas fa-chart-line"></i></span><span>Invest</span></a>
+                    <a href="giftcode.html" class="hero-action"><span class="ha-icon"><i class="fas fa-gift"></i></span><span>Gift</span></a>
+                </div>
+            </section>
 
-        <!-- Stats Grid -->
-        <section class="overview-grid">
-            <div class="stat-box"><p>Total Invested</p><h4 id="totalInvested">₦0.00</h4></div>
-            <div class="stat-box"><p>Total Earnings</p><h4 id="totalEarnings">₦0.00</h4></div>
-            <div class="stat-box"><p>Total Deposits</p><h4 id="totalDeposits">₦0.00</h4></div>
-            <div class="stat-box"><p>Total Withdrawals</p><h4 id="totalWithdrawals">₦0.00</h4></div>
-            <div class="stat-box"><p>Referral Bonus</p><h4 id="totalReferral">₦0.00</h4></div>
-            <div class="stat-box"><p>Gift Code Bonus</p><h4 id="totalGift">₦0.00</h4></div>
-        </section>
+            <!-- Stats Grid -->
+            <section class="grid grid-2c fade-up d1">
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-chart-line"></i></span><h3 class="stat-value" id="totalInvested">₦0.00</h3><p class="stat-label">Total Invested</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value" id="totalEarnings">₦0.00</h3><p class="stat-label">Total Earnings</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-arrow-up"></i></span><h3 class="stat-value" id="totalDeposits">₦0.00</h3><p class="stat-label">Total Deposits</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-arrow-down"></i></span><h3 class="stat-value" id="totalWithdrawals">₦0.00</h3><p class="stat-label">Total Withdrawals</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-user-friends"></i></span><h3 class="stat-value" id="totalReferral">₦0.00</h3><p class="stat-label">Referral Bonus</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-gift"></i></span><h3 class="stat-value" id="totalGift">₦0.00</h3><p class="stat-label">Gift Code Bonus</p></div>
+            </section>
+        </div>
 
-        <!-- Activity -->
-        <section class="activity-section">
-            <h3>Recent Activity</h3>
-            
-            <div class="filter-scroll">
-                <button class="filter-btn active" onclick="filterTransactions('all', this)">All</button>
-                <button class="filter-btn" onclick="filterTransactions('deposit', this)">Deposits</button>
-                <button class="filter-btn" onclick="filterTransactions('withdrawal', this)">Withdrawals</button>
-                <button class="filter-btn" onclick="filterTransactions('investment', this)">Investments</button>
-                <button class="filter-btn" onclick="filterTransactions('earning', this)">Earnings</button>
-                <button class="filter-btn" onclick="filterTransactions('bonus', this)">Bonuses</button>
-            </div>
+        <div class="page-cols">
+            <!-- Activity -->
+            <section class="activity-section fade-up d2">
+                <div class="section-head">
+                    <h3>Recent <em>Activity</em></h3>
+                    <a href="transactions.html" class="view-all">Full log</a>
+                </div>
 
-            <div id="txList">
-                <div class="tx-item skeleton" style="height: 65px;"></div>
-                <div class="tx-item skeleton" style="height: 65px;"></div>
-            </div>
-        </section>
+                <div class="chip-tabs filter-scroll">
+                    <button class="filter-btn active" onclick="filterTransactions('all', this)">All</button>
+                    <button class="filter-btn" onclick="filterTransactions('deposit', this)">Deposits</button>
+                    <button class="filter-btn" onclick="filterTransactions('withdrawal', this)">Withdrawals</button>
+                    <button class="filter-btn" onclick="filterTransactions('investment', this)">Investments</button>
+                    <button class="filter-btn" onclick="filterTransactions('earning', this)">Earnings</button>
+                    <button class="filter-btn" onclick="filterTransactions('bonus', this)">Bonuses</button>
+                </div>
 
-        <!-- Quick Actions -->
-        <section class="quick-grid">
-            <a href="earnings.html" class="quick-card"><i class="fas fa-chart-pie"></i><span>Earnings History</span></a>
-            <a href="transactions.html" class="quick-card"><i class="fas fa-list-ul"></i><span>Full Transaction Log</span></a>
-            <a href="support.html" class="quick-card"><i class="fas fa-headset"></i><span>Billing Support</span></a>
-        </section>
+                <div id="txList">
+                    <div class="tx-item skeleton" style="height: 65px;"></div>
+                    <div class="tx-item skeleton" style="height: 65px;"></div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="fade-up d3">
+                <div class="section-head"><h3>Shortcuts</h3></div>
+                <div class="tiles">
+                    <a href="earnings.html" class="tile"><i class="fas fa-chart-pie"></i><span>Earnings History</span></a>
+                    <a href="transactions.html" class="tile"><i class="fas fa-list-ul"></i><span>Full Transaction Log</span></a>
+                    <a href="support.html" class="tile"><i class="fas fa-headset"></i><span>Billing Support</span></a>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
         <a href="wallet.html" class="nav-item active">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="earnings.html" class="nav-item">
-            <i class="fas fa-chart-bar"></i><span>Earnings</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
