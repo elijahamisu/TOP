@@ -675,17 +675,9 @@
             if(!confirm(`Confirm approval of ₦${amount.toLocaleString()}? This will deduct the amount from the user's wallet.`)) return;
 
             try {
-                const { error: wErr } = await supabase.from('withdrawals').update({ status: 'approved', processed_by: currentAdmin.id, processed_at: new Date().toISOString() }).eq('id', id);
+                // Server-side: re-checks balance, deducts wallet, settles the transaction, notifies, logs.
+                const { error: wErr } = await supabase.rpc('admin_approve_withdrawal', { p_id: id });
                 if(wErr) throw wErr;
-
-                const newBal = balance - amount;
-                await supabase.from('wallets').update({ balance: newBal }).eq('user_id', userId);
-
-                await supabase.from('transactions').insert([{ user_id: userId, amount: amount, type: 'withdrawal', description: 'Withdrawal Approved & Paid' }]);
-
-                await supabase.from('notifications').insert([{ user_id: userId, title: 'Withdrawal Approved', message: `Your withdrawal of ₦${amount.toLocaleString()} was approved and sent to your bank account.` }]);
-
-                await supabase.from('admin_logs').insert([{ admin_id: currentAdmin.id, action: `Approved Withdrawal #${id}`, target_id: id }]);
 
                 alert("Withdrawal approved and processed.");
                 closeModals();
@@ -700,12 +692,10 @@
         window.confirmReject = async () => {
             const reason = document.getElementById('rejectionReason').value.trim();
             if(!reason) { alert("Please provide a rejection reason."); return; }
-            const w = witData.find(x => x.id === activeActionId);
-
             try {
-                await supabase.from('withdrawals').update({ status: 'rejected', rejection_reason: reason, processed_by: currentAdmin.id, processed_at: new Date().toISOString() }).eq('id', activeActionId);
-                await supabase.from('notifications').insert([{ user_id: w.user_id, title: 'Withdrawal Rejected', message: `Your withdrawal request was rejected. Reason: ${reason}` }]);
-                await supabase.from('admin_logs').insert([{ admin_id: currentAdmin.id, action: `Rejected Withdrawal #${activeActionId}`, target_id: activeActionId }]);
+                // Server-side: marks rejected, fails the pending transaction, notifies, logs.
+                const { error: rErr } = await supabase.rpc('admin_reject_withdrawal', { p_id: activeActionId, p_reason: reason });
+                if (rErr) throw rErr;
 
                 alert("Withdrawal rejected.");
                 closeModals();

@@ -733,10 +733,7 @@
             modal.style.display = 'flex';
         };
 
-        // NEW: Add or deduct funds from a user's wallet. Logs a transaction + notification
-        // so it shows up in the user's own transaction history and the admin_logs audit trail.
-        // Requires the "Admins can update any wallet" / "...insert transactions/notifications
-        // for any user" RLS policies — without those, this will fail with a permissions error.
+        // Add or deduct funds from a user's wallet via the admin_adjust_balance RPC.
         window.adjustBalance = async (userId, mode) => {
             const amountInput = document.getElementById('balanceAdjustAmount');
             const reasonInput = document.getElementById('balanceAdjustReason');
@@ -754,38 +751,20 @@
             const newBalance = currentBalance + delta;
 
             if (mode === 'subtract' && amount > currentBalance) {
-                if (!confirm(`${u.full_name}'s current balance is ₦${currentBalance.toLocaleString()}. Deducting ₦${amount.toLocaleString()} will take it negative (₦${newBalance.toLocaleString()}). Continue anyway?`)) return;
+                alert(`${u.full_name}'s current balance is ₦${currentBalance.toLocaleString()}. You cannot deduct more than the balance.`);
+                return;
             }
 
             if (!confirm(`${mode === 'add' ? 'Add' : 'Deduct'} ₦${amount.toLocaleString()} ${mode === 'add' ? 'to' : 'from'} ${u.full_name}'s wallet?\n\nNew balance will be ₦${newBalance.toLocaleString()}.`)) return;
 
             try {
-                const { error: wErr } = await supabase.from('wallets').update({ balance: newBalance }).eq('user_id', userId);
+                // Server-side: updates wallet, logs transaction + notification + admin log atomically.
+                const { error: wErr } = await supabase.rpc('admin_adjust_balance', {
+                    p_user_id: userId,
+                    p_amount: delta,
+                    p_note: reason || null
+                });
                 if (wErr) throw wErr;
-
-                // Reuses the 'bonus' (positive) / 'withdrawal' (negative) transaction types
-                // so it displays with correct +/- coloring on transactions.html without
-                // needing changes there.
-                await supabase.from('transactions').insert([{
-                    user_id: userId,
-                    amount: amount,
-                    type: mode === 'add' ? 'bonus' : 'withdrawal',
-                    description: reason || (mode === 'add' ? 'Balance credited by admin' : 'Balance deducted by admin')
-                }]);
-
-                await supabase.from('notifications').insert([{
-                    user_id: userId,
-                    title: mode === 'add' ? 'Balance Credited' : 'Balance Adjusted',
-                    message: mode === 'add'
-                        ? `₦${amount.toLocaleString()} was added to your wallet by admin.${reason ? ' Reason: ' + reason : ''}`
-                        : `₦${amount.toLocaleString()} was deducted from your wallet by admin.${reason ? ' Reason: ' + reason : ''}`
-                }]);
-
-                await supabase.from('admin_logs').insert([{
-                    admin_id: currentAdminId,
-                    action: `${mode === 'add' ? 'Added' : 'Deducted'} ₦${amount.toLocaleString()} ${mode === 'add' ? 'to' : 'from'} user #${userId.slice(0,8)}${reason ? ' — ' + reason : ''}`,
-                    target_id: userId
-                }]);
 
                 alert('Balance updated successfully.');
                 closeModal();
@@ -795,11 +774,7 @@
             }
         };
 
-        // NEW: Admin-assign an investment plan directly to a user, bypassing wallet balance.
-        // Creates the investment record with the same math create_investment() uses
-        // (daily_rate = plan.daily_profit_percent, expected_return over duration_days),
-        // logs a transaction so it shows in the user's history, notifies them, and
-        // records the action in admin_logs. Requires the "investments admin insert" RLS policy.
+        // Admin-assign an investment plan to a user (no wallet charge) via the admin_assign_plan RPC.
         window.assignPlanToUser = async (userId) => {
             const planId = document.getElementById('assignPlanSelect').value;
             const amount = parseFloat(document.getElementById('assignPlanAmount').value);
@@ -816,43 +791,13 @@
             if (!confirm(`Assign "${plan.name}" (₦${amount.toLocaleString()}) to this user? This does not touch their wallet balance.`)) return;
 
             try {
-                const dailyRate = parseFloat(plan.daily_profit_percent);
-                const durationDays = parseInt(plan.duration_days);
-                const expectedReturn = amount + (amount * dailyRate * durationDays / 100);
-                const endDate = new Date();
-                endDate.setDate(endDate.getDate() + durationDays);
-
-                const { data: inv, error: invErr } = await supabase.from('investments').insert([{
-                    user_id: userId,
-                    plan_id: plan.id,
-                    plan_name: plan.name,
-                    amount: amount,
-                    daily_rate: dailyRate,
-                    expected_return: expectedReturn,
-                    end_date: endDate.toISOString().split('T')[0],
-                    status: 'active'
-                }]).select().single();
+                // Server-side: creates the investment (no wallet charge), transaction, notification, admin log.
+                const { error: invErr } = await supabase.rpc('admin_assign_plan', {
+                    p_user_id: userId,
+                    p_plan_id: plan.id,
+                    p_amount: amount
+                });
                 if (invErr) throw invErr;
-
-                await supabase.from('transactions').insert([{
-                    user_id: userId,
-                    amount: amount,
-                    type: 'investment',
-                    description: `Admin-assigned investment: ${plan.name}`
-                }]);
-
-                await supabase.from('notifications').insert([{
-                    user_id: userId,
-                    title: 'Investment Plan Assigned',
-                    message: `An administrator has activated the "${plan.name}" plan (₦${amount.toLocaleString()}) on your account.`,
-                    type: 'investment'
-                }]);
-
-                await supabase.from('admin_logs').insert([{
-                    admin_id: currentAdminId,
-                    action: `Assigned plan "${plan.name}" (₦${amount.toLocaleString()}) to user #${userId.slice(0,8)}`,
-                    target_id: userId
-                }]);
 
                 alert('Plan assigned successfully.');
                 closeModal();
@@ -860,6 +805,31 @@
             } catch (err) {
                 alert('Error: ' + err.message);
             }
+        };
+
+        // Reset a user's wallet to ₦0 via admin_adjust_balance (logged like any deduction).
+        window.resetUserWallet = async (userId) => {
+            const u = usersData.find(user => user.id === userId);
+            const bal = parseFloat(u?.wallets?.balance || 0);
+            if (bal <= 0) { alert('This wallet is already at ₦0.'); return; }
+            if (!confirm(`Reset ${u.full_name}'s wallet from ₦${bal.toLocaleString()} to ₦0?`)) return;
+            const { error } = await supabase.rpc('admin_adjust_balance', { p_user_id: userId, p_amount: -bal, p_note: 'Wallet reset by admin' });
+            if (error) { alert('Error: ' + error.message); return; }
+            alert('Wallet reset.');
+            closeModal();
+            fetchUsers();
+        };
+
+        // Send a one-off notification to a single user.
+        window.sendDirectNotification = async (userId) => {
+            const title = prompt('Notification title:');
+            if (!title) return;
+            const message = prompt('Message:');
+            if (!message) return;
+            const { error } = await supabase.from('notifications').insert([{ user_id: userId, title, message, type: 'system' }]);
+            if (error) { alert('Error: ' + error.message); return; }
+            await supabase.from('admin_logs').insert([{ admin_id: currentAdminId, action: `Sent notification "${title}" to user #${userId.slice(0,8)}`, target_id: userId }]);
+            alert('Notification sent.');
         };
 
         window.toggleSuspend = async (id, currentStatus) => {

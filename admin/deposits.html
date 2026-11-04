@@ -538,69 +538,14 @@
             document.getElementById('detailModal').style.display = 'flex';
         };
 
-        async function creditReferralCommission(depositorUserId, depositAmount) {
-            const { data: depositorProfile } = await supabase
-                .from('profiles')
-                .select('referral_by, username')
-                .eq('id', depositorUserId)
-                .single();
-
-            if (!depositorProfile || !depositorProfile.referral_by) return;
-
-            const { data: referrerProfile } = await supabase
-                .from('profiles')
-                .select('id')
-                .ilike('username', depositorProfile.referral_by)
-                .single();
-
-            if (!referrerProfile) return;
-
-            const commission = parseFloat(depositAmount) * 0.20;
-
-            const { data: referrerWallet } = await supabase
-                .from('wallets')
-                .select('balance')
-                .eq('user_id', referrerProfile.id)
-                .single();
-            if (!referrerWallet) return;
-
-            const newReferrerBalance = parseFloat(referrerWallet.balance) + commission;
-            await supabase.from('wallets').update({ balance: newReferrerBalance }).eq('user_id', referrerProfile.id);
-
-            await supabase.from('transactions').insert([{
-                user_id: referrerProfile.id,
-                amount: commission,
-                type: 'referral',
-                description: `Referral commission (20%) from @${depositorProfile.username}'s deposit`
-            }]);
-
-            await supabase.from('notifications').insert([{
-                user_id: referrerProfile.id,
-                title: 'Referral Commission Earned',
-                message: `You earned ₦${commission.toLocaleString()} (20%) from @${depositorProfile.username}'s deposit!`
-            }]);
-        }
-
         window.approveDeposit = async (id, amount, userId) => {
             if(!confirm("Approve this deposit and add ₦" + amount.toLocaleString() + " to user wallet?")) return;
 
             try {
-                const { error: dErr } = await supabase.from('deposits').update({ status: 'approved' }).eq('id', id);
+                // Server-side: marks approved, credits wallet, settles the transaction,
+                // notifies the user, pays the referral commission and writes the admin log.
+                const { error: dErr } = await supabase.rpc('admin_approve_deposit', { p_id: id });
                 if(dErr) throw dErr;
-
-                const { data: wallet } = await supabase.from('wallets').select('balance').eq('user_id', userId).single();
-                const newBalance = parseFloat(wallet.balance) + parseFloat(amount);
-
-                const { error: wErr } = await supabase.from('wallets').update({ balance: newBalance }).eq('user_id', userId);
-                if(wErr) throw wErr;
-
-                await supabase.from('transactions').insert([{ user_id: userId, amount: amount, type: 'deposit', description: 'Deposit Verified & Approved' }]);
-
-                await supabase.from('notifications').insert([{ user_id: userId, title: 'Deposit Approved', message: `Your deposit of ₦${amount.toLocaleString()} has been verified and added to your wallet.` }]);
-
-                await creditReferralCommission(userId, amount);
-
-                await supabase.from('admin_logs').insert([{ admin_id: activeAdmin.id, action: `Approved Deposit #${id}`, target_id: id }]);
 
                 alert("Deposit approved successfully!");
                 closeModals();
@@ -618,12 +563,10 @@
             const reason = document.getElementById('rejectionReason').value.trim();
             if(!reason) { alert("Please provide a reason."); return; }
 
-            const dep = depositData.find(x => x.id === pendingActionId);
-
             try {
-                await supabase.from('deposits').update({ status: 'rejected', rejection_reason: reason }).eq('id', pendingActionId);
-                await supabase.from('notifications').insert([{ user_id: dep.user_id, title: 'Deposit Rejected', message: `Your deposit of ₦${parseFloat(dep.amount).toLocaleString()} was rejected. Reason: ${reason}` }]);
-                await supabase.from('admin_logs').insert([{ admin_id: activeAdmin.id, action: `Rejected Deposit #${pendingActionId}`, target_id: pendingActionId }]);
+                // Server-side: marks rejected, fails the pending transaction, notifies the user, logs it.
+                const { error: rErr } = await supabase.rpc('admin_reject_deposit', { p_id: pendingActionId, p_reason: reason });
+                if (rErr) throw rErr;
 
                 alert("Deposit rejected.");
                 closeModals();

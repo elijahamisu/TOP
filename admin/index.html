@@ -561,7 +561,7 @@
             document.getElementById('countUsers').innerText = users || 0;
             document.getElementById('countInvestments').innerText = invest || 0;
 
-            const { data: deposits } = await supabase.from('transactions').select('amount').eq('type', 'deposit');
+            const { data: deposits } = await supabase.from('transactions').select('amount').eq('type', 'deposit').eq('status', 'success');
             const totalDep = deposits?.reduce((a, b) => a + parseFloat(b.amount), 0) || 0;
             document.getElementById('countDeposits').innerText = `₦${totalDep.toLocaleString()}`;
 
