@@ -541,19 +541,12 @@
                 if (password !== confirmPassword) throw new Error("Passwords do not match.");
                 if (password.length < 6) throw new Error("Password must be at least 6 characters.");
                 
-                // 2. Check if username exists.
-                // Use maybeSingle() instead of single(): single() throws a PostgREST
-                // error whenever zero rows come back, which is the normal case for an
-                // available username — that error was very likely what was landing in
-                // the catch block below as an empty-looking object.
-                const { data: existingUser, error: userCheckErr } = await supabase
-                    .from('profiles')
-                    .select('username')
-                    .eq('username', username)
-                    .maybeSingle();
+                // 2. Check if username exists (RPC works before sign-in; profiles are not publicly readable).
+                const { data: isAvailable, error: userCheckErr } = await supabase
+                    .rpc('username_available', { p_username: username });
 
                 if (userCheckErr) throw new Error("Couldn't verify username right now. Please try again.");
-                if (existingUser) throw new Error("Username already taken. Please choose another.");
+                if (isAvailable === false) throw new Error("Username already taken. Please choose another.");
 
                 // 3. Signup Auth
                 const { data: authData, error: authErr } = await supabase.auth.signUp({

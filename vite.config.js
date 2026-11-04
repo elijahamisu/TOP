@@ -1,7 +1,19 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { resolve } from 'path';
 
-export default defineConfig({
+// Public Supabase defaults for the TOP project. The anon key is public by design (RLS protects data).
+const DEFAULT_SUPABASE_URL = 'https://qeflimxlemgtjldoxtid.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlZmxpbXhsZW1ndGpsZG94dGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTQyNzIsImV4cCI6MjEwOTM5MDI3Mn0.wj7so8tKwMT6O1yXryfF293sbRj73KIzV1UmAuW3KaU';
+
+export default defineConfig(({ mode }) => {
+  const env = { ...loadEnv(mode, process.cwd(), 'VITE_'), ...process.env };
+  const SUPABASE_URL = env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+  const SUPABASE_ANON_KEY = env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
+  return {
+  define: {
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(SUPABASE_URL),
+    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(SUPABASE_ANON_KEY),
+  },
   build: {
     rollupOptions: {
       input: {
@@ -45,4 +57,5 @@ export default defineConfig({
       },
     },
   },
+};
 });

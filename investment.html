@@ -438,43 +438,23 @@
             spin.style.display = 'block';
 
             try {
-                // Double check wallet
-                const { data: wData } = await supabase.from('wallets').select('balance').eq('user_id', currentUser.id).single();
-                if (parseFloat(wData.balance) < pendingInvestment.amount) throw new Error("Insufficient Balance");
+                // Resolve the plan id (plans may be passed by name only)
+                let planId = pendingInvestment.id || pendingInvestment.plan_id;
+                if (!planId) {
+                    const { data: pData, error: pErr } = await supabase.from('investment_plans')
+                        .select('id').eq('name', pendingInvestment.name).limit(1).maybeSingle();
+                    if (pErr) throw pErr;
+                    if (!pData) throw new Error("Investment plan not found");
+                    planId = pData.id;
+                }
 
-                const endDate = new Date();
-                endDate.setDate(endDate.getDate() + pendingInvestment.duration);
-
-                // 1. Create Investment
-                const { error: invErr } = await supabase.from('investments').insert([{
-                    user_id: currentUser.id,
-                    plan_name: pendingInvestment.name,
-                    amount: pendingInvestment.amount,
-                    daily_profit: pendingInvestment.daily_profit,
-                    status: 'active',
-                    end_date: endDate.toISOString()
-                }]);
+                // Create the investment server-side (checks balance, deducts wallet, logs transaction + notification)
+                const { data: rpcData, error: invErr } = await supabase.rpc('create_investment', {
+                    p_plan_id: planId,
+                    p_amount: pendingInvestment.amount
+                });
                 if (invErr) throw invErr;
-
-                // 2. Deduct Wallet
-                const newBal = parseFloat(wData.balance) - pendingInvestment.amount;
-                const { error: wallErr } = await supabase.from('wallets').update({ balance: newBal }).eq('user_id', currentUser.id);
-                if (wallErr) throw wallErr;
-
-                // 3. Transaction
-                await supabase.from('transactions').insert([{
-                    user_id: currentUser.id,
-                    amount: pendingInvestment.amount,
-                    type: 'investment',
-                    description: `Subscribed to ${pendingInvestment.name}`
-                }]);
-
-                // 4. Notification
-                await supabase.from('notifications').insert([{
-                    user_id: currentUser.id,
-                    title: 'Investment Active',
-                    message: `Successfully invested ₦${pendingInvestment.amount.toLocaleString()} in ${pendingInvestment.name}.`
-                }]);
+                const newBal = parseFloat(rpcData?.balance ?? (userWallet - pendingInvestment.amount));
 
                 // Clean up and show success
                 sessionStorage.removeItem('selected_plan');

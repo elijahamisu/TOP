@@ -7,8 +7,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 // 1. Environment Variable Validation
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const DEFAULT_SUPABASE_URL = 'https://qeflimxlemgtjldoxtid.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlZmxpbXhsZW1ndGpsZG94dGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTQyNzIsImV4cCI6MjEwOTM5MDI3Mn0.wj7so8tKwMT6O1yXryfF293sbRj73KIzV1UmAuW3KaU';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
     console.error(

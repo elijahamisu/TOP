@@ -419,31 +419,16 @@
             spin.style.display = 'block';
 
             try {
-                // 1. Insert Deposit Request
-                const { error: depErr } = await supabase.from('deposits').insert([{
-                    user_id: currentUser.id,
-                    amount: amt,
-                    payment_method: 'OPay',
-                    sender_account_name: senderAccountName,
-                    sender_bank_name: senderBankName,
-                    status: 'pending'
-                }]);
+                // Submit server-side (creates deposit, pending transaction and notification)
+                const { error: depErr } = await supabase.rpc('create_deposit', {
+                    p_amount: amt,
+                    p_method: 'OPay',
+                    p_reference: null,
+                    p_proof_url: null,
+                    p_sender_account_name: senderAccountName,
+                    p_sender_bank_name: senderBankName
+                });
                 if (depErr) throw depErr;
-
-                // 2. Create Transaction Log
-                await supabase.from('transactions').insert([{
-                    user_id: currentUser.id,
-                    amount: amt,
-                    type: 'deposit',
-                    description: `Deposit via OPay from ${senderBankName}`
-                }]);
-
-                // 3. Create Notification
-                await supabase.from('notifications').insert([{
-                    user_id: currentUser.id,
-                    title: 'Deposit Received',
-                    message: `Your deposit of ₦${amt.toLocaleString()} is pending approval.`
-                }]);
 
                 alert('Deposit submitted! We will notify you once it is confirmed.');
                 window.location.reload();

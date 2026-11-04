@@ -4,10 +4,12 @@
  * and provides global utility helpers for formatting and timezone management.
  */
 
+// 0. Public defaults for the TOP Supabase project (anon key is public; RLS protects data)
+export const DEFAULT_SUPABASE_URL = 'https://qeflimxlemgtjldoxtid.supabase.co';
+export const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlZmxpbXhsZW1ndGpsZG94dGlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTQyNzIsImV4cCI6MjEwOTM5MDI3Mn0.wj7so8tKwMT6O1yXryfF293sbRj73KIzV1UmAuW3KaU';
+
 // 1. Environment Variable Validation
 const requiredEnvVars = [
-    'VITE_SUPABASE_URL',
-    'VITE_SUPABASE_ANON_KEY',
     'VITE_APP_NAME',
     'VITE_APP_CURRENCY',
     'VITE_APP_TIMEZONE'
@@ -30,8 +32,8 @@ const isEnvValid = validateEnv();
 // 2. Global Configuration Object
 export const ENV = {
     // Supabase
-    SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || null,
-    SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || null,
+    SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL,
+    SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY,
 
     // Platform Identity
     APP_NAME: import.meta.env.VITE_APP_NAME || 'TOP',

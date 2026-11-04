@@ -620,41 +620,15 @@
             spin.style.display = 'block';
 
             try {
-                const feeAmount = amount * (WITHDRAWAL_FEE_PERCENT / 100);
-                const netAmount = amount - feeAmount;
-
-                // 1. Create Withdrawal Request
-                // NOTE: the definitive checks (pending balance, platform lock, active-plan requirement)
-                // also live in database triggers on the withdrawals table, so none of this can be
-                // bypassed by calling the API directly.
-                // `amount` stays the gross figure deducted from the wallet; fee_amount/net_amount
-                // record the 15% charge breakdown for admin payout reference.
-                const { error: wErr } = await supabase.from('withdrawals').insert([{
-                    user_id: currentUser.id,
-                    amount: amount,
-                    fee_amount: feeAmount,
-                    net_amount: netAmount,
-                    bank_name: bank,
-                    account_number: accNum,
-                    account_name: accName,
-                    status: 'pending'
-                }]);
+                // Submit server-side: request_withdrawal enforces the lock, active-plan rule,
+                // pending balance and fee, and writes the withdrawal, transaction and notification.
+                const { error: wErr } = await supabase.rpc('request_withdrawal', {
+                    p_amount: amount,
+                    p_bank_name: bank,
+                    p_account_number: accNum,
+                    p_account_name: accName
+                });
                 if (wErr) throw wErr;
-
-                // 2. Create Transaction Record
-                await supabase.from('transactions').insert([{
-                    user_id: currentUser.id,
-                    amount: amount,
-                    type: 'withdrawal',
-                    description: `Withdrawal request to ${bank} (15% charge applies, net payout ₦${netAmount.toLocaleString()})`
-                }]);
-
-                // 3. Create Notification
-                await supabase.from('notifications').insert([{
-                    user_id: currentUser.id,
-                    title: 'Withdrawal Pending',
-                    message: `Your withdrawal request of ₦${amount.toLocaleString()} is pending approval. A 15% charge applies — you'll receive ₦${netAmount.toLocaleString()}.`
-                }]);
 
                 alert('Withdrawal request submitted successfully! It is now awaiting admin approval.');
                 await saveBankDetails(false);
@@ -662,13 +636,8 @@
 
             } catch (err) {
                 console.error(err);
-                // Surface a friendlier message if it was blocked by a DB-level trigger
-                let msg = 'An error occurred while processing your request. Please try again.';
-                if (err && err.message) {
-                    if (err.message.includes('pending withdrawal')) msg = err.message;
-                    else if (err.message.includes('locked')) msg = err.message;
-                    else if (err.message.includes('active investment') || err.message.includes('active plan')) msg = err.message;
-                }
+                // Show the server's own message (lock, active plan, pending balance, minimum, etc.)
+                const msg = (err && err.message) ? err.message : 'An error occurred while processing your request. Please try again.';
                 alert(msg);
                 btn.disabled = false;
                 txt.style.display = 'block';

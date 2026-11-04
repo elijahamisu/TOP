@@ -380,8 +380,8 @@
                 if (file.size > 2 * 1024 * 1024) { alert("File too large. Max 2MB."); return; }
 
                 const fileExt = file.name.split('.').pop();
-                const fileName = `${currentUser.id}-${Math.random()}.${fileExt}`;
-                const filePath = `avatars/${fileName}`;
+                const fileName = `avatar-${Date.now()}.${fileExt}`;
+                const filePath = `${currentUser.id}/${fileName}`; // storage policy: users write only to their own folder
 
                 // Upload to Storage (Assuming 'avatars' bucket exists and is public)
                 const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
