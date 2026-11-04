@@ -257,7 +257,7 @@
                         <div class="user-cell">
                             <div class="user-avatar">${u.full_name.charAt(0)}</div>
                             <div>
-                                <p style="font-weight:700">${u.full_name}</p>
+                                <p style="font-weight:700">${u.full_name}${u.is_admin ? ' <span class="badge badge-solid" style="font-size:10px;vertical-align:middle;">Admin</span>' : ''}</p>
                                 <p style="font-size:11px; color:var(--text-muted)">${u.id.slice(0,8)}</p>
                             </div>
                         </div>
@@ -366,12 +366,35 @@
                     <button class="btn-add-funds" style="width:100%" onclick="assignPlanToUser('${u.id}')">Assign Plan</button>
                 </div>
 
+                <div class="modal-plan-list" style="margin-top:16px;">
+                    <div class="plan-row">
+                        <span class="plan-name"><i class="fas fa-user-shield"></i> Admin Access<span class="plan-status">${u.is_admin ? 'Admin' : 'Regular user'}</span></span>
+                    </div>
+                    ${u.id === currentAdminId
+                        ? `<p style="font-size:12px;color:var(--text-muted);margin-top:8px;">This is your account. Another admin must remove your access.</p>`
+                        : `<button class="${u.is_admin ? 'btn-deduct-funds' : 'btn-add-funds'}" style="width:100%;margin-top:8px;" onclick="setAdminAccess('${u.id}', ${!u.is_admin})">${u.is_admin ? 'Remove Admin Access' : 'Make Admin'}</button>`}
+                </div>
+
                 <div class="modal-actions">
                     <button class="btn-export" style="flex:1" onclick="sendDirectNotification('${u.id}')">Send Notification</button>
                     <button class="btn-export" style="flex:1; background:var(--warning)" onclick="resetUserWallet('${u.id}')">Reset Wallet</button>
                 </div>
             `;
             modal.style.display = 'flex';
+        };
+
+        // Grant or remove admin access via the admin_set_admin RPC.
+        window.setAdminAccess = async (userId, makeAdmin) => {
+            const u = usersData.find(user => user.id === userId);
+            const msg = makeAdmin
+                ? `Make ${u.full_name} an admin?\n\nThey will get full access to the admin panel: users, deposits, withdrawals, balances and settings.`
+                : `Remove admin access from ${u.full_name}?`;
+            if (!confirm(msg)) return;
+            const { error } = await supabase.rpc('admin_set_admin', { p_user_id: userId, p_make_admin: makeAdmin });
+            if (error) { alert('Error: ' + error.message); return; }
+            alert(makeAdmin ? `${u.full_name} is now an admin.` : `${u.full_name} is no longer an admin.`);
+            closeModal();
+            fetchUsers();
         };
 
         // Add or deduct funds from a user's wallet via the admin_adjust_balance RPC.
