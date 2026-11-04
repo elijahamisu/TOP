@@ -282,7 +282,7 @@
                         <div class="user-cell">
                             <div class="user-avatar">${u.full_name.charAt(0)}</div>
                             <div class="user-name-block">
-                                <p>${u.full_name}</p>
+                                <p>${u.full_name}${u.is_admin ? ' <span class="badge badge-solid" style="font-size:10px;vertical-align:middle;"><i class="fas fa-user-shield"></i> Admin</span>' : ''}</p>
                                 <p style="font-size:11px; color:var(--text-muted)">@${u.username}</p>
                             </div>
                         </div>
@@ -293,6 +293,7 @@
                         <div><span class="label">Investments</span>${investmentsHtml}</div>
                         <div><span class="label">Joined</span>${joined}</div>
                         <div><span class="label">ID</span>${u.id.slice(0,8)}</div>
+                        <div><span class="label">Role</span>${u.is_admin ? '<b style="color:var(--red)">Admin</b>' : 'User'}</div>
                     </div>
                     <div class="user-card-actions">
                         <button class="btn-action-icon" onclick="viewUser('${u.id}')"><i class="fas fa-eye"></i></button>
@@ -329,7 +330,7 @@
 
             body.innerHTML = `
                 <div class="detail-grid">
-                    <div class="detail-item"><label>Full Name</label><p>${u.full_name}</p></div>
+                    <div class="detail-item"><label>Full Name</label><p>${u.full_name}${u.is_admin ? ' <span class="badge badge-solid" style="font-size:10px;vertical-align:middle;"><i class="fas fa-user-shield"></i> Admin</span>' : ''}</p></div>
                     <div class="detail-item"><label>Username</label><p>@${u.username}</p></div>
                     <div class="detail-item"><label>Phone</label><p>${u.phone || 'N/A'}</p></div>
                     <div class="detail-item"><label>Joined Date</label><p>${new Date(u.created_at).toLocaleString()}</p></div>
