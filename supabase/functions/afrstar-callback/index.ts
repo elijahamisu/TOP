@@ -2,13 +2,12 @@
 //   Collection callback: <SUPABASE_URL>/functions/v1/afrstar-callback?type=payin
 //   Payout callback:     <SUPABASE_URL>/functions/v1/afrstar-callback?type=payout
 // Answers exactly "success" (HTTP 200) only after verifying and persisting.
-import { db, getConfig, sign, safeEqual, money, orderKind } from '../_shared/afrstar.ts';
+import { db, getConfig, verifyCallback, relayHmacOk, money, orderKind } from '../_shared/afrstar.ts';
 
 const txt = (status: number, body: string) => new Response(body, { status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
 const num = (v: unknown) => (v === null || v === undefined || v === '' ? null : (Number.isFinite(Number(v)) ? Number(v) : null));
 
-async function readBody(req: Request) {
-  const raw = (await req.text()).trim();
+function parse(raw: string) {
   try { return JSON.parse(raw); } catch { return Object.fromEntries(new URLSearchParams(raw)); }
 }
 async function rpc(fn: string, args: Record<string, unknown>) {
@@ -23,12 +22,13 @@ Deno.serve(async (req) => {
   const config = getConfig();
   if (!config.ok) return txt(500, 'gateway not configured');
   try {
-    const b: any = await readBody(req);
+    const raw = await req.text();
+    if (config.relay && !relayHmacOk(req.headers.get('x-relay-ts') || '', raw, req.headers.get('x-relay-signature') || '')) return txt(401, 'relay signature required');
+    const b: any = parse(raw.trim());
     const orderSn = String(b.order_sn || '').trim(), posn = String(b.platform_osn || '').trim();
     const status = b.status === undefined || b.status === null ? '' : String(b.status).trim();
     const sig = String(b.sign || '').trim();
     if (!orderSn || !posn || status === '' || !sig) return txt(400, 'missing fields');
-    if (b.merchant_sn !== undefined && String(b.merchant_sn).trim() !== config.sn) return txt(400, 'merchant mismatch');
     const kind = orderKind(orderSn);
     const base = { p_order_sn: orderSn, p_platform_osn: posn, p_status: Number(status), p_message: b.message ? String(b.message).slice(0, 500) : null, p_payload: b };
 
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
         const { data } = await db.from('gateway_admin_transactions').select('amount').eq('order_sn', orderSn).maybeSingle();
         if (!data) return txt(404, 'order not found'); original = data.amount;
       } else return txt(404, 'order not found');
-      if (!safeEqual(sign.payinCallback(config, posn, status, original), sig)) return txt(401, 'invalid signature');
+      if (!(await verifyCallback(config, 'payin', b, original))) return txt(401, 'invalid signature');
       const utr = b.utr ? String(b.utr).slice(0, 120) : (b.session_id ? String(b.session_id).slice(0, 120) : null);
       const paid = num(b.amount_paid) ?? num(b.amount);
       const r = kind === 'USER_DEPOSIT'
@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
     if (type === 'payout' || kind === 'USER_WITHDRAWAL' || kind === 'ADMIN_PAYOUT') {
       if (b.amount === undefined || b.amount === '' || b.amount === null) return txt(400, 'missing amount');
       const amt = money(b.amount);
-      if (!safeEqual(sign.payoutCallback(config, posn, status, amt), sig)) return txt(401, 'invalid signature');
+      if (!(await verifyCallback(config, 'payout', b, amt))) return txt(401, 'invalid signature');
       const utr = b.utr ? String(b.utr).slice(0, 120) : null;
       let r: string;
       if (kind === 'USER_WITHDRAWAL') r = await rpc('gw_apply_payout', { ...base, p_amount: Number(amt), p_utr: utr });
