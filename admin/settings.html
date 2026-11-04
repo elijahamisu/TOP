@@ -93,7 +93,7 @@
                         <h3>General Settings</h3>
                         <div class="form-grid">
                             <div class="form-group"><label>Platform Name</label><input type="text" name="app_name" class="form-control" placeholder="TOP"></div>
-                            <div class="form-group"><label>Website URL</label><input type="url" name="app_url" class="form-control" placeholder="https://top.com"></div>
+                            <div class="form-group"><label>Website URL <i class="fas fa-lock"></i></label><input type="url" name="app_url" class="form-control" placeholder="https://top.com" readonly disabled title="Locked"></div>
                             <div class="form-group"><label>Support Email</label><input type="email" name="support_email" class="form-control"></div>
                             <div class="form-group"><label>Telegram Community</label><input type="text" name="telegram_link" class="form-control"></div>
                         </div>
@@ -106,7 +106,7 @@
                     <div class="admin-panel settings-card">
                         <h3>Investment &amp; Earnings</h3>
                         <div class="form-grid">
-                            <div class="form-group"><label>Earnings Credit Time (UTC)</label><input type="time" name="earnings_time" class="form-control"></div>
+                            <div class="form-group"><label>Earnings Credit Time (UTC) <i class="fas fa-lock"></i></label><input type="time" name="earnings_time" class="form-control" readonly disabled title="Locked: earnings are credited daily at 00:00 UTC (1:00 AM WAT)"></div>
                             <div class="form-group"><label>Min. Investment (₦)</label><input type="number" name="min_investment" class="form-control"></div>
                             <div class="form-group"><label>Max. Investment (₦)</label><input type="number" name="max_investment" class="form-control"></div>
                         </div>
@@ -221,8 +221,10 @@
 
             // Loop through all defined fields in the form
             // Required numeric columns: a blank box keeps the saved value instead of sending ""
+            const LOCKED_FIELDS = ['app_url', 'earnings_time'];
             const REQUIRED_NUMBERS = ['welcome_bonus_amount', 'referral_percent'];
             for (let [key, value] of formData.entries()) {
+                if (LOCKED_FIELDS.includes(key)) continue;
                 const input = form.elements[key];
                 const isNumber = input && input.type === 'number';
                 if (isNumber || (input && input.type === 'time')) {

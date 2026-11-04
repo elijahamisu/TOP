@@ -100,7 +100,7 @@
                 <a href="support.html">Support</a>
                 <a href="terms.html">Terms</a>
             </div>
-            <p class="text-xs muted" style="margin-top:12px;">&copy; 2024 TOP. All Rights Reserved.</p>
+            <p class="text-xs muted" style="margin-top:12px;">&copy; 2024 <span data-app-name>TOP</span>. All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -130,6 +130,14 @@
 
             // Reset UI
             errorDiv.style.display = 'none';
+
+            // Max Login Attempts (from platform settings): lock this email for 15 minutes
+            const lockMsg = attemptLockMessage(email);
+            if (lockMsg) {
+                errorDiv.innerText = lockMsg;
+                errorDiv.style.display = 'block';
+                return;
+            }
             setLoading(true);
 
             try {
@@ -145,6 +153,11 @@
                 });
 
                 if (error) {
+                    if (error.message.includes("Invalid login credentials")) {
+                        const left = await recordFailedAttempt(email);
+                        if (left === 0) throw new Error(attemptLockMessage(email));
+                        if (left !== null && left <= 2) throw new Error(`Incorrect email or password. ${left} attempt${left === 1 ? '' : 's'} left before a 15-minute lock.`);
+                    }
                     // Friendly error handling
                     if (error.message.includes("Invalid login credentials")) {
                         throw new Error("Incorrect email or password. Please try again.");
@@ -157,6 +170,8 @@
 
                 // 3. Success Logic
                 if (data.user) {
+                    clearAttempts(email);
+                    localStorage.setItem('top_last_activity', String(Date.now()));
                     handleSuccessfulLogin();
                 }
 
@@ -166,6 +181,40 @@
                 setLoading(false);
             }
         });
+
+        // --- Login attempt limiting ---
+        const LOCK_MINUTES = 15;
+        const attemptsKey = (email) => 'top_login_attempts_' + email.toLowerCase();
+        const readAttempts = (email) => {
+            try { return JSON.parse(localStorage.getItem(attemptsKey(email))) || { count: 0, lockedUntil: 0 }; }
+            catch { return { count: 0, lockedUntil: 0 }; }
+        };
+        function attemptLockMessage(email) {
+            if (!email) return null;
+            const a = readAttempts(email);
+            if (a.lockedUntil && Date.now() < a.lockedUntil) {
+                const mins = Math.ceil((a.lockedUntil - Date.now()) / 60000);
+                return `Too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`;
+            }
+            return null;
+        }
+        async function recordFailedAttempt(email) {
+            const s = await (window.TOPSettings || Promise.resolve({}));
+            const max = Number(s.max_login_attempts) || 0;
+            if (max <= 0) return null;
+            const a = readAttempts(email);
+            if (a.lockedUntil && Date.now() >= a.lockedUntil) { a.count = 0; a.lockedUntil = 0; }
+            a.count += 1;
+            if (a.count >= max) { a.lockedUntil = Date.now() + LOCK_MINUTES * 60000; a.count = 0; }
+            localStorage.setItem(attemptsKey(email), JSON.stringify(a));
+            return a.lockedUntil ? 0 : max - a.count;
+        }
+        function clearAttempts(email) { localStorage.removeItem(attemptsKey(email)); }
+
+        if (new URLSearchParams(location.search).get('expired')) {
+            errorDiv.innerText = 'You were signed out after a period of inactivity. Please log in again.';
+            errorDiv.style.display = 'block';
+        }
 
         function setLoading(isLoading) {
             if (isLoading) {
@@ -211,5 +260,6 @@
         });
 
     </script>
+    <script type="module" src="/assets/js/platform.js"></script>
 </body>
 </html>

@@ -469,6 +469,32 @@ create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
 
 -- @@CHUNK 4: user RPCs
+-- Settings wiring (2026-11-04): maintenance guard + notification toggles
+create or replace function public._assert_not_maintenance()
+returns void language plpgsql stable security definer set search_path = public as $$
+begin
+  if exists (select 1 from public.platform_settings where id = 1 and maintenance_mode)
+     and not public.is_admin() then
+    raise exception 'TOP is under maintenance. Please try again shortly.';
+  end if;
+end $$;
+revoke execute on function public._assert_not_maintenance() from public, anon;
+
+create or replace function public.filter_notification_by_settings()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare s public.platform_settings;
+begin
+  select * into s from public.platform_settings where id = 1;
+  if not found then return new; end if;
+  if new.type = 'deposit' and s.notif_deposit is false then return null; end if;
+  if new.type = 'withdrawal' and s.notif_withdraw is false then return null; end if;
+  if new.type = 'earning' and s.notif_earnings is false then return null; end if;
+  return new;
+end $$;
+drop trigger if exists trg_filter_notification_by_settings on public.notifications;
+create trigger trg_filter_notification_by_settings before insert on public.notifications
+  for each row execute function public.filter_notification_by_settings();
+
 create or replace function public.create_investment(p_plan_id uuid, p_amount numeric)
 returns json language plpgsql security definer set search_path = public as $$
 declare
@@ -482,11 +508,16 @@ declare
   s public.platform_settings;
 begin
   if v_uid is null then raise exception 'You must be signed in'; end if;
+  perform public._assert_not_maintenance();
   select status into v_status from public.profiles where id = v_uid;
   if coalesce(v_status, '') <> 'active' then raise exception 'Your account is not active'; end if;
   select * into s from public.platform_settings where id = 1;
   if s.enable_investments = false then raise exception 'Investments are currently disabled'; end if;
   if p_amount is null or p_amount <= 0 then raise exception 'Enter a valid amount'; end if;
+  if coalesce(s.min_investment, 0) > 0 and p_amount < s.min_investment then
+    raise exception 'Minimum investment is ₦%', to_char(s.min_investment, 'FM999,999,999,990'); end if;
+  if coalesce(s.max_investment, 0) > 0 and p_amount > s.max_investment then
+    raise exception 'Maximum investment is ₦%', to_char(s.max_investment, 'FM999,999,999,990'); end if;
 
   select * into v_plan from public.investment_plans where id = p_plan_id;
   if not found then raise exception 'Investment plan not found'; end if;
@@ -527,6 +558,7 @@ declare
   v_new_bal numeric;
 begin
   if v_uid is null then raise exception 'You must be signed in'; end if;
+  perform public._assert_not_maintenance();
   if p_code is null or trim(p_code) = '' then raise exception 'Enter a gift code'; end if;
 
   select * into v_gc from public.gift_codes where upper(code) = upper(trim(p_code)) for update;
@@ -563,6 +595,7 @@ declare
   v_id uuid;
 begin
   if v_uid is null then raise exception 'You must be signed in'; end if;
+  perform public._assert_not_maintenance();
   select status into v_status from public.profiles where id = v_uid;
   if coalesce(v_status, '') <> 'active' then raise exception 'Your account is not active'; end if;
   if p_amount is null or p_amount <= 0 then raise exception 'Enter a valid amount'; end if;
@@ -595,6 +628,7 @@ declare
   v_id uuid;
 begin
   if v_uid is null then raise exception 'You must be signed in'; end if;
+  perform public._assert_not_maintenance();
   select status into v_status from public.profiles where id = v_uid;
   if coalesce(v_status, '') <> 'active' then raise exception 'Your account is not active'; end if;
   select * into s from public.platform_settings where id = 1;
