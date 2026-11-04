@@ -4,181 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Earnings Management | TOP Admin</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons & Charts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #060b13;
-            --secondary-bg: #0a0f1a;
-            --sidebar-bg: #0d121f;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.4);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --sidebar-width: 260px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- Sidebar --- */
-        aside {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
-            position: fixed; height: 100vh;
-            left: -260px; transition: 0.3s ease; z-index: 1000;
-            display: flex; flex-direction: column;
-        }
-        aside.active { left: 0; }
-
-        .nav-item {
-            padding: 12px 25px; display: flex; align-items: center; gap: 15px;
-            color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s;
-        }
-        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: var(--accent-color); border-left: 4px solid var(--accent-color); }
-
-        /* --- Main Content --- */
-        main { flex: 1; margin-left: 0; transition: 0.3s; width: 100%; }
-        
-        header {
-            height: 70px; background: var(--secondary-bg); border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: sticky; top: 0; z-index: 900;
-        }
-
-        .container { padding: 20px; max-width: 1600px; margin: 0 auto; }
-
-        /* --- Scheduler Monitor --- */
-        .scheduler-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-            padding: 20px; border-radius: 20px; border: 1px solid var(--accent-color);
-            margin-bottom: 25px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;
-        }
-        .sched-item h4 { font-size: 11px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 5px; }
-        .sched-item p { font-size: 16px; font-weight: 700; }
-        .status-pulse { display: inline-block; width: 10px; height: 10px; background: var(--success); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        /* --- Stats Row --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px; margin-bottom: 25px;
-        }
-        .stat-card { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 1px solid var(--glass-border); }
-        .stat-card p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-card h3 { font-size: 20px; font-weight: 700; }
-
-        /* --- Analytics Section --- */
-        .charts-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px; }
-        .chart-box { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .chart-box h4 { font-size: 14px; margin-bottom: 15px; color: var(--text-muted); }
-
-        /* --- Toolbar --- */
-        .toolbar {
-            background: var(--card-bg); padding: 15px; border-radius: 15px;
-            border: 1px solid var(--glass-border); margin-bottom: 20px;
-            display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-        }
-        .search-box { flex: 1; min-width: 250px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 10px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
-        .search-box input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 14px; }
-        .filter-select { background: var(--secondary-bg); color: white; padding: 10px; border-radius: 10px; border: 1px solid var(--glass-border); font-size: 13px; outline: none; }
-        .btn-export { background: var(--accent-color); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; }
-
-        /* --- Table --- */
-        .table-container { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-        th { text-align: left; padding: 18px 15px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
-        td { padding: 15px; font-size: 13px; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
-        .user-link { color: white; text-decoration: none; font-weight: 600; }
-        .user-link:hover { color: var(--accent-color); }
-        
-        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: rgba(16, 185, 129, 0.1); color: var(--success); }
-
-        /* --- Modal --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--sidebar-bg); width: 100%; max-width: 700px; border-radius: 24px; border: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; }
-        .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10; }
-        .modal-body { padding: 25px; }
-
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .info-card { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); }
-        .info-card label { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-        .info-card p { font-size: 14px; font-weight: 600; }
-
-        /* --- Responsive --- */
-        @media (min-width: 1024px) { aside { left: 0; } main { margin-left: var(--sidebar-width); } }
-        .overlay-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <link rel="stylesheet" href="../assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        #earnTableBody td:nth-child(1)::before { content: "Earning ID"; }
+        #earnTableBody td:nth-child(2)::before { content: "User"; }
+        #earnTableBody td:nth-child(3)::before { content: "Investment Info"; }
+        #earnTableBody td:nth-child(4)::before { content: "Amount"; }
+        #earnTableBody td:nth-child(5)::before { content: "Credited On"; }
+        #earnTableBody td:nth-child(6)::before { content: "Status"; }
+        #earnTableBody td:nth-child(7)::before { content: "Action"; }
+    </style>
 </head>
-<body>
+<body class="admin-body page-earnings">
 
     <div id="loader" class="overlay-loader">
+        <img class="loader-mark" src="../assets/img/logo-mark.svg" alt="">
         <div class="spinner"></div>
     </div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar">
-        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">TOP ADMIN</div>
-        <nav style="flex:1">
-            <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-            <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i> Deposits</a>
-            <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i> Withdrawals</a>
-            <a href="investments.html" class="nav-item"><i class="fas fa-rocket"></i> Investments</a>
-            <a href="earnings.html" class="nav-item active"><i class="fas fa-chart-line"></i> Earnings</a>
-            <a href="giftcodes.html" class="nav-item"><i class="fas fa-gift"></i> Gift Codes</a>
-            <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support Tickets</a>
-            <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+    <div class="drawer-backdrop admin-backdrop" onclick="document.getElementById('sidebar').classList.remove('active')"></div>
+
+    <aside id="sidebar" class="sidebar is-static admin-sidebar" aria-label="Admin navigation">
+        <div class="side-head">
+            <a href="index.html" class="brand" aria-label="TOP Admin home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-solid">Admin</span>
+            <button type="button" class="icon-btn side-close" onclick="document.getElementById('sidebar').classList.remove('active')" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="side-nav">
+            <p class="side-label">Overview</p>
+            <a href="index.html" class="side-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="reports.html" class="side-link"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="activity-log.html" class="side-link"><i class="fas fa-history"></i> Activity Log</a>
+            <p class="side-label">People</p>
+            <a href="users.html" class="side-link"><i class="fas fa-users"></i> Users</a>
+            <a href="referrals.html" class="side-link"><i class="fas fa-user-friends"></i> Referrals</a>
+            <a href="support.html" class="side-link"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="notifications.html" class="side-link"><i class="fas fa-bell"></i> Notifications</a>
+            <p class="side-label">Money</p>
+            <a href="deposits.html" class="side-link"><i class="fas fa-arrow-down"></i> Deposits</a>
+            <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            <a href="earnings.html" class="side-link active"><i class="fas fa-coins"></i> Earnings</a>
+            <p class="side-label">Products</p>
+            <a href="investments.html" class="side-link"><i class="fas fa-rocket"></i> Investments</a>
+            <a href="plans.html" class="side-link"><i class="fas fa-layer-group"></i> Investment Plans</a>
+            <a href="giftcodes.html" class="side-link"><i class="fas fa-gift"></i> Gift Codes</a>
+            <p class="side-label">Account</p>
+            <a href="settings.html" class="side-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="profile.html" class="side-link"><i class="fas fa-user-circle"></i> Profile</a>
         </nav>
-        <a href="#" onclick="adminLogout()" class="nav-item" style="color: var(--danger); border-top: 1px solid var(--glass-border);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" onclick="adminLogout()" class="side-link side-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </aside>
 
-    <main>
-        <header>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <i class="fas fa-bars" style="cursor:pointer; color:var(--text-muted)" id="mobileMenuBtn"></i>
-                <h2 style="font-size: 18px;">Earnings Management</h2>
+    <main class="with-sidebar admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="icon-btn admin-menu-btn" id="mobileMenuBtn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <p class="eyebrow">TOP Admin</p>
+                    <h1>Earnings Management</h1>
+                </div>
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <span id="adminName" style="font-size: 12px; font-weight: 600;">Admin</span>
-                <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-color);"></div>
+            <div class="topbar-right">
+                <span id="adminName">Admin</span>
+                <div class="avatar admin-avatar"><i class="fas fa-user-shield"></i></div>
             </div>
         </header>
-
-        <div class="container">
-            <!-- Scheduler Monitor -->
-            <section class="scheduler-card">
+        <div class="container admin-content">
+            <section class="scheduler-card fade-up">
                 <div class="sched-item">
                     <h4>Scheduler Status</h4>
-                    <p><span class="status-pulse"></span> Active & Running</p>
+                    <p><span class="status-pulse"></span> Active &amp; Running</p>
                 </div>
                 <div class="sched-item">
                     <h4>Next Schedule</h4>
@@ -186,7 +92,7 @@
                 </div>
                 <div class="sched-item">
                     <h4>Time Remaining</h4>
-                    <p id="countdown" style="color: var(--warning);">00h 00m 00s</p>
+                    <p id="countdown">00h 00m 00s</p>
                 </div>
                 <div class="sched-item">
                     <h4>Last Execution</h4>
@@ -194,74 +100,59 @@
                 </div>
             </section>
 
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card"><p>Today's Total</p><h3 id="statToday" style="color: var(--success);">₦0</h3></div>
-                <div class="stat-card"><p>Yesterday's Total</p><h3 id="statYesterday">₦0</h3></div>
-                <div class="stat-card"><p>This Month</p><h3 id="statMonth" style="color: var(--accent-color);">₦0</h3></div>
-                <div class="stat-card"><p>Active Investments</p><h3 id="statActiveInvs">0</h3></div>
-                <div class="stat-card"><p>Users Credited Today</p><h3 id="statUsersToday">0</h3></div>
-            </div>
+            <section class="admin-stats">
+                <div class="stat-card is-hero"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value" id="statToday">₦0</h3><p class="stat-label">Today's Total</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-clock-rotate-left"></i></span><h3 class="stat-value" id="statYesterday">₦0</h3><p class="stat-label">Yesterday's Total</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-calendar"></i></span><h3 class="stat-value text-red" id="statMonth">₦0</h3><p class="stat-label">This Month</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-rocket"></i></span><h3 class="stat-value" id="statActiveInvs">0</h3><p class="stat-label">Active Investments</p></div>
+                <div class="stat-card stat-span"><span class="stat-icon"><i class="fas fa-user-check"></i></span><h3 class="stat-value" id="statUsersToday">0</h3><p class="stat-label">Users Credited Today</p></div>
+            </section>
 
-            <!-- Charts -->
-            <div class="charts-row">
-                <div class="chart-box">
+            <section class="admin-grid-2">
+                <div class="admin-panel chart-panel">
                     <h4>Earnings Growth (Daily)</h4>
-                    <canvas id="dailyChart" height="150"></canvas>
+                    <canvas id="dailyChart" height="150" class="tint-blue"></canvas>
                 </div>
-                <div class="chart-box">
+                <div class="admin-panel chart-panel">
                     <h4>System Payout Trend</h4>
-                    <canvas id="trendChart" height="150"></canvas>
+                    <canvas id="trendChart" height="150" class="tint-green"></canvas>
                 </div>
-            </div>
+            </section>
 
-            <!-- Toolbar -->
-            <div class="toolbar">
+            <section class="admin-toolbar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="earnSearch" placeholder="Search user, ID, or plan...">
                 </div>
-                <select class="filter-select" id="timeFilter">
-                    <option value="all">All Records</option>
-                    <option value="today">Today</option>
-                    <option value="yesterday">Yesterday</option>
-                    <option value="week">This Week</option>
-                    <option value="month">This Month</option>
-                </select>
-                <button class="btn-export" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export Records</button>
-            </div>
+                <div class="toolbar-row">
+                    <select class="filter-select" id="timeFilter">
+                        <option value="all">All Records</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export Records</button>
+                </div>
+            </section>
 
-            <!-- Table -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Earning ID</th>
-                            <th>User</th>
-                            <th>Investment Info</th>
-                            <th>Amount</th>
-                            <th>Credited On</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
+            <section class="table-wrap admin-table">
+                <table class="table table-stack">
+                    <thead><tr><th>Earning ID</th><th>User</th><th>Investment Info</th><th>Amount</th><th>Credited On</th><th>Status</th><th>Action</th></tr></thead>
                     <tbody id="earnTableBody">
-                        <!-- Content -->
                     </tbody>
                 </table>
-            </div>
+            </section>
         </div>
     </main>
 
-    <!-- Modal -->
     <div class="modal-overlay" id="earnModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Earning Details</h3>
-                <i class="fas fa-times" onclick="closeModal()" style="cursor:pointer"></i>
+                <i class="fas fa-times modal-close" onclick="closeModal()" role="button" aria-label="Close"></i>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- Injected via JS -->
             </div>
         </div>
     </div>

@@ -4,221 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Notification Management | TOP Admin</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #060b13;
-            --secondary-bg: #0a0f1a;
-            --sidebar-bg: #0d121f;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.4);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --sidebar-width: 260px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- Sidebar --- */
-        aside {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
-            position: fixed; height: 100vh;
-            left: -260px; transition: 0.3s ease; z-index: 1000;
-            display: flex; flex-direction: column;
-        }
-        aside.active { left: 0; }
-
-        .nav-item {
-            padding: 12px 25px; display: flex; align-items: center; gap: 15px;
-            color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s;
-        }
-        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: var(--accent-color); border-left: 4px solid var(--accent-color); }
-
-        /* --- Main Content --- */
-        main { flex: 1; margin-left: 0; transition: 0.3s; width: 100%; }
-        
-        header {
-            height: 70px; background: var(--secondary-bg); border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: sticky; top: 0; z-index: 900;
-        }
-
-        .container { padding: 20px; max-width: 1600px; margin: 0 auto; }
-
-        /* --- Stats Grid --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px; margin-bottom: 25px;
-        }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 18px; border: 1px solid var(--glass-border); }
-        .stat-card p { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-card h3 { font-size: 22px; font-weight: 700; }
-
-        /* --- Toolbar --- */
-        .toolbar {
-            background: var(--card-bg); padding: 15px; border-radius: 15px;
-            border: 1px solid var(--glass-border); margin-bottom: 20px;
-            display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-        }
-        .search-box { flex: 1; min-width: 250px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 10px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
-        .search-box input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 14px; }
-        
-        .btn-prime { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-
-        /* --- Table --- */
-        .table-container { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-        th { text-align: left; padding: 18px 15px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); letter-spacing: 1px; }
-        td { padding: 15px; font-size: 13px; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
-        
-        .type-pill { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1); }
-        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        .status-sent { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-scheduled { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-
-        .btn-action { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 15px; padding: 6px; transition: 0.2s; }
-        .btn-action:hover { color: var(--accent-color); }
-
-        /* --- Modals --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(10px); }
-        .modal-content { background: var(--sidebar-bg); width: 100%; max-width: 650px; border-radius: 24px; border: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; }
-        .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10; }
-        .modal-body { padding: 25px; }
-
-        /* Form Controls */
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
-        .form-control { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; padding: 12px; color: white; outline: none; font-size: 14px; }
-        .form-control:focus { border-color: var(--accent-color); }
-        textarea.form-control { height: 120px; resize: none; }
-
-        .btn-submit { width: 100%; padding: 14px; background: var(--accent-color); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-submit:active { transform: scale(0.98); }
-
-        /* --- Details --- */
-        .detail-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-        .detail-row span { font-size: 12px; color: var(--text-muted); }
-        .detail-row b { font-size: 13px; text-align: right; }
-
-        /* --- Utilities --- */
-        @media (min-width: 1024px) { aside { left: 0; } main { margin-left: var(--sidebar-width); } }
-        .overlay-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 25px; height: 25px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <link rel="stylesheet" href="../assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        #notifTableBody td:nth-child(1)::before { content: "ID"; }
+        #notifTableBody td:nth-child(2)::before { content: "Recipient"; }
+        #notifTableBody td:nth-child(3)::before { content: "Title"; }
+        #notifTableBody td:nth-child(4)::before { content: "Type"; }
+        #notifTableBody td:nth-child(5)::before { content: "Status"; }
+        #notifTableBody td:nth-child(6)::before { content: "Date & Time"; }
+        #notifTableBody td:nth-child(7)::before { content: "Action"; }
+        .page-notifications .modal-content { max-width: 620px; }
+    </style>
 </head>
-<body>
+<body class="admin-body page-notifications">
 
     <div id="loader" class="overlay-loader">
+        <img class="loader-mark" src="../assets/img/logo-mark.svg" alt="">
         <div class="spinner"></div>
     </div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar">
-        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">TOP ADMIN</div>
-        <nav style="flex:1">
-            <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-            <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i> Deposits</a>
-            <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i> Withdrawals</a>
-            <a href="investments.html" class="nav-item"><i class="fas fa-rocket"></i> Investments</a>
-            <a href="earnings.html" class="nav-item"><i class="fas fa-chart-line"></i> Earnings</a>
-            <a href="referrals.html" class="nav-item"><i class="fas fa-users-viewfinder"></i> Referrals</a>
-            <a href="giftcodes.html" class="nav-item"><i class="fas fa-gift"></i> Gift Codes</a>
-            <a href="transactions.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
-            <a href="notifications.html" class="nav-item active"><i class="fas fa-bell"></i> Notifications</a>
-            <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support Tickets</a>
-            <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+    <div class="drawer-backdrop admin-backdrop" onclick="document.getElementById('sidebar').classList.remove('active')"></div>
+
+    <aside id="sidebar" class="sidebar is-static admin-sidebar" aria-label="Admin navigation">
+        <div class="side-head">
+            <a href="index.html" class="brand" aria-label="TOP Admin home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-solid">Admin</span>
+            <button type="button" class="icon-btn side-close" onclick="document.getElementById('sidebar').classList.remove('active')" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="side-nav">
+            <p class="side-label">Overview</p>
+            <a href="index.html" class="side-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="reports.html" class="side-link"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="activity-log.html" class="side-link"><i class="fas fa-history"></i> Activity Log</a>
+            <p class="side-label">People</p>
+            <a href="users.html" class="side-link"><i class="fas fa-users"></i> Users</a>
+            <a href="referrals.html" class="side-link"><i class="fas fa-user-friends"></i> Referrals</a>
+            <a href="support.html" class="side-link"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="notifications.html" class="side-link active"><i class="fas fa-bell"></i> Notifications</a>
+            <p class="side-label">Money</p>
+            <a href="deposits.html" class="side-link"><i class="fas fa-arrow-down"></i> Deposits</a>
+            <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
+            <p class="side-label">Products</p>
+            <a href="investments.html" class="side-link"><i class="fas fa-rocket"></i> Investments</a>
+            <a href="plans.html" class="side-link"><i class="fas fa-layer-group"></i> Investment Plans</a>
+            <a href="giftcodes.html" class="side-link"><i class="fas fa-gift"></i> Gift Codes</a>
+            <p class="side-label">Account</p>
+            <a href="settings.html" class="side-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="profile.html" class="side-link"><i class="fas fa-user-circle"></i> Profile</a>
         </nav>
-        <a href="#" onclick="adminLogout()" class="nav-item" style="color: var(--danger); border-top: 1px solid var(--glass-border);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" onclick="adminLogout()" class="side-link side-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </aside>
 
-    <main>
-        <header>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <i class="fas fa-bars" style="cursor:pointer; color:var(--text-muted)" id="mobileMenuBtn"></i>
-                <h2 style="font-size: 18px;">Notification Center</h2>
+    <main class="with-sidebar admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="icon-btn admin-menu-btn" id="mobileMenuBtn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <p class="eyebrow">TOP Admin</p>
+                    <h1>Notification Center</h1>
+                </div>
             </div>
-            <div id="adminProfile" style="display:flex; align-items:center; gap:10px;">
-                <span id="adminName" style="font-size: 12px; font-weight: 600;">Admin</span>
-                <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-color);"></div>
+            <div class="topbar-right" id="adminProfile">
+                <span id="adminName">Admin</span>
+                <div class="avatar admin-avatar"><i class="fas fa-user-shield"></i></div>
             </div>
         </header>
+        <div class="container admin-content">
+            <section class="admin-stats">
+                <div class="stat-card is-hero"><span class="stat-icon"><i class="fas fa-bell"></i></span><h3 class="stat-value" id="statTotal">0</h3><p class="stat-label">Total Notifications</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-paper-plane"></i></span><h3 class="stat-value text-success" id="statSent">0</h3><p class="stat-label">Sent Today</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-clock"></i></span><h3 class="stat-value text-warn" id="statSched">0</h3><p class="stat-label">Scheduled</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-bullhorn"></i></span><h3 class="stat-value" id="statBroad">0</h3><p class="stat-label">Broadcasts</p></div>
+            </section>
 
-        <div class="container">
-            <!-- Stats -->
-            <div class="stats-grid">
-                <div class="stat-card"><p>Total Notifications</p><h3 id="statTotal">0</h3></div>
-                <div class="stat-card"><p>Sent Today</p><h3 id="statSent" style="color: var(--success);">0</h3></div>
-                <div class="stat-card"><p>Scheduled</p><h3 id="statSched" style="color: var(--warning);">0</h3></div>
-                <div class="stat-card"><p>Broadcasts</p><h3 id="statBroad">0</h3></div>
-            </div>
-
-            <!-- Toolbar -->
-            <div class="toolbar">
+            <section class="admin-toolbar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="notifSearch" placeholder="Search ID, title, or user...">
                 </div>
-                <button class="btn-prime" onclick="openCreateModal()"><i class="fas fa-paper-plane"></i> New Message</button>
-            </div>
+                <button class="btn btn-primary" onclick="openCreateModal()"><i class="fas fa-paper-plane"></i> New Message</button>
+            </section>
 
-            <!-- Main Table -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Recipient</th>
-                            <th>Title</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Date & Time</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
+            <section class="table-wrap admin-table">
+                <table class="table table-stack">
+                    <thead><tr><th>ID</th><th>Recipient</th><th>Title</th><th>Type</th><th>Status</th><th>Date &amp; Time</th><th>Action</th></tr></thead>
                     <tbody id="notifTableBody">
-                        <!-- Content -->
                     </tbody>
                 </table>
-            </div>
+            </section>
         </div>
     </main>
 
-    <!-- Create Modal -->
     <div class="modal-overlay" id="createModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Send New Notification</h3>
-                <i class="fas fa-times" onclick="closeModals()" style="cursor:pointer"></i>
+                <i class="fas fa-times modal-close" onclick="closeModals()" role="button" aria-label="Close"></i>
             </div>
             <div class="modal-body">
                 <form id="notifForm">
@@ -251,7 +143,7 @@
                         <label>Message</label>
                         <textarea id="notifMsg" class="form-control" placeholder="Type your detailed message here..." required></textarea>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div class="form-split">
                         <div class="form-group">
                             <label>Schedule (Optional)</label>
                             <input type="datetime-local" id="schedTime" class="form-control">
@@ -263,15 +155,13 @@
         </div>
     </div>
 
-    <!-- View Modal -->
     <div class="modal-overlay" id="viewModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Notification Details</h3>
-                <i class="fas fa-times" onclick="closeModals()" style="cursor:pointer"></i>
+                <i class="fas fa-times modal-close" onclick="closeModals()" role="button" aria-label="Close"></i>
             </div>
             <div class="modal-body" id="modalViewBody">
-                <!-- Content -->
             </div>
         </div>
     </div>
