@@ -200,7 +200,7 @@
                     const input = form.elements[key];
                     if (input) {
                         if (input.type === 'checkbox') input.checked = data[key];
-                        else input.value = data[key];
+                        else input.value = data[key] ?? '';
                     }
                 });
 
@@ -220,8 +220,22 @@
             };
 
             // Loop through all defined fields in the form
-            for (let pair of formData.entries()) {
-                updates[pair[0]] = pair[1];
+            // Required numeric columns: a blank box keeps the saved value instead of sending ""
+            const REQUIRED_NUMBERS = ['welcome_bonus_amount', 'referral_percent'];
+            for (let [key, value] of formData.entries()) {
+                const input = form.elements[key];
+                const isNumber = input && input.type === 'number';
+                if (isNumber || (input && input.type === 'time')) {
+                    const trimmed = String(value).trim();
+                    if (trimmed === '') {
+                        if (REQUIRED_NUMBERS.includes(key)) continue;
+                        updates[key] = null;
+                    } else {
+                        updates[key] = isNumber ? Number(trimmed) : trimmed;
+                    }
+                } else {
+                    updates[key] = value;
+                }
             }
 
             // Correct for checkboxes (FormData only includes successful/checked ones by default)
