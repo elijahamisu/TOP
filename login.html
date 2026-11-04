@@ -72,26 +72,6 @@
         </div>
     </main>
 
-    <!-- Telegram Modal -->
-    <div class="modal-overlay" id="telegramModal">
-        <div class="modal-card">
-            <i class="fab fa-telegram"></i>
-            <h2>Join Community</h2>
-            <p>&#127881; Welcome back! Join our Telegram community for investment updates, announcements, and 24/7 support.</p>
-            <div class="modal-btns">
-                <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-primary btn-block" id="joinTelegramBtn">
-                    Join Telegram Group
-                </a>
-                <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-outline btn-block" id="joinTelegramChannelBtn">
-                    Join Telegram Channel
-                </a>
-                <button class="btn btn-ghost btn-block" id="closeModalBtn">
-                    Maybe Later
-                </button>
-            </div>
-        </div>
-    </div>
-
     <footer class="site-footer" style="padding:28px 0;">
         <div class="container text-center">
             <div class="footer-links">
@@ -119,7 +99,6 @@
         const submitBtn = document.getElementById('submitBtn');
         const btnText = submitBtn.querySelector('.btn-text');
         const btnSpinner = document.getElementById('btnSpinner');
-        const telegramModal = document.getElementById('telegramModal');
 
         // Form Submission Logic
         loginForm.addEventListener('submit', async (e) => {
@@ -229,35 +208,9 @@
         }
 
         function handleSuccessfulLogin() {
-            // Check if Telegram popup was shown this session
-            const hasSeenPopup = sessionStorage.getItem('top_telegram_shown');
-
-            if (!hasSeenPopup) {
-                telegramModal.style.display = 'flex';
-                sessionStorage.setItem('top_telegram_shown', 'true');
-            } else {
-                window.location.href = 'dashboard.html';
-            }
-        }
-
-        // Modal Button Handlers
-        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            // The Telegram popup now shows on the dashboard (editable in Admin > Settings).
             window.location.href = 'dashboard.html';
-        });
-
-        document.getElementById('joinTelegramBtn').addEventListener('click', () => {
-            // Give them a moment to open the link before redirecting
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1500);
-        });
-
-        // Close modal if clicked outside
-        window.addEventListener('click', (e) => {
-            if (e.target === telegramModal) {
-                window.location.href = 'dashboard.html';
-            }
-        });
+        }
 
     </script>
     <script type="module" src="/assets/js/platform.js"></script>

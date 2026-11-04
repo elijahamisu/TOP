@@ -95,10 +95,22 @@
                             <div class="form-group"><label>Platform Name</label><input type="text" name="app_name" class="form-control" placeholder="TOP"></div>
                             <div class="form-group"><label>Website URL <i class="fas fa-lock"></i></label><input type="url" name="app_url" class="form-control" placeholder="https://top.com" readonly disabled title="Locked"></div>
                             <div class="form-group"><label>Support Email</label><input type="email" name="support_email" class="form-control"></div>
-                            <div class="form-group"><label>Telegram Community</label><input type="text" name="telegram_link" class="form-control"></div>
+                            <div class="form-group"><label>Telegram Group Link</label><input type="url" name="telegram_link" class="form-control" placeholder="https://t.me/+..."></div>
                         </div>
                         <div class="form-group"><label>Platform Description</label><textarea name="app_description" class="form-control"></textarea></div>
                         <div class="toggle-group"><div class="toggle-info"><h4>Maintenance Mode</h4><p>When enabled, users cannot access the platform.</p></div><label class="switch"><input type="checkbox" name="maintenance_mode"><span class="slider"></span></label></div>
+                    </div>
+                    <div class="admin-panel settings-card" style="margin-top:20px;">
+                        <h3>Dashboard Telegram Popup</h3>
+                        <p class="muted" style="margin:-4px 0 14px;font-size:13px;">Shows to users every time they open or refresh their dashboard.</p>
+                        <div class="toggle-group"><div class="toggle-info"><h4>Show Telegram Popup</h4><p>Turn the dashboard popup on or off.</p></div><label class="switch"><input type="checkbox" name="telegram_popup_enabled"><span class="slider"></span></label></div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Popup Title</label><input type="text" name="telegram_popup_title" class="form-control" placeholder="Join Our Community"></div>
+                            <div class="form-group"><label>Telegram Channel Link</label><input type="url" name="telegram_channel_link" class="form-control" placeholder="https://t.me/yourchannel"></div>
+                            <div class="form-group"><label>Group Button Text</label><input type="text" name="telegram_group_button" class="form-control" placeholder="Join Telegram Group"></div>
+                            <div class="form-group"><label>Channel Button Text</label><input type="text" name="telegram_channel_button" class="form-control" placeholder="Join Telegram Channel"></div>
+                        </div>
+                        <div class="form-group"><label>Popup Message</label><textarea name="telegram_popup_message" class="form-control" rows="3" placeholder="Join our Telegram community for updates, announcements and 24/7 support."></textarea></div>
                     </div>
                 </section>
 

@@ -117,28 +117,6 @@
         </div>
     </main>
 
-    <!-- Welcome Modal -->
-    <div class="modal-overlay" id="welcomeModal">
-        <div class="modal-card">
-            <i class="fab fa-telegram"></i>
-            <h2>&#127881; Welcome to TOP!</h2>
-            <p>
-                Your account is ready and your <b>&#8358;450 Welcome Bonus</b> has been credited! Join our Telegram community for updates, support, and special offers.
-            </p>
-            <div class="modal-btns">
-                <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-primary btn-block" id="joinTeleBtn">
-                    Join Telegram Community
-                </a>
-                <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-outline btn-block" id="joinTeleChannelBtn">
-                    Join Telegram Channel
-                </a>
-                <button class="btn btn-ghost btn-block" id="toDashboardBtn">
-                    Continue to Dashboard
-                </button>
-            </div>
-        </div>
-    </div>
-
     <footer class="site-footer" style="padding:28px 0;">
         <div class="container text-center">
             <div class="footer-links">
@@ -172,7 +150,6 @@
         const regBtn = document.getElementById('regBtn');
         const btnSpinner = document.getElementById('btnSpinner');
         const btnText = document.getElementById('btnText');
-        const welcomeModal = document.getElementById('welcomeModal');
 
         // Auto-fill the referral code field if the person arrived via a referral
         // link (e.g. register.html?ref=SOMECODE).
@@ -254,7 +231,7 @@
                         .eq('id', user.id);
                     if (phoneErr) console.error('Could not save phone number:', phoneErr);
 
-                    welcomeModal.style.display = 'flex';
+                    window.location.href = 'dashboard.html';
                 }
 
             } catch (err) {
@@ -280,15 +257,6 @@
             btnSpinner.style.display = loading ? 'block' : 'none';
             btnText.style.display = loading ? 'none' : 'block';
         }
-
-        // Modal Logic
-        document.getElementById('toDashboardBtn').addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
-        });
-
-        document.getElementById('joinTeleBtn').addEventListener('click', () => {
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
-        });
 
     </script>
     <script type="module" src="/assets/js/platform.js"></script>

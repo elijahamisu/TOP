@@ -9,6 +9,7 @@
 import { supabase } from '../../config/supabase.js';
 
 const COMMUNITY_LINK = /^https:\/\/t\.me\/\+/; // the "community / group" invite links
+const CHANNEL_LINK = /^https:\/\/t\.me\/monvexachannel\/?$/; // the default channel link
 
 async function loadSettings() {
     const { data } = await supabase.from('platform_settings').select('*').eq('id', 1).single();
@@ -31,6 +32,11 @@ function applyBranding(s) {
     if (s.telegram_link) {
         document.querySelectorAll('a[href]').forEach(a => {
             if (COMMUNITY_LINK.test(a.getAttribute('href'))) a.setAttribute('href', s.telegram_link);
+        });
+    }
+    if (s.telegram_channel_link) {
+        document.querySelectorAll('a[href]').forEach(a => {
+            if (CHANNEL_LINK.test(a.getAttribute('href'))) a.setAttribute('href', s.telegram_channel_link);
         });
     }
     document.querySelectorAll('[data-support-email]').forEach(el => {
@@ -59,6 +65,49 @@ function showMaintenance(s) {
         </div>`;
     document.body.appendChild(overlay);
     document.documentElement.style.overflow = 'hidden';
+}
+
+function isDashboard() {
+    const path = window.location.pathname.replace(/\/+$/, '');
+    return /\/dashboard(\.html)?$/.test(path);
+}
+
+// Dashboard Telegram popup: shows on every dashboard load/refresh, text and links set in Admin > Settings.
+function showTelegramPopup(s) {
+    if (s.telegram_popup_enabled === false) return;
+    const group = s.telegram_link;
+    const channel = s.telegram_channel_link;
+    if (!group && !channel) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay is-open';
+    overlay.id = 'telegramPopup';
+    const card = document.createElement('div');
+    card.className = 'modal-card';
+    card.innerHTML = '<i class="fab fa-telegram"></i><h2></h2><p></p><div class="modal-btns"></div>';
+    card.querySelector('h2').textContent = s.telegram_popup_title || 'Join Our Community';
+    card.querySelector('p').textContent = s.telegram_popup_message ||
+        'Join our Telegram community for investment updates, announcements, and 24/7 support.';
+    const btns = card.querySelector('.modal-btns');
+    const addLink = (href, text, cls, icon) => {
+        if (!href) return;
+        const a = document.createElement('a');
+        a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.className = 'btn btn-block ' + cls;
+        a.innerHTML = `<i class="${icon}"></i> `;
+        a.append(document.createTextNode(text));
+        a.addEventListener('click', () => setTimeout(close, 300));
+        btns.appendChild(a);
+    };
+    addLink(group, s.telegram_group_button || 'Join Telegram Group', 'btn-primary', 'fab fa-telegram');
+    addLink(channel, s.telegram_channel_button || 'Join Telegram Channel', 'btn-outline', 'fas fa-bullhorn');
+    const later = document.createElement('button');
+    later.type = 'button'; later.className = 'btn btn-ghost btn-block'; later.textContent = 'Maybe Later';
+    later.addEventListener('click', close);
+    btns.appendChild(later);
+    overlay.appendChild(card);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.body.appendChild(overlay);
+    function close() { overlay.remove(); }
 }
 
 function startSessionTimeout(minutes) {
@@ -104,4 +153,9 @@ function startSessionTimeout(minutes) {
     }
 
     if (session && !isAdmin) startSessionTimeout(s.session_timeout);
+
+    if (session && isDashboard()) {
+        const show = () => showTelegramPopup(s);
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
+    }
 })();
