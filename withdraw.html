@@ -97,7 +97,7 @@
                         </div>
                         <div class="input-wrapper">
                             <i class="fas fa-university"></i>
-                            <input type="text" id="bankName" class="form-control" placeholder="e.g. GTBank" required>
+                            <select id="bankName" class="form-control" required></select>
                         </div>
                     </div>
 
@@ -180,6 +180,22 @@
     </nav>
 
     <script type="module">
+        import { sortedBanks, POPULAR_CODES, guessBankCode, bankByCode } from './assets/js/ng-banks.js';
+        // Bank dropdown: value is the bank's name (codes are resolved server-side for gateway payouts)
+        (() => {
+            const sel = document.getElementById('bankName');
+            const opt = b => `<option value="${b.name.replace(/"/g, '&quot;')}">${b.name}</option>`;
+            const all = sortedBanks({ popularFirst: true });
+            sel.innerHTML = '<option value="">Select your bank</option>' + all.slice(0, POPULAR_CODES.length).map(opt).join('')
+                + '<option disabled>──────────</option>' + all.slice(POPULAR_CODES.length).map(opt).join('');
+        })();
+        function setBank(name) {
+            const sel = document.getElementById('bankName');
+            if (!name) return;
+            if ([...sel.options].some(o => o.value === name)) { sel.value = name; return; }
+            const b = bankByCode(guessBankCode(name));
+            if (b) sel.value = b.name;
+        }
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -236,7 +252,7 @@
                 document.getElementById('userAvatar').innerText = data.full_name.charAt(0).toUpperCase();
 
                 if (data.saved_bank_name || data.saved_account_number || data.saved_account_name) {
-                    document.getElementById('bankName').value = data.saved_bank_name || '';
+                    setBank(data.saved_bank_name || '');
                     document.getElementById('accountNumber').value = data.saved_account_number || '';
                     document.getElementById('accountName').value = data.saved_account_name || '';
                     document.getElementById('savedDetailsBadge').style.display = 'inline';

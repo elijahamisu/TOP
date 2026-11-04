@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Payment Gateway | TOP Admin</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="../assets/css/top.css">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
+    <meta name="application-name" content="TOP">
+</head>
+<body class="admin-body page-gateway">
+
+    <div id="loader" class="overlay-loader">
+        <img class="loader-mark" src="../assets/img/logo-mark.svg" alt="">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="drawer-backdrop admin-backdrop" onclick="document.getElementById('sidebar').classList.remove('active')"></div>
+
+    <aside id="sidebar" class="sidebar is-static admin-sidebar" aria-label="Admin navigation">
+        <div class="side-head">
+            <a href="index.html" class="brand" aria-label="TOP Admin home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-solid">Admin</span>
+            <button type="button" class="icon-btn side-close" onclick="document.getElementById('sidebar').classList.remove('active')" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="side-nav">
+            <p class="side-label">Overview</p>
+            <a href="index.html" class="side-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="reports.html" class="side-link"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="activity-log.html" class="side-link"><i class="fas fa-history"></i> Activity Log</a>
+            <p class="side-label">People</p>
+            <a href="users.html" class="side-link"><i class="fas fa-users"></i> Users</a>
+            <a href="referrals.html" class="side-link"><i class="fas fa-user-friends"></i> Referrals</a>
+            <a href="support.html" class="side-link"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="notifications.html" class="side-link"><i class="fas fa-bell"></i> Notifications</a>
+            <p class="side-label">Money</p>
+            <a href="deposits.html" class="side-link"><i class="fas fa-arrow-down"></i> Deposits</a>
+            <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="gateway.html" class="side-link active"><i class="fas fa-bolt"></i> Payment Gateway</a>
+            <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
+            <p class="side-label">Products</p>
+            <a href="investments.html" class="side-link"><i class="fas fa-rocket"></i> Investments</a>
+            <a href="plans.html" class="side-link"><i class="fas fa-layer-group"></i> Investment Plans</a>
+            <a href="giftcodes.html" class="side-link"><i class="fas fa-gift"></i> Gift Codes</a>
+            <p class="side-label">Account</p>
+            <a href="settings.html" class="side-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="profile.html" class="side-link"><i class="fas fa-user-circle"></i> Profile</a>
+        </nav>
+        <a href="#" onclick="adminLogout()" class="side-link side-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </aside>
+
+    <main class="with-sidebar admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="icon-btn admin-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('active')" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <p class="eyebrow">TOP Admin</p>
+                    <h1>Payment Gateway</h1>
+                </div>
+            </div>
+            <div class="topbar-right" id="adminProfile">
+                <span id="adminName">Admin</span>
+                <div class="avatar admin-avatar"><i class="fas fa-user-shield"></i></div>
+            </div>
+        </header>
+        <div class="container admin-content">
+            <section class="gw-hero">
+                <div class="gw-hero-top">
+                    <div>
+                        <p class="gw-eyebrow"><i class="fas fa-bolt"></i> Afrstar Gateway</p>
+                        <h2 class="gw-balance" id="gwBalance">₦—</h2>
+                        <p class="gw-sub" id="gwBalanceSub">Checking balance…</p>
+                    </div>
+                    <button class="gw-refresh" id="refreshBtn" onclick="loadStatus()" aria-label="Refresh balance"><i class="fas fa-rotate-right"></i></button>
+                </div>
+                <div class="gw-hero-actions">
+                    <button class="gw-act" onclick="openSheet('topupSheet')"><i class="fas fa-circle-plus"></i><span>Top Up</span></button>
+                    <button class="gw-act" onclick="openSheet('payoutSheet')"><i class="fas fa-arrow-up-from-bracket"></i><span>Withdraw</span></button>
+                </div>
+                <div class="gw-config-warn" id="configWarn" hidden><i class="fas fa-triangle-exclamation"></i> <span>Gateway keys are not set yet, so balance, top up, withdraw and online deposits are off.</span></div>
+            </section>
+
+            <section class="admin-panel gw-card">
+                <div class="gw-card-head">
+                    <div><h3>Deposit Method</h3><p>Choose how users fund their wallets.</p></div>
+                    <span class="gw-mode-pill" id="modePill">—</span>
+                </div>
+                <div class="gw-mode" role="radiogroup">
+                    <label class="gw-mode-opt">
+                        <input type="radio" name="depMode" value="manual">
+                        <div><i class="fas fa-building-columns"></i><b>Manual Transfer</b><small>Users pay to your bank account and you approve each deposit.</small></div>
+                    </label>
+                    <label class="gw-mode-opt">
+                        <input type="radio" name="depMode" value="gateway">
+                        <div><i class="fas fa-bolt"></i><b>Payment Gateway</b><small>Users pay online and wallets are credited automatically. No approval needed.</small></div>
+                    </label>
+                </div>
+                <p class="gw-note"><i class="fas fa-user-friends"></i> Referral commission is paid on both methods. Withdrawals always wait for your approval.</p>
+            </section>
+
+            <section class="admin-panel gw-card">
+                <div class="gw-card-head"><div><h3>Gateway Activity</h3><p>Your top-ups and withdrawals on the gateway.</p></div></div>
+                <div id="gwTxList" class="gw-tx-list"><p class="gw-empty">Loading…</p></div>
+            </section>
+
+            <section class="admin-panel gw-card">
+                <div class="gw-card-head"><div><h3>Callback URLs</h3><p>Paste these in the Afrstar merchant portal.</p></div></div>
+                <div class="gw-url"><span>Collection callback</span><code id="cbPayin">—</code><button onclick="copyText('cbPayin')"><i class="fas fa-copy"></i></button></div>
+                <div class="gw-url"><span>Payout callback</span><code id="cbPayout">—</code><button onclick="copyText('cbPayout')"><i class="fas fa-copy"></i></button></div>
+                <p class="gw-note" id="serverIpNote" hidden></p>
+            </section>
+        </div>
+
+        <!-- Top up sheet -->
+        <div class="gw-sheet-wrap" id="topupSheet" onclick="if(event.target===this) closeSheets()">
+            <div class="gw-sheet">
+                <h3><i class="fas fa-circle-plus"></i> Top Up Gateway</h3>
+                <p class="gw-sub-dark">You'll pay through the gateway checkout. The money goes to the gateway balance, not a user wallet.</p>
+                <div class="form-group"><label>Amount (₦)</label><input type="number" id="topupAmount" class="form-control" min="100" placeholder="10000"></div>
+                <div class="form-group"><label>Phone for checkout</label><input type="tel" id="topupPhone" class="form-control" placeholder="080..."></div>
+                <div class="gw-sheet-actions"><button class="btn-cancel-flat" onclick="closeSheets()">Cancel</button><button class="btn-add-funds" id="topupBtn" onclick="doTopup()">Continue to Pay</button></div>
+            </div>
+        </div>
+
+        <!-- Withdraw sheet -->
+        <div class="gw-sheet-wrap" id="payoutSheet" onclick="if(event.target===this) closeSheets()">
+            <div class="gw-sheet">
+                <h3><i class="fas fa-arrow-up-from-bracket"></i> Withdraw From Gateway</h3>
+                <p class="gw-sub-dark">Sends gateway balance to a bank account. Available: <b id="payoutAvail">₦—</b></p>
+                <div class="form-group"><label>Amount (₦)</label><input type="number" id="payoutAmount" class="form-control" min="100" placeholder="10000"></div>
+                <div class="form-group"><label>Bank</label><select id="payoutBank" class="form-control"></select></div>
+                <div class="form-group"><label>Account Number</label><input type="text" id="payoutAccount" class="form-control" inputmode="numeric" maxlength="10" placeholder="10 digits"></div>
+                <div class="form-group"><label>Account Name</label><input type="text" id="payoutName" class="form-control" placeholder="Account holder name"></div>
+                <div class="gw-sheet-actions"><button class="btn-cancel-flat" onclick="closeSheets()">Cancel</button><button class="btn-prime" id="payoutBtn" onclick="doPayout()">Withdraw</button></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { bankOptionsHtml } from '../assets/js/ng-banks.js';
+        const SB_URL = import.meta.env.VITE_SUPABASE_URL;
+        const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+        const FN = `${SB_URL}/functions/v1/afrstar`;
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const ngn = n => '₦' + Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        let session = null, lastBalance = null;
+
+        async function call(body) {
+            const res = await fetch(FN, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`, apikey: SB_KEY }, body: JSON.stringify(body) });
+            const j = await res.json().catch(() => ({}));
+            if (!res.ok) throw Object.assign(new Error(j.error || `Request failed (${res.status})`), { data: j });
+            return j;
+        }
+
+        async function init() {
+            ({ data: { session } } = await supabase.auth.getSession());
+            if (!session) { window.location.href = 'login.html'; return; }
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+            if (!profile?.is_admin) { window.location.href = '../login.html'; return; }
+            document.getElementById('adminName').innerText = profile.full_name;
+            document.getElementById('topupPhone').value = profile.phone || '';
+            document.getElementById('payoutBank').innerHTML = bankOptionsHtml({ placeholder: 'Select bank' });
+            document.getElementById('loader').style.display = 'none';
+            const q = new URLSearchParams(location.search);
+            if (q.get('topup')) { alert('Top-up payment submitted. It shows as completed once the gateway confirms it.'); history.replaceState(null, '', 'gateway.html'); }
+            document.querySelectorAll('input[name="depMode"]').forEach(r => r.addEventListener('change', () => setMode(r.value)));
+            await Promise.all([loadMode(), loadStatus(), loadTx()]);
+        }
+
+        async function loadMode() {
+            const { data } = await supabase.from('platform_settings').select('deposit_mode').eq('id', 1).single();
+            renderMode(data?.deposit_mode || 'manual');
+        }
+        function renderMode(mode) {
+            document.querySelectorAll('input[name="depMode"]').forEach(r => r.checked = r.value === mode);
+            const pill = document.getElementById('modePill');
+            pill.textContent = mode === 'gateway' ? 'Gateway' : 'Manual';
+            pill.className = 'gw-mode-pill ' + (mode === 'gateway' ? 'is-gateway' : 'is-manual');
+        }
+        async function setMode(mode) {
+            const label = mode === 'gateway' ? 'Payment Gateway (automatic)' : 'Manual Transfer (admin approval)';
+            if (!confirm(`Switch user deposits to ${label}?`)) { loadMode(); return; }
+            const { error } = await supabase.from('platform_settings').update({ deposit_mode: mode, updated_at: new Date().toISOString() }).eq('id', 1);
+            if (error) { alert('Could not switch: ' + error.message); loadMode(); return; }
+            await supabase.from('admin_logs').insert([{ admin_id: session.user.id, admin_name: document.getElementById('adminName').innerText, action: `Switched deposits to ${mode}` }]);
+            renderMode(mode);
+        }
+
+        window.loadStatus = async () => {
+            const btn = document.getElementById('refreshBtn'); btn.classList.add('spin');
+            try {
+                const s = await call({ action: 'status' });
+                document.getElementById('cbPayin').textContent = s.callbacks?.payin || '—';
+                document.getElementById('cbPayout').textContent = s.callbacks?.payout || '—';
+                document.getElementById('configWarn').hidden = !!s.configured;
+                const sub = document.getElementById('gwBalanceSub');
+                if (s.configured && s.balance !== null && s.balance !== undefined) {
+                    lastBalance = s.balance;
+                    document.getElementById('gwBalance').textContent = ngn(s.balance);
+                    sub.textContent = 'Available balance · updated ' + new Date(s.fetched_at).toLocaleTimeString();
+                } else {
+                    document.getElementById('gwBalance').textContent = '₦—';
+                    sub.textContent = s.configured ? ('Could not read balance: ' + (s.error || 'unknown error')) : 'Not connected';
+                }
+                document.getElementById('payoutAvail').textContent = lastBalance !== null ? ngn(lastBalance) : '₦—';
+                const ipNote = document.getElementById('serverIpNote');
+                if (s.server_ip && (s.error || !s.configured)) { ipNote.hidden = false; ipNote.innerHTML = `<i class="fas fa-network-wired"></i> Server IP: <b>${esc(s.server_ip)}</b>. If Afrstar restricts by IP, ask them to allow it.`; }
+                else ipNote.hidden = true;
+            } catch (e) {
+                document.getElementById('gwBalanceSub').textContent = e.message;
+            } finally { btn.classList.remove('spin'); }
+        };
+
+        async function loadTx() {
+            const { data, error } = await supabase.from('gateway_admin_transactions').select('*').order('created_at', { ascending: false }).limit(30);
+            const list = document.getElementById('gwTxList');
+            if (error) { list.innerHTML = `<p class="gw-empty">${esc(error.message)}</p>`; return; }
+            if (!data?.length) { list.innerHTML = '<p class="gw-empty">No gateway top-ups or withdrawals yet.</p>'; return; }
+            list.innerHTML = data.map(t => `
+                <div class="gw-tx">
+                    <span class="gw-tx-ic ${t.kind}"><i class="fas ${t.kind === 'topup' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></span>
+                    <div class="gw-tx-main">
+                        <b>${t.kind === 'topup' ? 'Top up' : 'Withdraw to ' + esc(t.bank_name || 'bank')}</b>
+                        <small>${new Date(t.created_at).toLocaleString()}${t.account_number ? ' · ' + esc(t.account_number) : ''}</small>
+                        ${t.gateway_message ? `<small class="gw-tx-msg">${esc(t.gateway_message)}</small>` : ''}
+                    </div>
+                    <div class="gw-tx-right">
+                        <b class="${t.kind === 'topup' ? 'pos' : 'neg'}">${t.kind === 'topup' ? '+' : '−'}${ngn(t.amount)}</b>
+                        <span class="status-pill ${esc(t.status)}">${esc(t.status)}</span>
+                        ${t.kind === 'topup' && t.status === 'pending' && t.pay_url ? `<a class="gw-tx-pay" href="${esc(t.pay_url)}">Pay</a>` : ''}
+                    </div>
+                </div>`).join('');
+        }
+
+        window.openSheet = id => { document.getElementById(id).classList.add('open'); };
+        window.closeSheets = () => document.querySelectorAll('.gw-sheet-wrap').forEach(s => s.classList.remove('open'));
+        window.copyText = id => { navigator.clipboard.writeText(document.getElementById(id).textContent); alert('Copied'); };
+
+        window.doTopup = async () => {
+            const amount = Number(document.getElementById('topupAmount').value);
+            const phone = document.getElementById('topupPhone').value.trim();
+            if (!(amount > 0)) { alert('Enter an amount.'); return; }
+            const btn = document.getElementById('topupBtn'); btn.disabled = true; btn.textContent = 'Creating checkout…';
+            try { const r = await call({ action: 'topup', amount, phone }); window.location.href = r.pay_url; }
+            catch (e) { alert(e.message); btn.disabled = false; btn.textContent = 'Continue to Pay'; loadTx(); }
+        };
+
+        window.doPayout = async () => {
+            const amount = Number(document.getElementById('payoutAmount').value);
+            const bank_code = document.getElementById('payoutBank').value;
+            const account_number = document.getElementById('payoutAccount').value.trim();
+            const account_name = document.getElementById('payoutName').value.trim();
+            if (!(amount > 0) || !bank_code || !/^\d{10}$/.test(account_number) || !account_name) { alert('Fill in amount, bank, a 10-digit account number and the account name.'); return; }
+            const bankName = document.getElementById('payoutBank').selectedOptions[0].textContent;
+            if (!confirm(`Withdraw ${ngn(amount)} from the gateway to ${account_name}, ${bankName} ${account_number}?`)) return;
+            const btn = document.getElementById('payoutBtn'); btn.disabled = true; btn.textContent = 'Sending…';
+            try { await call({ action: 'payout', amount, bank_code, account_number, account_name }); alert('Withdrawal sent to the gateway. It completes when the gateway confirms.'); closeSheets(); }
+            catch (e) { alert(e.message); }
+            finally { btn.disabled = false; btn.textContent = 'Withdraw'; loadTx(); loadStatus(); }
+        };
+
+        window.adminLogout = async () => { await supabase.auth.signOut(); window.location.href = 'login.html'; };
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+    <!-- Admin bottom nav (phones/tablets) -->
+    <nav class="bottom-nav admin-bottom-nav" aria-label="Admin quick navigation">
+        <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Home</span></a>
+        <a href="users.html" class="nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+        <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposits</span></a>
+        <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdrawals</span></a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        <button type="button" class="nav-item" onclick="document.getElementById('sidebar').classList.add('active');" aria-label="Open full menu"><i class="fas fa-bars"></i><span>Menu</span></button>
+    </nav>
+</body>
+</html>

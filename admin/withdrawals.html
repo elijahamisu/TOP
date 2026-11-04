@@ -48,6 +48,7 @@
             <p class="side-label">Money</p>
             <a href="deposits.html" class="side-link"><i class="fas fa-arrow-down"></i> Deposits</a>
             <a href="withdrawals.html" class="side-link active"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="gateway.html" class="side-link"><i class="fas fa-bolt"></i> Payment Gateway</a>
             <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
             <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
             <p class="side-label">Products</p>
@@ -97,6 +98,7 @@
                     <select class="filter-select" id="statusFilter">
                         <option value="all">All Status</option>
                         <option value="pending">Pending</option>
+                        <option value="processing">Processing (Gateway)</option>
                         <option value="approved">Approved</option>
                         <option value="rejected">Rejected</option>
                     </select>
@@ -145,6 +147,8 @@
 
     <script type="module">
         import { roleTags } from '../assets/js/roles.js';
+        import { bankOptionsHtml, guessBankCode } from '../assets/js/ng-banks.js';
+        const FN = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/afrstar`;
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -392,21 +396,45 @@
                     <div class="info-card">
                         <h4>Financial Status</h4>
                         <div class="detail-item"><span>Withdrawal Amount</span><b style="color:var(--danger)">₦${grossAmt.toLocaleString()}</b></div>
-                        <div class="detail-item"><span>Withdrawal Charge (15%)</span><b>₦${feeAmt.toLocaleString()}</b></div>
+                        <div class="detail-item"><span>Withdrawal Charge</span><b>₦${feeAmt.toLocaleString()}</b></div>
                         <div class="detail-item"><span>Net Payout to Bank</span><b style="color:var(--warning); font-size:15px;">₦${netAmt.toLocaleString()}</b></div>
                         <div class="detail-item"><span>Wallet Balance</span><b style="color:var(--success)">₦${balance.toLocaleString()}</b></div>
                         <div class="detail-item"><span>Status</span><b class="status-badge status-${w.status}">${w.status}</b></div>
                     </div>
                 </div>
 
+                ${w.gateway_message ? `<div class="wd-gw-msg"><i class="fas fa-bolt"></i> ${w.gateway_message}${w.order_sn ? ` <small>(${w.order_sn})</small>` : ''}</div>` : ''}
                 ${w.status === 'pending' ? `
-                <div class="action-bar">
-                    <button class="btn-modal btn-approve" onclick="approveWithdrawal('${w.id}', ${w.amount}, '${w.user_id}', ${balance})">Approve & Disburse</button>
-                    <button class="btn-modal btn-reject" onclick="openRejectModal()">Reject Request</button>
+                <div class="form-group wd-bank-pick">
+                    <label>Bank for gateway payout</label>
+                    <select id="wdBankCode" class="form-control">${bankOptionsHtml({ selected: w.bank_code || guessBankCode(w.bank_name) || '', placeholder: 'Select bank (' + (w.bank_name || '') + ')' })}</select>
                 </div>
-                ` : ''}
+                <div class="wd-actions">
+                    <button class="btn-modal btn-gateway" id="sendGwBtn" onclick="sendToGateway('${w.id}')"><i class="fas fa-bolt"></i> Send to Gateway</button>
+                    <button class="btn-modal btn-approve" onclick="approveWithdrawal('${w.id}', ${w.amount}, '${w.user_id}', ${balance})"><i class="fas fa-check"></i> Mark as Paid</button>
+                    <button class="btn-modal btn-reject" onclick="openRejectModal()"><i class="fas fa-times"></i> Reject</button>
+                </div>
+                ` : w.status === 'processing' ? `<p class="wd-gw-msg">Sent to the gateway. It completes automatically when the gateway confirms the payout; if it fails, the wallet is refunded and the request goes back to pending.</p>` : ''}
             `;
             document.getElementById('detailModal').style.display = 'flex';
+        };
+
+        window.sendToGateway = async (id) => {
+            const w = witData.find(x => x.id === id);
+            const bank_code = document.getElementById('wdBankCode').value;
+            if (!bank_code) { alert('Choose the bank first.'); return; }
+            const bankName = document.getElementById('wdBankCode').selectedOptions[0].textContent;
+            const net = w.net_amount != null ? parseFloat(w.net_amount) : parseFloat(w.amount);
+            if (!confirm(`Send ₦${net.toLocaleString()} to ${w.account_name} (${bankName} ${w.account_number}) through the payment gateway?\n\nThe user's wallet is debited ₦${parseFloat(w.amount).toLocaleString()} now.`)) return;
+            const btn = document.getElementById('sendGwBtn'); btn.disabled = true; btn.textContent = 'Sending…';
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const res = await fetch(FN, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`, apikey: import.meta.env.VITE_SUPABASE_ANON_KEY }, body: JSON.stringify({ action: 'send_withdrawal', id, bank_code }) });
+                const j = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(j.error || `Request failed (${res.status})`);
+                alert('Sent to the gateway. It will be marked paid once the gateway confirms.');
+                closeModals(); fetchWithdrawals();
+            } catch (e) { alert(e.message); btn.disabled = false; btn.innerHTML = '<i class="fas fa-bolt"></i> Send to Gateway'; fetchWithdrawals(); }
         };
 
         window.approveWithdrawal = async (id, amount, userId, balance) => {
@@ -414,14 +442,14 @@
                 alert("Critical Error: User's current wallet balance is less than the withdrawal amount.");
                 return;
             }
-            if(!confirm(`Confirm approval of ₦${amount.toLocaleString()}? This will deduct the amount from the user's wallet.`)) return;
+            if(!confirm(`Mark ₦${amount.toLocaleString()} as paid? Use this when you paid the user yourself, outside the gateway. The amount is deducted from the user's wallet.`)) return;
 
             try {
                 // Server-side: re-checks balance, deducts wallet, settles the transaction, notifies, logs.
                 const { error: wErr } = await supabase.rpc('admin_approve_withdrawal', { p_id: id });
                 if(wErr) throw wErr;
 
-                alert("Withdrawal approved and processed.");
+                alert("Withdrawal marked as paid.");
                 closeModals();
                 fetchWithdrawals();
             } catch (err) {

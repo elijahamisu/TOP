@@ -43,6 +43,7 @@
             <p class="side-label">Money</p>
             <a href="deposits.html" class="side-link active"><i class="fas fa-arrow-down"></i> Deposits</a>
             <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="gateway.html" class="side-link"><i class="fas fa-bolt"></i> Payment Gateway</a>
             <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
             <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
             <p class="side-label">Products</p>
@@ -244,7 +245,7 @@
                     </td>
                     <td><b>₦${amount}</b></td>
                     <td>
-                        <p style="font-size:12px;">Kuda Bank</p>
+                        <p style="font-size:12px;">${d.method === 'gateway' ? '<span class="method-tag"><i class="fas fa-bolt"></i> Gateway</span>' : (d.payment_method || 'Bank Transfer')}</p>
                         <p style="font-size:10px; color:var(--text-muted)">ID: ${d.id.slice(0,8)}</p>
                     </td>
                     <td>${date.toLocaleDateString()} <br> <span style="font-size:10px; color:var(--text-muted)">${date.toLocaleTimeString()}</span></td>
@@ -267,7 +268,7 @@
                     </div>
                     <div class="dep-card-details">
                         <div><span class="label">Amount</span><span class="dep-amount">₦${amount}</span></div>
-                        <div><span class="label">Method</span>Kuda Bank</div>
+                        <div><span class="label">Method</span>${d.method === 'gateway' ? '<span class="method-tag"><i class="fas fa-bolt"></i> Gateway</span>' : (d.payment_method || 'Bank Transfer')}</div>
                         <div><span class="label">Date</span>${date.toLocaleDateString()}</div>
                         <div><span class="label">Time</span>${date.toLocaleTimeString()}</div>
                     </div>
@@ -288,10 +289,15 @@
                 <div class="detail-row"><span>Deposit ID</span><b>#${d.id.slice(0,12)}</b></div>
                 <div class="detail-row"><span>User</span><b>${d.profiles.full_name} (${d.profiles.email})</b></div>
                 <div class="detail-row"><span>Amount</span><b style="color:var(--success); font-size:18px;">₦${parseFloat(d.amount).toLocaleString()}</b></div>
-                <div class="detail-row"><span>Method</span><b>Kuda Bank</b></div>
+                <div class="detail-row"><span>Method</span><b>${d.method === 'gateway' ? 'Payment Gateway (auto)' : (d.payment_method || 'Bank Transfer')}</b></div>
+                ${d.sender_account_name ? `<div class="detail-row"><span>Sender</span><b>${d.sender_account_name}${d.sender_bank_name ? ' · ' + d.sender_bank_name : ''}</b></div>` : ''}
+                ${d.method === 'gateway' ? `<div class="detail-row"><span>Gateway</span><b>${d.gateway_message || '—'}${d.utr ? ' · Ref ' + d.utr : ''}</b></div>` : ''}
                 <div class="detail-row"><span>Status</span><b class="status-badge status-${d.status}">${d.status}</b></div>
 
-                ${d.status === 'pending' ? `
+                ${d.method === 'gateway' && ['pending','failed'].includes(d.status) ? `
+                <p class="wd-gw-msg">Gateway deposits are credited automatically when the payment is confirmed. Reject only to clear an abandoned checkout.</p>
+                <div class="action-bar"><button class="btn-modal btn-reject" onclick="openRejectModal()">Clear (Reject)</button></div>
+                ` : d.status === 'pending' ? `
                 <div class="action-bar">
                     <button class="btn-modal btn-approve" onclick="approveDeposit('${d.id}', ${d.amount}, '${d.user_id}')">Approve & Fund Wallet</button>
                     <button class="btn-modal btn-reject" onclick="openRejectModal()">Reject</button>

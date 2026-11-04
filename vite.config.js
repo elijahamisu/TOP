@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => {
         admin_investments: resolve(__dirname, 'admin/investments.html'),
         admin_deposits: resolve(__dirname, 'admin/deposits.html'),
         admin_withdrawals: resolve(__dirname, 'admin/withdrawals.html'),
+        admin_gateway: resolve(__dirname, 'admin/gateway.html'),
         admin_earnings: resolve(__dirname, 'admin/earnings.html'),
         admin_referrals: resolve(__dirname, 'admin/referrals.html'),
         admin_giftcodes: resolve(__dirname, 'admin/giftcodes.html'),

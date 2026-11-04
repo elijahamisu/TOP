@@ -69,6 +69,7 @@
                     </div>
                 </div>
 
+<div id="manualBox">
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="senderAccountName">Name on Your Bank Account</label>
@@ -122,6 +123,22 @@
                     <span id="btnText">I Have Paid</span>
                     <div class="spinner" id="btnSpinner"></div>
                 </button>
+                </div>
+                <div id="gatewayBox" hidden>
+                    <div class="method-box">
+                        <div class="cluster" style="gap:10px;">
+                            <span class="li-icon" style="width:34px;height:34px;"><i class="fas fa-bolt"></i></span>
+                            <span style="font-weight:700; font-size:14px;">Instant Online Payment</span>
+                        </div>
+                        <i class="fas fa-check-circle text-red"></i>
+                    </div>
+                    <ul class="steps-list">
+                        <li><i class="fas fa-circle-check"></i><span>Enter the amount and tap <b>Pay Now</b>.</span></li>
+                        <li><i class="fas fa-circle-check"></i><span>Pay on the secure checkout page by bank transfer.</span></li>
+                        <li><i class="fas fa-circle-check"></i><span>Your wallet is credited automatically once payment is confirmed.</span></li>
+                    </ul>
+                    <button class="btn btn-primary btn-lg btn-block" id="payNowBtn" onclick="payNow()"><i class="fas fa-lock"></i> <span id="payNowText">Pay Now</span></button>
+                </div>
             </section>
 
             <div class="stack-col">
@@ -174,6 +191,7 @@
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
 
         let currentUser = null;
+        let depositMode = 'manual';
 
         async function init() {
             const { data: { session } } = await supabase.auth.getSession();
@@ -185,6 +203,16 @@
             document.getElementById('kudaNumber').innerText = import.meta.env.VITE_KUDA_ACCOUNT_NUMBER || '6578299180';
             document.getElementById('kudaBank').innerText = import.meta.env.VITE_KUDA_BANK_NAME || 'OPay';
 
+            const { data: ps } = await supabase.from('platform_settings').select('deposit_mode, kuda_account_name, kuda_account_number, kuda_bank_name').eq('id', 1).single();
+            depositMode = ps?.deposit_mode === 'gateway' ? 'gateway' : 'manual';
+            document.getElementById('manualBox').hidden = depositMode === 'gateway';
+            document.getElementById('gatewayBox').hidden = depositMode !== 'gateway';
+            if (depositMode === 'gateway') document.querySelector('.page-sub').textContent = 'Fund your wallet instantly online';
+            const back = new URLSearchParams(location.search).get('gateway');
+            if (back) {
+                history.replaceState(null, '', 'deposit.html');
+                alert('Payment submitted! Your wallet will be credited automatically as soon as the payment is confirmed.');
+            }
             await loadWalletData();
             await loadDepositHistory();
             await loadProfile();
@@ -224,7 +252,7 @@
                 item.innerHTML = `
                     <div class="hist-info">
                         <h5>₦${parseFloat(d.amount).toLocaleString()}</h5>
-                        <p>${date.toLocaleDateString()} • OPay</p>
+                        <p>${date.toLocaleDateString()} • ${d.method === 'gateway' ? 'Online Payment' : (d.payment_method || 'Bank Transfer')}</p>
                     </div>
                     <div class="hist-status">
                         <span class="badge ${d.status}">${d.status}</span>
@@ -285,6 +313,22 @@
             }
         };
 
+        window.payNow = async () => {
+            const amt = parseFloat(document.getElementById('depositAmount').value);
+            if (!amt || amt < 1000) { alert('Minimum deposit is ₦1,000'); return; }
+            const btn = document.getElementById('payNowBtn'), txt = document.getElementById('payNowText');
+            btn.disabled = true; txt.textContent = 'Opening secure checkout…';
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const res = await fetch(`${SB_URL}/functions/v1/afrstar`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}`, apikey: SB_KEY }, body: JSON.stringify({ action: 'deposit', amount: amt }) });
+                const j = await res.json().catch(() => ({}));
+                if (!res.ok || !j.pay_url) throw new Error(j.error || 'Could not start the payment.');
+                window.location.href = j.pay_url;
+            } catch (e) {
+                alert(e.message);
+                btn.disabled = false; txt.textContent = 'Pay Now';
+            }
+        };
         window.addEventListener('DOMContentLoaded', init);
     </script>
     <script type="module" src="/assets/js/platform.js"></script>
