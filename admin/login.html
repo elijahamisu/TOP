@@ -4,365 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Portal Login | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #060b13;
-            --secondary-bg: #0a0f1a;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --card-bg: rgba(17, 24, 39, 0.75);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12), transparent 70%);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 440px;
-            margin: 0 auto;
-        }
-
-        /* --- Header --- */
-        header {
-            padding: 24px 0;
-            border-bottom: 1px solid var(--glass-border);
-            background: rgba(6, 11, 19, 0.85);
-            backdrop-filter: blur(10px);
-        }
-
-        .header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-logo {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--accent-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-portal {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            text-transform: uppercase;
-        }
-
-        /* --- Main Login Area --- */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 30px 0;
-        }
-
-        .login-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            padding: 32px 24px;
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-            margin-bottom: 20px;
-        }
-
-        .welcome-head {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .welcome-head i {
-            font-size: 36px;
-            color: var(--accent-color);
-            margin-bottom: 12px;
-            display: inline-block;
-        }
-
-        .welcome-head h1 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .welcome-head p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* --- Alert Messages --- */
-        #alertBox {
-            display: none;
-            padding: 12px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.12);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .alert-success {
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        /* --- Form Styling --- */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px 15px 14px 44px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: white;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            background: rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .btn-admin-login {
-            width: 100%;
-            padding: 15px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-admin-login:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-admin-login:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .back-website-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .back-website-link:hover {
-            color: var(--text-main);
-        }
-
-        /* --- Quick Information Card --- */
-        .security-info-card {
-            background: rgba(10, 15, 26, 0.7);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 18px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .info-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .info-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .info-text h4 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        .info-text p {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* --- Footer --- */
-        footer {
-            padding: 24px 0;
-            border-top: 1px solid var(--glass-border);
-            background: var(--secondary-bg);
-            text-align: center;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 18px;
-            margin-bottom: 10px;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 12px;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .copyright {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.35);
-        }
-
-        /* --- Spinner --- */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.9s ease-in-out infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (min-width: 640px) {
-            .login-card {
-                padding: 40px 32px;
-            }
-        }
-    </style>
     <link rel="stylesheet" href="../assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
 </head>
-<body>
+<body class="admin-login">
 
-    <header>
-        <div class="container header-flex">
-            <a href="../index.html" class="admin-logo">
-                <i class="fas fa-shield-alt"></i> TOP
-            </a>
-            <span class="badge-portal">Admin Portal</span>
+    <header class="topnav">
+        <div class="container topnav-inner">
+            <a href="../index.html" class="brand" aria-label="TOP home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-red"><i class="fas fa-shield-alt"></i> Admin Portal</span>
         </div>
     </header>
 
-    <main>
-        <div class="container">
-            <div class="login-card">
-                <div class="welcome-head">
-                    <i class="fas fa-user-shield"></i>
-                    <h1>Administrator Access</h1>
+    <main class="auth-shell">
+        <div class="container login-grid">
+            <div class="auth-card fade-up">
+                <div class="auth-head">
+                    <img src="../assets/img/logo-mark.svg" alt="TOP">
+                    <p class="eyebrow">Restricted area</p>
+                    <h1>Administrator <em class="accent">Access</em></h1>
                     <p>Enter your credentials to access the management portal</p>
                 </div>
 
@@ -376,7 +44,6 @@
                             <input type="email" id="adminEmail" class="form-control" placeholder="admin@top.com" required autocomplete="email">
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="adminPassword">Password</label>
                         <div class="input-wrapper">
@@ -384,45 +51,40 @@
                             <input type="password" id="adminPassword" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
                         </div>
                     </div>
-
-                    <button type="submit" id="submitBtn" class="btn-admin-login">
+                    <button type="submit" id="submitBtn" class="btn btn-primary btn-block btn-lg">
                         <span id="btnText">Login to Admin Portal</span>
                         <div class="spinner" id="btnSpinner"></div>
                     </button>
                 </form>
 
-                <a href="../index.html" class="back-website-link">
-                    <i class="fas fa-arrow-left"></i> Back to Main Website
-                </a>
+                <div class="auth-foot">
+                    <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Main Website</a>
+                </div>
             </div>
 
-            <div class="security-info-card">
-                <div class="info-row">
-                    <div class="info-icon"><i class="fas fa-lock"></i></div>
-                    <div class="info-text">
-                        <h4>Secure Administrator Access</h4>
-                        <p>End-to-end encrypted session authentication</p>
-                    </div>
+            <div class="secure-list">
+                <div class="secure-intro">
+                    <p class="eyebrow">TOP Management</p>
+                    <h2>The control room for <em class="accent">every naira</em>.</h2>
+                    <p>Approve deposits, release withdrawals and keep the platform running, all from one secure console.</p>
                 </div>
-                <div class="info-row">
-                    <div class="info-icon"><i class="fas fa-user-check"></i></div>
-                    <div class="info-text">
-                        <h4>Authorized Personnel Only</h4>
-                        <p>Unauthorized access attempts are blocked and reported</p>
-                    </div>
+                <div class="secure-item fade-up d1">
+                    <span class="li-icon"><i class="fas fa-lock"></i></span>
+                    <div><h4>Secure Administrator Access</h4><p>End-to-end encrypted session authentication</p></div>
                 </div>
-                <div class="info-row">
-                    <div class="info-icon"><i class="fas fa-history"></i></div>
-                    <div class="info-text">
-                        <h4>All Admin Activities Are Logged</h4>
-                        <p>System actions, logins, and approvals are audited</p>
-                    </div>
+                <div class="secure-item fade-up d2">
+                    <span class="li-icon"><i class="fas fa-user-check"></i></span>
+                    <div><h4>Authorized Personnel Only</h4><p>Unauthorized access attempts are blocked and reported</p></div>
+                </div>
+                <div class="secure-item fade-up d3">
+                    <span class="li-icon"><i class="fas fa-history"></i></span>
+                    <div><h4>All Admin Activities Are Logged</h4><p>System actions, logins, and approvals are audited</p></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <div class="container">
             <div class="footer-links">
                 <a href="../index.html">TOP Home</a>

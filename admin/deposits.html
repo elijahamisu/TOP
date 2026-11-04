@@ -4,309 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Deposit Management | TOP Admin</title>
-
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #060b13;
-            --secondary-bg: #0a0f1a;
-            --sidebar-bg: #0d121f;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.4);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --sidebar-width: 260px;
-            --header-height: 60px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            width: 100%;
-            overflow-x: hidden;
-        }
-
-        body { min-height: 100vh; min-height: 100dvh; }
-
-        aside {
-            width: min(80vw, var(--sidebar-width));
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
-            position: fixed; top: 0; left: 0;
-            height: 100vh; height: 100dvh;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            display: flex; flex-direction: column;
-        }
-        aside.active { transform: translateX(0); }
-
-        .sidebar-backdrop {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.55);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .sidebar-backdrop.active { display: block; opacity: 1; pointer-events: auto; }
-
-        .sidebar-header {
-            padding: 22px 20px;
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--accent-color);
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .sidebar-close { font-size: 18px; color: var(--text-muted); cursor: pointer; padding: 6px; }
-
-        .nav-item {
-            padding: 14px 22px; display: flex; align-items: center; gap: 15px;
-            color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.2s;
-            min-height: 48px;
-        }
-        .nav-item i { width: 20px; text-align: center; }
-        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: var(--accent-color); border-left: 4px solid var(--accent-color); }
-
-        main { width: 100%; min-height: 100vh; min-height: 100dvh; }
-
-        header {
-            height: var(--header-height);
-            background: var(--secondary-bg);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 10px; padding: 0 14px;
-            position: sticky; top: 0; z-index: 900;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-        .header-left h2 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #mobileMenuBtn { font-size: 20px; cursor: pointer; color: var(--text-muted); padding: 8px; flex-shrink: 0; }
-
-        #adminProfile { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        #adminName { display: none; }
-
-        .container { padding: 16px; max-width: 1600px; margin: 0 auto; }
-
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 10px; margin-bottom: 18px;
-        }
-        .stat-card {
-            background: var(--card-bg); padding: 14px; border-radius: 14px; border: 1px solid var(--glass-border);
-        }
-        .stat-card p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-        .stat-card h3 { font-size: 18px; font-weight: 700; word-break: break-word; }
-
-        .toolbar {
-            background: var(--card-bg); padding: 14px; border-radius: 14px;
-            border: 1px solid var(--glass-border); margin-bottom: 16px;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .search-box {
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            padding: 12px 14px; border-radius: 10px; display: flex; align-items: center; gap: 10px;
-        }
-        .search-box input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 14px; }
-
-        .toolbar-row { display: flex; gap: 10px; }
-
-        .filter-select {
-            flex: 1;
-            background: var(--secondary-bg); color: white; padding: 12px; border-radius: 10px;
-            border: 1px solid var(--glass-border); font-size: 13px; outline: none;
-        }
-
-        .btn-prime {
-            background: var(--accent-color); color: white; border: none; padding: 12px 16px;
-            border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; white-space: nowrap;
-        }
-
-        .table-container {
-            background: var(--card-bg); border-radius: 18px; border: 1px solid var(--glass-border);
-        }
-
-        table { display: none; }
-
-        .mobile-dep-list { display: flex; flex-direction: column; padding: 10px; gap: 10px; }
-
-        .dep-card {
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .dep-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-        .dep-user-name { font-weight: 700; font-size: 14px; }
-        .dep-username { font-size: 11px; color: var(--text-muted); }
-        .dep-amount { font-weight: 700; color: var(--success); font-size: 16px; }
-
-        .dep-card-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
-        .dep-card-details .label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 2px; }
-
-        .dep-card-action {
-            border-top: 1px solid var(--glass-border);
-            padding-top: 10px;
-        }
-        .btn-view-full {
-            width: 100%;
-            background: rgba(59,130,246,0.12);
-            color: var(--accent-color);
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            min-height: 42px;
-        }
-
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-        .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .status-approved { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-
-        .action-icon { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 15px; padding: 6px; transition: 0.2s; }
-        .action-icon:hover { color: var(--accent-color); }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; align-items: flex-end;
-            justify-content: center; z-index: 2000; backdrop-filter: blur(10px);
-        }
-        .modal-content {
-            background: var(--sidebar-bg); width: 100%; max-width: 600px;
-            border-radius: 20px 20px 0 0;
-            border: 1px solid var(--glass-border);
-            max-height: 92vh; overflow-y: auto;
-        }
-        .modal-header { padding: 18px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10; }
-        .modal-body { padding: 20px; }
-
-        .detail-row { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-        .detail-row span { color: var(--text-muted); }
-        .detail-row b { color: white; text-align: right; }
-
-        .action-bar { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--glass-border); }
-        .btn-modal { padding: 14px; border-radius: 12px; border: none; font-weight: 700; font-size: 13px; cursor: pointer; flex: 1; min-height: 46px; }
-        .btn-approve { background: var(--success); color: #fff; }
-        .btn-reject { background: var(--danger); color: #fff; }
-
-        #rejectModal .modal-content { max-width: 400px; }
-        .reason-area { width: 100%; height: 100px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 10px; color: white; padding: 10px; outline: none; margin-top: 15px; font-family: inherit; font-size: 14px; }
-
-        .overlay-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (min-width: 480px) {
-            .stats-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        @media (min-width: 640px) {
-            .toolbar { flex-direction: row; flex-wrap: wrap; align-items: center; }
-            .search-box { flex: 1; min-width: 220px; width: auto; }
-            .toolbar-row { display: contents; }
-            .filter-select { flex: none; width: auto; }
-
-            .modal-overlay { align-items: center; padding: 20px; }
-            .modal-content { border-radius: 24px; max-height: 90vh; }
-            .action-bar { flex-direction: row; }
-        }
-
-        @media (min-width: 768px) {
-            table { display: table; width: 100%; border-collapse: collapse; min-width: 700px; }
-            .mobile-dep-list { display: none; }
-            .table-container { overflow-x: auto; }
-
-            th { text-align: left; padding: 18px 15px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
-            td { padding: 15px; font-size: 13px; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
-        }
-
-        @media (min-width: 1024px) {
-            .sidebar-backdrop { display: none !important; }
-            aside { transform: none; width: var(--sidebar-width); }
-            main { margin-left: var(--sidebar-width); }
-            #mobileMenuBtn { display: none; }
-            #adminName { display: inline; font-size: 12px; font-weight: 600; }
-            .container { padding: 25px; }
-            .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        }
-    </style>
     <link rel="stylesheet" href="../assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
 </head>
-<body>
+<body class="admin-body page-deposits">
 
     <div id="loader" class="overlay-loader">
+        <img class="loader-mark" src="../assets/img/logo-mark.svg" alt="">
         <div class="spinner"></div>
     </div>
 
-    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+    <div class="drawer-backdrop sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-    <aside id="sidebar">
-        <div class="sidebar-header">
-            TOP ADMIN
-            <i class="fas fa-times sidebar-close" onclick="closeSidebar()"></i>
+    <aside id="sidebar" class="sidebar is-static admin-sidebar" aria-label="Admin navigation">
+        <div class="side-head">
+            <a href="index.html" class="brand" aria-label="TOP Admin home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-solid">Admin</span>
+            <button type="button" class="icon-btn side-close" onclick="closeSidebar()" aria-label="Close menu"><i class="fas fa-times"></i></button>
         </div>
-        <nav style="flex:1; overflow-y:auto;">
-            <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-            <a href="deposits.html" class="nav-item active"><i class="fas fa-arrow-down"></i> Deposits</a>
-            <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i> Withdrawals</a>
-            <a href="investments.html" class="nav-item"><i class="fas fa-rocket"></i> Investments</a>
-            <a href="giftcodes.html" class="nav-item"><i class="fas fa-gift"></i> Gift Codes</a>
-            <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support Tickets</a>
-            <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+        <nav class="side-nav">
+            <p class="side-label">Overview</p>
+            <a href="index.html" class="side-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="reports.html" class="side-link"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="activity-log.html" class="side-link"><i class="fas fa-history"></i> Activity Log</a>
+            <p class="side-label">People</p>
+            <a href="users.html" class="side-link"><i class="fas fa-users"></i> Users</a>
+            <a href="referrals.html" class="side-link"><i class="fas fa-user-friends"></i> Referrals</a>
+            <a href="support.html" class="side-link"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="notifications.html" class="side-link"><i class="fas fa-bell"></i> Notifications</a>
+            <p class="side-label">Money</p>
+            <a href="deposits.html" class="side-link active"><i class="fas fa-arrow-down"></i> Deposits</a>
+            <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
+            <p class="side-label">Products</p>
+            <a href="investments.html" class="side-link"><i class="fas fa-rocket"></i> Investments</a>
+            <a href="plans.html" class="side-link"><i class="fas fa-layer-group"></i> Investment Plans</a>
+            <a href="giftcodes.html" class="side-link"><i class="fas fa-gift"></i> Gift Codes</a>
+            <p class="side-label">Account</p>
+            <a href="settings.html" class="side-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="profile.html" class="side-link"><i class="fas fa-user-circle"></i> Profile</a>
         </nav>
-        <a href="#" onclick="adminLogout()" class="nav-item" style="color: var(--danger); border-top: 1px solid var(--glass-border);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" onclick="adminLogout()" class="side-link side-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </aside>
 
-    <main>
-        <header>
-            <div class="header-left">
-                <i class="fas fa-bars" id="mobileMenuBtn"></i>
-                <h2>Deposit Management</h2>
+    <main class="with-sidebar admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="icon-btn admin-menu-btn" id="mobileMenuBtn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <p class="eyebrow">TOP Admin</p>
+                    <h1>Deposit Management</h1>
+                </div>
             </div>
-            <div id="adminProfile">
+            <div class="topbar-right" id="adminProfile">
                 <span id="adminName">Admin</span>
-                <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-color);"></div>
+                <div class="avatar admin-avatar"><i class="fas fa-user-shield"></i></div>
             </div>
         </header>
+        <div class="container admin-content">
+            <section class="admin-stats">
+                <div class="stat-card is-hero"><span class="stat-icon"><i class="fas fa-arrow-down"></i></span><h3 class="stat-value" id="statTotal">0</h3><p class="stat-label">Total Deposits</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-hourglass-half"></i></span><h3 class="stat-value text-warn" id="statPending">0</h3><p class="stat-label">Pending</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-sack-dollar"></i></span><h3 class="stat-value text-success" id="statVolume">₦0</h3><p class="stat-label">Total Volume</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-scale-balanced"></i></span><h3 class="stat-value" id="statAvg">₦0</h3><p class="stat-label">Avg. Deposit</p></div>
+            </section>
 
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card"><p>Total Deposits</p><h3 id="statTotal">0</h3></div>
-                <div class="stat-card"><p>Pending</p><h3 id="statPending" style="color: var(--warning);">0</h3></div>
-                <div class="stat-card"><p>Total Volume</p><h3 id="statVolume" style="color: var(--success);">₦0</h3></div>
-                <div class="stat-card"><p>Avg. Deposit</p><h3 id="statAvg">₦0</h3></div>
-            </div>
-
-            <div class="toolbar">
+            <section class="admin-toolbar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" id="depSearch" placeholder="Search user, amount, or ID...">
@@ -318,28 +90,18 @@
                         <option value="approved">Approved</option>
                         <option value="rejected">Rejected</option>
                     </select>
-                    <button class="btn-prime" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</button>
+                    <button class="btn btn-primary" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</button>
                 </div>
-            </div>
+            </section>
 
-            <div class="table-container">
-                <div class="mobile-dep-list" id="depCardList"></div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Amount</th>
-                            <th>Bank Details</th>
-                            <th>Date & Time</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+            <section class="table-wrap admin-table with-cards">
+                <div class="mobile-dep-list card-list" id="depCardList"></div>
+                <table class="table">
+                    <thead><tr><th>User</th><th>Amount</th><th>Bank Details</th><th>Date &amp; Time</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody id="depTableBody">
                     </tbody>
                 </table>
-            </div>
+            </section>
         </div>
     </main>
 
@@ -347,25 +109,25 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Deposit Verification</h3>
-                <i class="fas fa-times" onclick="closeModals()" style="cursor:pointer; padding:6px;"></i>
+                <i class="fas fa-times modal-close" onclick="closeModals()" role="button" aria-label="Close"></i>
             </div>
             <div class="modal-body" id="modalBody">
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="rejectModal">
+    <div class="modal-overlay modal-narrow" id="rejectModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Reject Deposit</h3>
-                <i class="fas fa-times" onclick="closeModals()" style="cursor:pointer; padding:6px;"></i>
+                <i class="fas fa-times modal-close" onclick="closeModals()" role="button" aria-label="Close"></i>
             </div>
             <div class="modal-body">
-                <p style="font-size: 13px; color: var(--text-muted);">Please provide a reason for rejecting this deposit. This will be sent to the user.</p>
+                <p>Please provide a reason for rejecting this deposit. This will be sent to the user.</p>
                 <textarea id="rejectionReason" class="reason-area" placeholder="e.g. Transaction receipt not found or incorrect amount."></textarea>
                 <div class="action-bar">
                     <button class="btn-modal btn-reject" onclick="confirmReject()">Confirm Rejection</button>
-                    <button class="btn-modal" style="background:#333; color:white;" onclick="closeModals()">Cancel</button>
+                    <button class="btn-modal" onclick="closeModals()">Cancel</button>
                 </div>
             </div>
         </div>
