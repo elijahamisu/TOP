@@ -17,14 +17,16 @@
     <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
     <style>
-        #logTableBody td:nth-child(1)::before { content: "Activity ID"; }
-        #logTableBody td:nth-child(2)::before { content: "Administrator"; }
-        #logTableBody td:nth-child(3)::before { content: "Action"; }
-        #logTableBody td:nth-child(4)::before { content: "Description"; }
-        #logTableBody td:nth-child(5)::before { content: "Date & Time"; }
-        #logTableBody td:nth-child(6)::before { content: "IP Address"; }
-        #logTableBody td:nth-child(7)::before { content: "Status"; }
-        #logTableBody td:nth-child(8)::before { content: "View"; }
+        @media (max-width: 719px) {
+            #logTableBody td:nth-child(1)::before { content: "Activity ID"; }
+            #logTableBody td:nth-child(2)::before { content: "Administrator"; }
+            #logTableBody td:nth-child(3)::before { content: "Action"; }
+            #logTableBody td:nth-child(4)::before { content: "Description"; }
+            #logTableBody td:nth-child(5)::before { content: "Date & Time"; }
+            #logTableBody td:nth-child(6)::before { content: "IP Address"; }
+            #logTableBody td:nth-child(7)::before { content: "Status"; }
+            #logTableBody td:nth-child(8)::before { content: "View"; }
+        }
         .page-activity-log #logTableBody td:nth-child(4) { max-width: 320px; }
         @media print {
             body * { visibility: hidden; }

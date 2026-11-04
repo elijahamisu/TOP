@@ -4,169 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Reports & Analytics | TOP Admin</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons & Charts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #060b13;
-            --secondary-bg: #0a0f1a;
-            --sidebar-bg: #0d121f;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.4);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --sidebar-width: 260px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- Sidebar --- */
-        aside {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--glass-border);
-            position: fixed; height: 100vh;
-            left: -260px; transition: 0.3s ease; z-index: 1000;
-            display: flex; flex-direction: column;
-        }
-        aside.active { left: 0; }
-
-        .nav-item {
-            padding: 12px 25px; display: flex; align-items: center; gap: 15px;
-            color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.3s;
-        }
-        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: var(--accent-color); border-left: 4px solid var(--accent-color); }
-
-        /* --- Main Content --- */
-        main { flex: 1; margin-left: 0; transition: 0.3s; width: 100%; }
-        
-        header {
-            height: 70px; background: var(--secondary-bg); border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: sticky; top: 0; z-index: 900;
-        }
-
-        .container { padding: 20px; max-width: 1600px; margin: 0 auto; }
-
-        /* --- Control Bar --- */
-        .report-controls {
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-            gap: 15px; margin-bottom: 25px; padding: 15px; background: var(--card-bg);
-            border-radius: 15px; border: 1px solid var(--glass-border);
-        }
-
-        .period-selector { display: flex; gap: 10px; align-items: center; }
-        .filter-select {
-            background: var(--secondary-bg); color: white; padding: 10px 15px;
-            border-radius: 10px; border: 1px solid var(--glass-border); font-size: 13px; outline: none;
-        }
-
-        .btn-prime { background: var(--accent-color); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-
-        /* --- Stats Grid --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px; margin-bottom: 25px;
-        }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 18px; border: 1px solid var(--glass-border); }
-        .stat-card p { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-card h3 { font-size: 20px; font-weight: 700; }
-
-        /* --- Charts Grid --- */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .chart-container { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .chart-container h4 { font-size: 14px; margin-bottom: 20px; color: var(--text-muted); text-transform: uppercase; }
-
-        /* --- Table Sections --- */
-        .table-section { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border); padding: 20px; overflow-x: auto; margin-bottom: 30px; }
-        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 14px; }
-        th { text-align: left; padding: 15px; color: var(--text-muted); border-bottom: 1px solid var(--glass-border); font-weight: 500; font-size: 12px; text-transform: uppercase; }
-        td { padding: 15px; border-bottom: 1px solid var(--glass-border); }
-
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .charts-grid { grid-template-columns: 1fr; }
-            .report-controls { flex-direction: column; align-items: stretch; }
-        }
-        @media (min-width: 1024px) { aside { left: 0; } main { margin-left: var(--sidebar-width); } }
-
-        .overlay-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-bg); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <link rel="stylesheet" href="../assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="../assets/css/top-admin.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        @media (max-width: 719px) {
+            #planTableBody td:nth-child(1)::before { content: "Plan Name"; }
+            #planTableBody td:nth-child(2)::before { content: "Investors"; }
+            #planTableBody td:nth-child(3)::before { content: "Total Capital"; }
+            #planTableBody td:nth-child(4)::before { content: "Total Payouts"; }
+            #planTableBody td:nth-child(5)::before { content: "Performance"; }
+        }
+        @media (max-width: 719px) {
+            #earnerTableBody td:nth-child(1)::before { content: "Name"; }
+            #earnerTableBody td:nth-child(2)::before { content: "Total Earned"; }
+        }
+        @media (max-width: 719px) {
+            #referrerTableBody td:nth-child(1)::before { content: "Name"; }
+            #referrerTableBody td:nth-child(2)::before { content: "Referrals"; }
+        }
+        .page-reports .admin-panel .table-wrap { box-shadow: none; }
+        @media (min-width: 1100px) { .page-reports .admin-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+        @media (min-width: 640px) and (max-width: 1099px) { .page-reports .admin-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    </style>
 </head>
-<body>
+<body class="admin-body page-reports">
 
     <div id="loader" class="overlay-loader">
+        <img class="loader-mark" src="../assets/img/logo-mark.svg" alt="">
         <div class="spinner"></div>
     </div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar">
-        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">TOP ADMIN</div>
-        <nav style="flex:1">
-            <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
-            <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i> Deposits</a>
-            <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i> Withdrawals</a>
-            <a href="investments.html" class="nav-item"><i class="fas fa-rocket"></i> Investments</a>
-            <a href="earnings.html" class="nav-item"><i class="fas fa-chart-line"></i> Earnings</a>
-            <a href="referrals.html" class="nav-item"><i class="fas fa-users-viewfinder"></i> Referrals</a>
-            <a href="giftcodes.html" class="nav-item"><i class="fas fa-gift"></i> Gift Codes</a>
-            <a href="transactions.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transactions</a>
-            <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
-            <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support Tickets</a>
-            <a href="reports.html" class="nav-item active"><i class="fas fa-chart-pie"></i> Reports</a>
+    <div class="drawer-backdrop admin-backdrop" onclick="document.getElementById('sidebar').classList.remove('active')"></div>
+
+    <aside id="sidebar" class="sidebar is-static admin-sidebar" aria-label="Admin navigation">
+        <div class="side-head">
+            <a href="index.html" class="brand" aria-label="TOP Admin home"><img src="../assets/img/logo.svg" alt="TOP"></a>
+            <span class="badge badge-solid">Admin</span>
+            <button type="button" class="icon-btn side-close" onclick="document.getElementById('sidebar').classList.remove('active')" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        </div>
+        <nav class="side-nav">
+            <p class="side-label">Overview</p>
+            <a href="index.html" class="side-link"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="reports.html" class="side-link active"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="activity-log.html" class="side-link"><i class="fas fa-history"></i> Activity Log</a>
+            <p class="side-label">People</p>
+            <a href="users.html" class="side-link"><i class="fas fa-users"></i> Users</a>
+            <a href="referrals.html" class="side-link"><i class="fas fa-user-friends"></i> Referrals</a>
+            <a href="support.html" class="side-link"><i class="fas fa-headset"></i> Support Tickets</a>
+            <a href="notifications.html" class="side-link"><i class="fas fa-bell"></i> Notifications</a>
+            <p class="side-label">Money</p>
+            <a href="deposits.html" class="side-link"><i class="fas fa-arrow-down"></i> Deposits</a>
+            <a href="withdrawals.html" class="side-link"><i class="fas fa-arrow-up"></i> Withdrawals</a>
+            <a href="transactions.html" class="side-link"><i class="fas fa-exchange-alt"></i> Transactions</a>
+            <a href="earnings.html" class="side-link"><i class="fas fa-coins"></i> Earnings</a>
+            <p class="side-label">Products</p>
+            <a href="investments.html" class="side-link"><i class="fas fa-rocket"></i> Investments</a>
+            <a href="plans.html" class="side-link"><i class="fas fa-layer-group"></i> Investment Plans</a>
+            <a href="giftcodes.html" class="side-link"><i class="fas fa-gift"></i> Gift Codes</a>
+            <p class="side-label">Account</p>
+            <a href="settings.html" class="side-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="profile.html" class="side-link"><i class="fas fa-user-circle"></i> Profile</a>
         </nav>
-        <a href="#" onclick="adminLogout()" class="nav-item" style="color: var(--danger); border-top: 1px solid var(--glass-border);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" onclick="adminLogout()" class="side-link side-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </aside>
 
-    <main>
-        <header>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <i class="fas fa-bars" style="cursor:pointer; color:var(--text-muted)" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
-                <h2 style="font-size: 18px;">Reports & Analytics</h2>
+    <main class="with-sidebar admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="icon-btn admin-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('active')" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <p class="eyebrow">TOP Admin</p>
+                    <h1>Reports &amp; Analytics</h1>
+                </div>
             </div>
-            <div id="adminProfile" style="display:flex; align-items:center; gap:10px;">
-                <span id="adminName" style="font-size: 12px; font-weight: 600;">Admin</span>
-                <div style="width:30px; height:30px; border-radius:50%; background:var(--accent-color);"></div>
+            <div class="topbar-right" id="adminProfile">
+                <span id="adminName">Admin</span>
+                <div class="avatar admin-avatar"><i class="fas fa-user-shield"></i></div>
             </div>
         </header>
-
-        <div class="container">
-            <!-- Filter Bar -->
-            <section class="report-controls">
+        <div class="container admin-content">
+            <section class="admin-panel report-controls">
                 <div class="period-selector">
-                    <span style="font-size: 12px; color: var(--text-muted);">Period:</span>
+                    <span class="muted">Period</span>
                     <select class="filter-select" id="reportPeriod" onchange="loadReportData()">
                         <option value="today">Today</option>
                         <option value="yesterday">Yesterday</option>
@@ -176,73 +106,66 @@
                         <option value="thisyear">This Year</option>
                     </select>
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-prime" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
-                    <button class="btn-prime" style="background:#333" onclick="loadReportData()"><i class="fas fa-sync"></i> Refresh</button>
+                <div class="cluster">
+                    <button class="btn btn-primary" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-outline" onclick="loadReportData()"><i class="fas fa-sync"></i> Refresh</button>
                 </div>
             </section>
 
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card"><p>Gross Deposits</p><h3 id="statDep">₦0</h3></div>
-                <div class="stat-card"><p>Total Withdrawals</p><h3 id="statWit" style="color: var(--danger);">₦0</h3></div>
-                <div class="stat-card"><p>New Investments</p><h3 id="statInv" style="color: var(--accent-color);">₦0</h3></div>
-                <div class="stat-card"><p>Earnings Paid</p><h3 id="statEar" style="color: var(--success);">₦0</h3></div>
-                <div class="stat-card"><p>Platform Users</p><h3 id="statUsers">0</h3></div>
-                <div class="stat-card"><p>Avg. Wallet</p><h3 id="statWallet">₦0</h3></div>
-            </div>
+            <section class="admin-stats">
+                <div class="stat-card is-hero"><span class="stat-icon"><i class="fas fa-arrow-down"></i></span><h3 class="stat-value" id="statDep">₦0</h3><p class="stat-label">Gross Deposits</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-arrow-up"></i></span><h3 class="stat-value text-danger" id="statWit">₦0</h3><p class="stat-label">Total Withdrawals</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-rocket"></i></span><h3 class="stat-value text-red" id="statInv">₦0</h3><p class="stat-label">New Investments</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value text-success" id="statEar">₦0</h3><p class="stat-label">Earnings Paid</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-users"></i></span><h3 class="stat-value" id="statUsers">0</h3><p class="stat-label">Platform Users</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-wallet"></i></span><h3 class="stat-value" id="statWallet">₦0</h3><p class="stat-label">Avg. Wallet</p></div>
+            </section>
 
-            <!-- Charts Section -->
-            <div class="charts-grid">
-                <div class="chart-container">
+            <section class="admin-grid-2">
+                <div class="admin-panel chart-panel">
                     <h4>Financial Performance (In vs Out)</h4>
                     <canvas id="financeChart" height="200"></canvas>
                 </div>
-                <div class="chart-container">
+                <div class="admin-panel chart-panel">
                     <h4>User Growth Trend</h4>
-                    <canvas id="growthChart" height="200"></canvas>
+                    <canvas id="growthChart" height="200" class="tint-blue"></canvas>
                 </div>
-            </div>
-
-            <!-- Top Performing Plans -->
-            <section class="table-section">
-                <div class="table-header">
-                    <h3>Top Investment Plans</h3>
-                    <i class="fas fa-medal" style="color:var(--warning)"></i>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Plan Name</th>
-                            <th>Investors</th>
-                            <th>Total Capital</th>
-                            <th>Total Payouts</th>
-                            <th>Performance</th>
-                        </tr>
-                    </thead>
-                    <tbody id="planTableBody">
-                        <!-- Dynamic -->
-                    </tbody>
-                </table>
             </section>
 
-            <!-- Top Users -->
-            <div class="charts-grid">
-                <div class="table-section">
-                    <h3>Top Earners</h3>
-                    <table style="min-width: 0;">
-                        <thead><tr><th>Name</th><th>Total Earned</th></tr></thead>
-                        <tbody id="earnerTableBody"></tbody>
+            <section class="admin-panel">
+                <div class="panel-head">
+                    <h3>Top Investment Plans</h3>
+                    <i class="fas fa-medal medal"></i>
+                </div>
+                <div class="table-wrap admin-table">
+                    <table class="table table-stack">
+                        <thead><tr><th>Plan Name</th><th>Investors</th><th>Total Capital</th><th>Total Payouts</th><th>Performance</th></tr></thead>
+                        <tbody id="planTableBody">
+                        </tbody>
                     </table>
                 </div>
-                <div class="table-section">
-                    <h3>Top Referrers</h3>
-                    <table style="min-width: 0;">
-                        <thead><tr><th>Name</th><th>Referrals</th></tr></thead>
-                        <tbody id="referrerTableBody"></tbody>
-                    </table>
+            </section>
+
+            <section class="admin-grid-2">
+                <div class="admin-panel">
+                    <div class="panel-head"><h3>Top Earners</h3></div>
+                    <div class="table-wrap admin-table">
+                        <table class="table table-stack">
+                            <thead><tr><th>Name</th><th>Total Earned</th></tr></thead>
+                            <tbody id="earnerTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+                <div class="admin-panel">
+                    <div class="panel-head"><h3>Top Referrers</h3></div>
+                    <div class="table-wrap admin-table">
+                        <table class="table table-stack">
+                            <thead><tr><th>Name</th><th>Referrals</th></tr></thead>
+                            <tbody id="referrerTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
