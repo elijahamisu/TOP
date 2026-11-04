@@ -45,14 +45,14 @@
 .info-note { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; background: var(--red-50); border: 1px solid var(--line); border-radius: var(--r-md); font-size: 13px; color: var(--ink); line-height: 1.55; }
 .info-note > i { color: var(--red); margin-top: 2px; flex-shrink: 0; }
 .info-note b { color: var(--red-deep); }
-.chip-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; margin: 0 0 var(--s-4); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.chip-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 12px; margin: 0 0 var(--s-2); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .chip-tabs::-webkit-scrollbar { display: none; }
 .filter-btn, .tab {
   flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: var(--r-pill); border: 1px solid var(--line); background: #fff;
   color: var(--ink-2); font: 600 13px/1 var(--f-body); cursor: pointer; white-space: nowrap; transition: all var(--t);
 }
 .filter-btn:hover, .tab:hover { color: var(--red); border-color: var(--line-strong); }
-.filter-btn.active, .tab.active { background: var(--grad-red); border-color: transparent; color: #fff; box-shadow: var(--shadow-red); }
+.filter-btn.active, .tab.active { background: var(--grad-red); border-color: transparent; color: #fff; box-shadow: 0 6px 14px rgba(230,0,0,.24); }
 .kv-list { display: grid; gap: 0; }
 .kv-row, .calc-row, .fee-row, .detail-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px dashed rgba(230,0,0,.14); font-size: 14px; }
 .kv-row:first-child, .calc-row:first-child, .fee-row:first-child, .detail-row:first-child { border-top: 0; }

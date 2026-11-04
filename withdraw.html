@@ -4,255 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Withdraw Funds | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 600px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        /* --- Wallet Summary Cards --- */
-        .summary-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;
-        }
-
-        .summary-card {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .summary-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .summary-card h4 { font-size: 16px; font-weight: 700; }
-
-        /* --- Notices (pending + restriction) --- */
-        .pending-notice {
-            display: none;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: var(--warning);
-            padding: 14px 16px;
-            border-radius: 16px;
-            font-size: 12.5px;
-            line-height: 1.5;
-            margin-bottom: 18px;
-        }
-        .pending-notice i { margin-right: 8px; }
-
-        .restriction-notice {
-            display: none;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--danger);
-            padding: 14px 16px;
-            border-radius: 16px;
-            font-size: 12.5px;
-            line-height: 1.5;
-            margin-bottom: 18px;
-        }
-        .restriction-notice i { margin-right: 8px; }
-
-        /* --- Withdrawal Form --- */
-        .withdraw-section {
-            background: var(--secondary-bg); padding: 25px; border-radius: 24px;
-            border: 1px solid var(--glass-border); margin-bottom: 25px;
-        }
-
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-
-        .input-box {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 14px; display: flex; align-items: center;
-            gap: 10px;
-        }
-
-        .input-box i { color: var(--accent-color); font-size: 16px; width: 20px; text-align: center; }
-        .input-box input {
-            background: transparent; border: none; color: white; width: 100%;
-            font-size: 15px; font-weight: 500; outline: none;
-        }
-        .input-box input:disabled { opacity: 0.5; }
-
-        .balance-info {
-            font-size: 12px; color: var(--text-muted); margin-top: 5px; text-align: right;
-        }
-
-        .fee-breakdown {
-            display: none;
-            background: rgba(0,0,0,0.25);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin: -6px 0 18px;
-            font-size: 12.5px;
-        }
-        .fee-row { display: flex; justify-content: space-between; padding: 4px 0; color: var(--text-muted); }
-        .fee-row-total { border-top: 1px solid var(--glass-border); margin-top: 4px; padding-top: 8px; color: var(--text-main); font-weight: 700; font-size: 14px; }
-
-        .btn-submit {
-            width: 100%; padding: 16px; background: var(--accent-color);
-            color: white; border: none; border-radius: 15px; font-weight: 700;
-            font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px;
-        }
-        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .btn-cancel {
-            width: 100%; padding: 12px; background: transparent;
-            color: var(--text-muted); border: none; font-size: 14px;
-            cursor: pointer; margin-top: 10px;
-        }
-
-        /* --- Withdrawal History --- */
-        .history-section h3 { font-size: 16px; margin-bottom: 15px; }
-        
-        .history-item {
-            background: var(--card-bg); padding: 15px; border-radius: 15px;
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
-        .hist-info h5 { font-size: 14px; margin-bottom: 4px; }
-        .hist-info p { font-size: 11px; color: var(--text-muted); }
-
-        .hist-status { text-align: right; }
-        .hist-status h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-        
-        .badge {
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase;
-        }
-        .pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .approved { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-
-        /* --- Empty State --- */
-        .empty-state {
-            text-align: center; padding: 40px 20px;
-            background: var(--card-bg); border-radius: 20px; border: 1px dashed var(--glass-border);
-        }
-        .empty-state i { font-size: 40px; color: var(--text-muted); margin-bottom: 15px; opacity: 0.5; }
-        .empty-state p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        /* --- Loading Spinner --- */
-        .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; display: none; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- Skeleton --- */
-        .skeleton { height: 60px; background: #1f2937; border-radius: 15px; animation: pulse 1.5s infinite; margin-bottom: 10px; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+@media (min-width: 960px) { .stack-col .tiles.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Withdraw</a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px; margin-right: 12px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Withdraw</h1>
+                    <p class="page-sub">Cash out to your bank account</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <main class="container app-main">
         <!-- Wallet Overview -->
-        <div class="summary-grid">
-            <div class="summary-card">
-                <p>Available Balance</p>
-                <h4 id="availableBal">₦0.00</h4>
+        <section class="grid grid-2c grid-4 fade-up">
+            <div class="stat-card is-hero">
+                <span class="stat-icon"><i class="fas fa-wallet"></i></span>
+                <h3 class="stat-value" id="availableBal">₦0.00</h3>
+                <p class="stat-label">Available Balance</p>
             </div>
-            <div class="summary-card">
-                <p>Pending Withdrawal</p>
-                <h4 id="pendingBal" style="color: var(--warning);">₦0.00</h4>
+            <div class="stat-card is-warn">
+                <span class="stat-icon"><i class="fas fa-hourglass-half"></i></span>
+                <h3 class="stat-value" id="pendingBal">₦0.00</h3>
+                <p class="stat-label">Pending Withdrawal</p>
             </div>
-            <div class="summary-card">
-                <p>Total Withdrawn</p>
-                <h4 id="totalWithdrawn">₦0.00</h4>
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-arrow-down"></i></span>
+                <h3 class="stat-value" id="totalWithdrawn">₦0.00</h3>
+                <p class="stat-label">Total Withdrawn</p>
             </div>
-            <div class="summary-card">
-                <p>Total Earnings</p>
-                <h4 id="totalEarnings">₦0.00</h4>
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-coins"></i></span>
+                <h3 class="stat-value" id="totalEarnings">₦0.00</h3>
+                <p class="stat-label">Total Earnings</p>
             </div>
-        </div>
+        </section>
 
         <!-- Hard restriction notice: locked platform-wide OR no active plan. Takes priority over pending-notice. -->
         <div class="restriction-notice" id="restrictionNotice">
@@ -264,96 +71,111 @@
             <i class="fas fa-circle-info"></i><span id="pendingNoticeText"></span>
         </div>
 
-        <!-- Withdrawal Form -->
-        <section class="withdraw-section">
-            <form id="withdrawForm">
-                <div class="form-group">
-                    <label>Withdrawal Amount (Min ₦450)</label>
-                    <div class="input-box">
-                        <i>₦</i>
-                        <input type="number" id="withdrawAmount" placeholder="450" min="450" required>
+        <div class="page-cols">
+            <!-- Withdrawal Form -->
+            <section class="card card-pad-lg withdraw-section fade-up d1">
+                <h3 class="section-card-title"><i class="fas fa-money-bill-transfer"></i> Request Withdrawal</h3>
+                <form id="withdrawForm">
+                    <div class="form-group">
+                        <label for="withdrawAmount">Withdrawal Amount (Min ₦450)</label>
+                        <div class="amount-field">
+                            <span class="cur">₦</span>
+                            <input type="number" id="withdrawAmount" class="form-control" placeholder="450" min="450" required>
+                        </div>
+                        <div class="form-hint balance-info">Withdrawable: <b class="text-red" id="withdrawableText">₦0.00</b></div>
                     </div>
-                    <div class="balance-info">Withdrawable: <span id="withdrawableText">₦0.00</span></div>
-                </div>
 
-                <div class="fee-breakdown" id="feeBreakdown">
-                    <div class="fee-row"><span>Withdrawal Charge (15%)</span><span id="feeAmountText">₦0.00</span></div>
-                    <div class="fee-row fee-row-total"><span>You'll Receive</span><span id="netAmountText">₦0.00</span></div>
-                </div>
-
-                <div class="form-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <label style="margin-bottom:0;">Bank Name</label>
-                        <span id="savedDetailsBadge" style="display:none; font-size:11px; color:var(--success);"><i class="fas fa-check-circle"></i> Using saved details</span>
+                    <div class="fee-breakdown" id="feeBreakdown">
+                        <div class="fee-row"><span>Withdrawal Charge (15%)</span><span id="feeAmountText">₦0.00</span></div>
+                        <div class="fee-row fee-row-total"><span>You'll Receive</span><span id="netAmountText">₦0.00</span></div>
                     </div>
-                    <div class="input-box">
-                        <i class="fas fa-university"></i>
-                        <input type="text" id="bankName" placeholder="e.g. GTBank" required>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Account Number</label>
-                    <div class="input-box">
-                        <i class="fas fa-hashtag"></i>
-                        <input type="number" id="accountNumber" placeholder="0123456789" required>
+                    <div class="form-group">
+                        <div class="row-between" style="margin-bottom:7px;">
+                            <label for="bankName" style="margin-bottom:0;">Bank Name</label>
+                            <span id="savedDetailsBadge" class="badge badge-success" style="display:none;"><i class="fas fa-check-circle"></i> Using saved details</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <i class="fas fa-university"></i>
+                            <input type="text" id="bankName" class="form-control" placeholder="e.g. GTBank" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Account Name</label>
-                    <div class="input-box">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="accountName" placeholder="John Doe" required>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="accountNumber">Account Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-hashtag"></i>
+                                <input type="number" id="accountNumber" class="form-control" placeholder="0123456789" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="accountName">Account Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="accountName" class="form-control" placeholder="John Doe" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="balance-info" style="text-align:left; margin-top:8px;">
-                        <a href="#" id="saveDetailsLink" style="color: var(--accent-color); text-decoration:none;"><i class="fas fa-save"></i> Save these details for next time</a>
-                        <span id="saveDetailsStatus" style="display:none; color: var(--success); margin-left:8px;"><i class="fas fa-check"></i> Saved</span>
+                    <div class="form-hint balance-info" style="margin:-4px 0 18px;">
+                        <a href="#" id="saveDetailsLink" class="text-red" style="font-weight:600;"><i class="fas fa-save"></i> Save these details for next time</a>
+                        <span id="saveDetailsStatus" class="text-success" style="display:none; margin-left:8px; font-weight:600;"><i class="fas fa-check"></i> Saved</span>
                     </div>
-                </div>
 
-                <button type="submit" class="btn-submit" id="submitBtn">
-                    <span id="btnText">Submit Withdrawal</span>
-                    <div class="spinner" id="btnSpinner"></div>
-                </button>
-                <button type="button" class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
-            </form>
-        </section>
+                    <div class="btn-stack">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitBtn">
+                            <span id="btnText">Submit Withdrawal</span>
+                            <div class="spinner" id="btnSpinner"></div>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-lg btn-block" onclick="window.location.href='dashboard.html'">Cancel</button>
+                    </div>
+                </form>
+            </section>
 
-        <!-- History -->
-        <section class="history-section">
-            <h3>Withdrawal History</h3>
-            <div id="withdrawList">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
+            <div class="stack-col">
+                <!-- History -->
+                <section class="history-section fade-up d2">
+                    <div class="section-head"><h3>Withdrawal <em>History</em></h3></div>
+                    <div id="withdrawList">
+                        <div class="skeleton"></div>
+                        <div class="skeleton"></div>
+                    </div>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="tiles cols-4 fade-up d3">
+                    <a href="wallet.html" class="tile"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+                    <a href="deposit.html" class="tile"><i class="fas fa-plus-circle"></i><span>Deposit</span></a>
+                    <a href="investment.html" class="tile"><i class="fas fa-rocket"></i><span>Invest</span></a>
+                    <a href="transactions.html" class="tile"><i class="fas fa-list"></i><span>History</span></a>
+                </section>
             </div>
-        </section>
-
-        <!-- Quick Actions -->
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;">
-            <a href="wallet.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-wallet"></i><br><span style="font-size:12px;">Wallet</span></a>
-            <a href="deposit.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-plus-circle"></i><br><span style="font-size:12px;">Deposit</span></a>
-            <a href="investment.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-rocket"></i><br><span style="font-size:12px;">Invest</span></a>
-            <a href="transactions.html" class="summary-card" style="text-decoration:none; color:white; text-align:center;"><i class="fas fa-list"></i><br><span style="font-size:12px;">History</span></a>
         </div>
     </main>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
-        <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+        <a href="wallet.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="withdraw.html" class="nav-item active">
-            <i class="fas fa-arrow-circle-down"></i><span>Withdraw</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 

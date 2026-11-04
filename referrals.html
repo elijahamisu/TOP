@@ -4,240 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Referral Program | TOP</title>
-    
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 800px; margin: 0 auto; }
-
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        .link-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 25px; border-radius: 24px; margin: 20px 0;
-            border: 1px solid var(--glass-border);
-            text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .link-card p { font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-bottom: 15px; }
-        
-        .code-display {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px; border-radius: 12px;
-            font-size: 20px; font-weight: 800;
-            letter-spacing: 2px; color: var(--gold);
-            margin-bottom: 20px; border: 1px dashed rgba(255,255,255,0.2);
-            display: inline-block; width: 100%;
-        }
-
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        
-        .btn-action {
-            background: rgba(255, 255, 255, 0.1);
-            color: white; border: none; padding: 12px;
-            border-radius: 12px; font-size: 13px; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.3s;
-        }
-        .btn-action:hover { background: rgba(255, 255, 255, 0.2); }
-        .btn-share { grid-column: span 2; background: var(--accent-color); }
-
-        .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;
-        }
-        .stat-box {
-            background: var(--card-bg); padding: 15px;
-            border-radius: 15px; border: 1px solid var(--glass-border);
-        }
-        .stat-box p { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
-        .stat-box h4 { font-size: 18px; font-weight: 700; }
-
-        .info-card {
-            background: var(--secondary-bg); padding: 20px; border-radius: 20px;
-            border: 1px solid var(--glass-border); margin-bottom: 25px;
-        }
-        .info-card h3 { font-size: 15px; margin-bottom: 15px; }
-        .step { display: flex; gap: 15px; margin-bottom: 15px; }
-        .step-icon {
-            width: 35px; height: 35px; background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-color); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .step-text h5 { font-size: 13px; margin-bottom: 2px; }
-        .step-text p { font-size: 11px; color: var(--text-muted); }
-
-        .list-section h3 { font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .list-item {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .user-info h5 { font-size: 14px; margin-bottom: 2px; }
-        .user-info p { font-size: 11px; color: var(--text-muted); }
-        .user-status { text-align: right; }
-        .user-status .badge {
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px;
-            text-transform: uppercase;
-        }
-        .registered { background: rgba(156, 163, 175, 0.1); color: #9ca3af; }
-        .active { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        .skeleton { background: #1f2937; border-radius: 15px; animation: pulse 1.5s infinite; height: 60px; margin-bottom: 10px; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-        .empty-state { text-align: center; padding: 40px 20px; }
-        .empty-state i { font-size: 50px; color: var(--text-muted); opacity: 0.2; margin-bottom: 15px; }
-
-        #toast {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: var(--success); color: white; padding: 10px 20px;
-            border-radius: 30px; font-size: 13px; font-weight: 600; display: none; z-index: 2000;
-        }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.code-display { margin: 10px 0 6px; padding: 14px 18px; border-radius: var(--r-md); background: rgba(255,255,255,.12); border: 1.5px dashed rgba(255,255,255,.55); font: 700 clamp(24px, 7vw, 32px)/1.2 var(--f-display); letter-spacing: .08em; color: #fff; text-align: center; overflow-wrap: anywhere; }
+        .link-card .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+        .link-card .action-btns .btn-share { grid-column: 1 / -1; }
+        .link-card .btn { padding: 0 12px; }
+        .how-card .step { display: flex; gap: 14px; align-items: flex-start; position: relative; }
+        .how-card .step + .step { margin-top: 18px; }
+        .how-card .step:not(:last-child)::after { content: ''; position: absolute; left: 21px; top: 48px; bottom: -14px; width: 2px; background: var(--red-100); }
+        .step-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--grad-red); color: #fff; box-shadow: var(--shadow-red); flex-shrink: 0; }
+        .step-text h5 { font: 700 15px/1.3 var(--f-body); margin: 2px 0 3px; }
+        .step-text p { font-size: 13px; color: var(--ink-2); }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <div id="toast">Copied successfully!</div>
-
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Referrals</a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px; margin-right: 12px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Referrals</h1>
+                    <p class="page-sub">Invite friends, earn rewards</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <section class="link-card">
-            <p>Invite your friends and earn rewards when they invest!</p>
-            <div class="code-display" id="refCodeDisplay">...</div>
-            <div class="action-btns">
-                <button class="btn-action" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
-                <button class="btn-action" onclick="copyLink()"><i class="fas fa-link"></i> Copy Link</button>
-                <button class="btn-action btn-share" onclick="shareLink()"><i class="fas fa-share-alt"></i> Share Referral Link</button>
-            </div>
-        </section>
+    <div id="toast">Copied successfully!</div>
 
-        <section class="stats-grid">
-            <div class="stat-box"><p>Total Referrals</p><h4 id="totalRefs">0</h4></div>
-            <div class="stat-box"><p>Active Investors</p><h4 id="activeRefs">0</h4></div>
-            <div class="stat-box"><p>Total Earnings</p><h4 id="totalRefEarnings">₦0.00</h4></div>
-            <div class="stat-box"><p>This Month</p><h4 id="monthRefEarnings">₦0.00</h4></div>
-        </section>
+    <main class="container app-main">
+        <div class="split-2">
+            <section class="card-hero link-card fade-up">
+                <div class="balance-top">
+                    <p class="balance-label">Your Referral Code</p>
+                    <span class="balance-chip"><i class="fas fa-gift"></i> Refer &amp; Earn</span>
+                </div>
+                <div class="code-display" id="refCodeDisplay">...</div>
+                <p class="hero-sub">Invite your friends and earn rewards when they invest!</p>
+                <div class="action-btns">
+                    <button class="btn btn-white" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
+                    <button class="btn btn-on-red" onclick="copyLink()"><i class="fas fa-link"></i> Copy Link</button>
+                    <button class="btn btn-dark btn-share" onclick="shareLink()"><i class="fas fa-share-alt"></i> Share Referral Link</button>
+                </div>
+            </section>
 
-        <section class="info-card">
-            <h3>How it works</h3>
-            <div class="step">
-                <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
-                <div class="step-text"><h5>Share your link</h5><p>Send your unique referral link to friends and family.</p></div>
-            </div>
-            <div class="step">
-                <div class="step-icon"><i class="fas fa-user-plus"></i></div>
-                <div class="step-text"><h5>They Register</h5><p>Referral code is detected automatically during signup.</p></div>
-            </div>
-            <div class="step">
-                <div class="step-icon"><i class="fas fa-wallet"></i></div>
-                <div class="step-text"><h5>Earn Rewards</h5><p>Receive bonuses directly into your wallet when they invest.</p></div>
-            </div>
-        </section>
+            <section class="grid grid-2c fade-up d1">
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-users"></i></span><h3 class="stat-value" id="totalRefs">0</h3><p class="stat-label">Total Referrals</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-user-check"></i></span><h3 class="stat-value" id="activeRefs">0</h3><p class="stat-label">Active Investors</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value" id="totalRefEarnings">₦0.00</h3><p class="stat-label">Total Earnings</p></div>
+                <div class="stat-card"><span class="stat-icon"><i class="fas fa-calendar"></i></span><h3 class="stat-value" id="monthRefEarnings">₦0.00</h3><p class="stat-label">This Month</p></div>
+            </section>
+        </div>
 
-        <section class="list-section">
-            <h3>My Network</h3>
-            <div id="referralList">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
-        </section>
+        <div class="page-cols">
+            <section class="list-section fade-up d2">
+                <div class="section-head"><h3>My <em>Network</em></h3></div>
+                <div id="referralList">
+                    <div class="skeleton"></div>
+                    <div class="skeleton"></div>
+                </div>
+            </section>
+
+            <section class="fade-up d3">
+                <div class="section-head"><h3>How it works</h3></div>
+                <div class="card how-card">
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
+                        <div class="step-text"><h5>Share your link</h5><p>Send your unique referral link to friends and family.</p></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="step-text"><h5>They Register</h5><p>Referral code is detected automatically during signup.</p></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="step-text"><h5>Earn Rewards</h5><p>Receive bonuses directly into your wallet when they invest.</p></div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
         <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="referrals.html" class="nav-item active">
-            <i class="fas fa-users"></i><span>Referrals</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
-        <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+        <a href="profile.html" class="nav-item active">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 

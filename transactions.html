@@ -4,258 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Transaction History | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- External Libs for Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 1000px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        /* --- Summary Horizontal Scroll --- */
-        .summary-wrapper {
-            display: flex; gap: 12px; overflow-x: auto; padding: 20px 0;
-            scrollbar-width: none;
-        }
-        .summary-wrapper::-webkit-scrollbar { display: none; }
-
-        .summary-card {
-            min-width: 140px; background: var(--card-bg); padding: 15px;
-            border-radius: 18px; border: 1px solid var(--glass-border);
-        }
-        .summary-card p { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
-        .summary-card h4 { font-size: 14px; font-weight: 700; }
-
-        /* --- Search & Filter Bar --- */
-        .tools-section {
-            background: var(--secondary-bg); padding: 15px; border-radius: 20px;
-            border: 1px solid var(--glass-border); margin-bottom: 20px;
-        }
-
-        .search-box {
-            background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 10px 15px; display: flex; align-items: center;
-            gap: 10px; margin-bottom: 15px;
-        }
-        .search-box i { color: var(--text-muted); }
-        .search-box input {
-            background: transparent; border: none; color: white; width: 100%;
-            outline: none; font-size: 14px;
-        }
-
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        select.filter-select {
-            background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
-            color: white; padding: 10px; border-radius: 10px; font-size: 12px; outline: none;
-        }
-
-        /* --- Action Buttons --- */
-        .action-btns { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-export {
-            flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--accent-color);
-            background: transparent; color: var(--accent-color); font-size: 12px;
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-export:active { background: var(--accent-color); color: white; }
-
-        /* --- Transaction List --- */
-        .tx-list-container { margin-top: 10px; }
-        
-        .tx-card {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border); margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; transition: 0.3s;
-        }
-        .tx-card:active { transform: scale(0.98); background: rgba(255,255,255,0.05); }
-
-        .tx-main h5 { font-size: 14px; margin-bottom: 4px; text-transform: capitalize; }
-        .tx-main p { font-size: 11px; color: var(--text-muted); }
-
-        .tx-end { text-align: right; }
-        .tx-end h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-        
-        .status-pill {
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 10px; text-transform: uppercase;
-        }
-        .success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .failed { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-
-        /* --- Modal --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; align-items: center;
-            justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: var(--secondary-bg); width: 100%; max-width: 400px;
-            padding: 30px; border-radius: 24px; border: 1px solid var(--glass-border);
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } }
-
-        .detail-row {
-            display: flex; justify-content: space-between; margin-bottom: 15px;
-            padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .detail-row span { font-size: 12px; color: var(--text-muted); }
-        .detail-row b { font-size: 13px; color: white; word-break: break-all; text-align: right; margin-left: 10px; }
-
-        .btn-copy {
-            background: var(--accent-color); color: white; border: none; width: 100%;
-            padding: 12px; border-radius: 12px; font-weight: 700; margin-top: 10px; cursor: pointer;
-        }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        /* --- Skeleton --- */
-        .skeleton { background: #1f2937; border-radius: 18px; animation: pulse 1.5s infinite; height: 70px; margin-bottom: 12px; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-
-        /* --- Empty State --- */
-        .empty-state { text-align: center; padding: 60px 20px; }
-        .empty-state i { font-size: 50px; color: var(--text-muted); opacity: 0.2; margin-bottom: 20px; }
-        .empty-state p { font-size: 14px; color: var(--text-muted); margin-bottom: 25px; }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.summary-wrapper { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 46%); gap: 12px; overflow-x: auto; padding: 2px 2px 16px; margin-bottom: -8px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+        .summary-wrapper::-webkit-scrollbar { display: none; }
+        .summary-wrapper > * { scroll-snap-align: start; }
+        @media (min-width: 720px) { .summary-wrapper { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; } }
+        @media (min-width: 1100px) { .summary-wrapper { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+        .action-btns { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed rgba(230,0,0,.14); flex-wrap: wrap; }
+        @media (min-width: 960px) { #txList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; } #txList > .empty-state { grid-column: 1 / -1; } }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> History</a>
-            <div class="profile-area">
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Transactions</h1>
+                    <p class="page-sub">Every naira in and out</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
+    <main class="container app-main">
         <!-- Summary Stats -->
-        <div class="summary-wrapper">
-            <div class="summary-card"><p>Total</p><h4 id="statTotal">0</h4></div>
-            <div class="summary-card"><p>Deposits</p><h4 id="statDeposit">₦0</h4></div>
-            <div class="summary-card"><p>Withdrawals</p><h4 id="statWithdraw">₦0</h4></div>
-            <div class="summary-card"><p>Investments</p><h4 id="statInvest">₦0</h4></div>
-            <div class="summary-card"><p>Earnings</p><h4 id="statEarn">₦0</h4></div>
-            <div class="summary-card"><p>Ref Bonus</p><h4 id="statRef">₦0</h4></div>
-        </div>
+        <section class="summary-wrapper fade-up">
+            <div class="stat-card is-hero"><span class="stat-icon"><i class="fas fa-receipt"></i></span><h3 class="stat-value" id="statTotal">0</h3><p class="stat-label">Total</p></div>
+            <div class="stat-card"><span class="stat-icon"><i class="fas fa-arrow-up"></i></span><h3 class="stat-value" id="statDeposit">₦0</h3><p class="stat-label">Deposits</p></div>
+            <div class="stat-card"><span class="stat-icon"><i class="fas fa-arrow-down"></i></span><h3 class="stat-value" id="statWithdraw">₦0</h3><p class="stat-label">Withdrawals</p></div>
+            <div class="stat-card"><span class="stat-icon"><i class="fas fa-chart-line"></i></span><h3 class="stat-value" id="statInvest">₦0</h3><p class="stat-label">Investments</p></div>
+            <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value" id="statEarn">₦0</h3><p class="stat-label">Earnings</p></div>
+            <div class="stat-card"><span class="stat-icon"><i class="fas fa-user-friends"></i></span><h3 class="stat-value" id="statRef">₦0</h3><p class="stat-label">Ref Bonus</p></div>
+        </section>
 
         <!-- Search & Filter -->
-        <section class="tools-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search ID, Type, or Amount...">
+        <section class="card tools-section fade-up d1">
+            <div class="tool-row">
+                <div class="input-wrapper search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search ID, Type, or Amount...">
+                </div>
+                <div class="split">
+                    <select id="typeFilter" class="form-control filter-select">
+                        <option value="all">All Types</option>
+                        <option value="deposit">Deposits</option>
+                        <option value="withdrawal">Withdrawals</option>
+                        <option value="investment">Investments</option>
+                        <option value="earning">Daily Earnings</option>
+                        <option value="referral">Referral Bonus</option>
+                        <option value="bonus">Welcome Bonus</option>
+                        <option value="gift">Gift Codes</option>
+                    </select>
+                    <select id="dateFilter" class="form-control filter-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">Last 7 Days</option>
+                        <option value="month">Last 30 Days</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-grid">
-                <select id="typeFilter" class="filter-select">
-                    <option value="all">All Types</option>
-                    <option value="deposit">Deposits</option>
-                    <option value="withdrawal">Withdrawals</option>
-                    <option value="investment">Investments</option>
-                    <option value="earning">Daily Earnings</option>
-                    <option value="referral">Referral Bonus</option>
-                    <option value="bonus">Welcome Bonus</option>
-                    <option value="gift">Gift Codes</option>
-                </select>
-                <select id="dateFilter" class="filter-select">
-                    <option value="all">All Time</option>
-                    <option value="today">Today</option>
-                    <option value="week">Last 7 Days</option>
-                    <option value="month">Last 30 Days</option>
-                    <option value="year">This Year</option>
-                </select>
+            <!-- Export Area -->
+            <div class="action-btns">
+                <span class="muted text-sm">Export your history</span>
+                <div class="cluster" style="gap:8px;">
+                    <button class="btn btn-outline btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="btn btn-primary btn-sm" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
             </div>
         </section>
 
-        <!-- Export Area -->
-        <div class="action-btns">
-            <button class="btn-export" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
-            <button class="btn-export" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
-        </div>
-
         <!-- Transaction List -->
-        <section id="txList" class="tx-list-container">
+        <section id="txList" class="tx-list-container fade-up d2">
             <div class="skeleton"></div>
             <div class="skeleton"></div>
             <div class="skeleton"></div>
@@ -264,32 +102,38 @@
 
     <!-- Details Modal -->
     <div class="modal-overlay" id="txModal">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
-                <h3 style="font-size: 18px;">Transaction Details</h3>
-                <i class="fas fa-times" onclick="closeModal()" style="cursor:pointer"></i>
+        <div class="modal-card is-form">
+            <div class="modal-head">
+                <h3>Transaction Details</h3>
+                <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
-            <div id="modalBody"></div>
-            <button class="btn-copy" id="copyIdBtn">Copy Transaction ID</button>
+            <div id="modalBody" class="kv-list"></div>
+            <button class="btn btn-primary btn-lg btn-block mt-4" id="copyIdBtn"><i class="fas fa-copy"></i> Copy Transaction ID</button>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
-        <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+        <a href="wallet.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="transactions.html" class="nav-item active">
-            <i class="fas fa-list-ul"></i><span>History</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
