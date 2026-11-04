@@ -5,6 +5,7 @@
  */
 import { supabase } from '../../config/supabase.js';
 import logoUrl from '../img/logo.svg';
+import { roleTags } from './roles.js';
 
 const SECTIONS = [
     { title: 'Main', links: [
@@ -61,6 +62,18 @@ function build() {
     `;
 
     document.body.append(backdrop, aside);
+
+    // Show the signed-in user's name and role tags (Admin / Promoter) at the top of the menu
+    (async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+        const { data: p } = await supabase.from('profiles').select('full_name, is_admin, is_promoter').eq('id', session.user.id).single();
+        if (!p) return;
+        const who = document.createElement('div');
+        who.className = 'user-sidebar-who';
+        who.innerHTML = `<p class="user-sidebar-name">${p.full_name}</p>${roleTags(p)}`;
+        aside.querySelector('.user-sidebar-head').after(who);
+    })();
 
     const open = () => { aside.classList.add('is-open'); backdrop.classList.add('is-open'); };
     const close = () => { aside.classList.remove('is-open'); backdrop.classList.remove('is-open'); };

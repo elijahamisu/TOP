@@ -136,6 +136,7 @@
     </div>
 
     <script type="module">
+        import { roleTags } from '../assets/js/roles.js';
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -163,7 +164,7 @@
         async function fetchInvestments() {
             const { data, error } = await supabase
                 .from('investments')
-                .select('*, profiles(full_name, username, email, phone)')
+                .select('*, profiles(full_name, username, email, phone, is_admin, is_promoter)')
                 .order('created_at', { ascending: false });
 
             if (data) {
@@ -217,7 +218,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
-                        <p style="font-weight:700">${i.profiles.full_name}</p>
+                        <p style="font-weight:700">${i.profiles.full_name}${roleTags(i.profiles)}</p>
                         <p style="font-size:11px; color:var(--text-muted)">@${i.profiles.username}</p>
                     </td>
                     <td>${i.plan_name}</td>
@@ -237,7 +238,7 @@
                 card.innerHTML = `
                     <div class="inv-card-top">
                         <div>
-                            <div class="inv-user-name">${i.profiles.full_name}</div>
+                            <div class="inv-user-name">${i.profiles.full_name}${roleTags(i.profiles)}</div>
                             <div class="inv-username">@${i.profiles.username}</div>
                             <div class="inv-plan-name">${i.plan_name}</div>
                         </div>

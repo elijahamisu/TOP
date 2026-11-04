@@ -19,6 +19,7 @@ create table if not exists public.profiles (
   referral_code text,
   referral_by text,
   is_admin boolean not null default false,
+  is_promoter boolean not null default false,
   avatar_url text,
   status text not null default 'active',
   saved_bank_name text,
@@ -299,6 +300,7 @@ returns trigger language plpgsql set search_path = public as $$
 begin
   if public._is_end_user() then
     if new.is_admin is distinct from old.is_admin then raise exception 'Not allowed to change is_admin'; end if;
+    if new.is_promoter is distinct from old.is_promoter then raise exception 'Not allowed to change is_promoter'; end if;
     if new.email is distinct from old.email then raise exception 'Not allowed to change email'; end if;
     if new.referral_by is distinct from old.referral_by then raise exception 'Not allowed to change referral_by'; end if;
     if new.status is distinct from old.status then raise exception 'Not allowed to change status'; end if;

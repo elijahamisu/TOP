@@ -29,6 +29,7 @@
                 <div class="hello">
                     <p>Welcome back,</p>
                     <h2 id="userName">User</h2>
+                    <div id="userRoleTags"></div>
                 </div>
             </div>
             <div class="header-actions">
@@ -191,6 +192,7 @@
     </nav>
 
     <script type="module">
+        import { roleTags } from './assets/js/roles.js';
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -240,6 +242,7 @@
             if (data) {
                 document.getElementById('userName').innerText = data.full_name;
                 document.getElementById('userAvatar').innerText = data.full_name.charAt(0);
+                document.getElementById('userRoleTags').innerHTML = roleTags(data, { size: 'sm' }).replace('role-tags', 'role-tags role-tags-hello');
                 document.getElementById('refCodeText').innerText = data.username;
                 window.userRefCode = data.username;
             }

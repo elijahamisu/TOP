@@ -688,3 +688,44 @@ select.form-control { background-image: linear-gradient(45deg, transparent 50%, 
   .user-sidebar-close, .user-menu-btn, .user-drawer-backdrop { display: none !important; }
   .app-body .bottom-nav { display: none; }
 }
+
+/* ---------- Role tags (Admin / Promoter) ---------- */
+.role-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; vertical-align: middle; margin-left: 6px; }
+.role-tag {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: Inter, system-ui, sans-serif; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  border-radius: 999px; line-height: 1; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.role-tag i { font-size: .95em; }
+.role-sm { font-size: 9px; padding: 4px 7px; }
+.role-md { font-size: 10.5px; padding: 5px 10px; }
+.role-lg { font-size: 12px; padding: 7px 13px; gap: 6px; }
+.role-admin {
+  color: #fff;
+  background: linear-gradient(135deg, #1a1a1a 0%, #3a0a0a 55%, #E60000 140%);
+  border: 1px solid rgba(230,0,0,.55);
+}
+.role-admin i { color: #FF4D4D; }
+.role-promoter {
+  color: #4a2c00;
+  background: linear-gradient(135deg, #FFE48A 0%, #F7C948 45%, #E0A100 100%);
+  border: 1px solid #D49B00;
+}
+.role-promoter i { color: #8A5A00; }
+.role-tag::after {
+  content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg); animation: role-shine 3.2s ease-in-out infinite;
+}
+@keyframes role-shine { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+@media (prefers-reduced-motion: reduce) { .role-tag::after { display: none; } }
+/* On red/hero backgrounds keep the tags readable */
+.card-hero .role-admin, .hero .role-admin { border-color: rgba(255,255,255,.5); }
+.role-tags-hello { margin: 4px 0 0; }
+.profile-role-tags { margin-top: 10px; display: flex; justify-content: center; }
+.profile-role-tags .role-tags { margin-left: 0; justify-content: center; }
+.user-sidebar-who { padding: 4px 18px 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.user-sidebar-name { font-weight: 700; font-size: 14px; margin: 0; }
+.user-sidebar-who .role-tags { margin-left: 0; }

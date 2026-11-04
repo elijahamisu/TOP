@@ -144,6 +144,7 @@
     </div>
 
     <script type="module">
+        import { roleTags } from '../assets/js/roles.js';
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -252,7 +253,7 @@
             // PostgREST returns error PGRST201 and `data` comes back null/undefined.
             const { data, error } = await supabase
                 .from('withdrawals')
-                .select('*, profiles!withdrawals_user_id_fkey(full_name, username, email, phone)')
+                .select('*, profiles!withdrawals_user_id_fkey(full_name, username, email, phone, is_admin, is_promoter)')
                 .order('created_at', { ascending: false });
 
             if (error) {
@@ -314,7 +315,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
-                        <p style="font-weight:700">${w.profiles.full_name}</p>
+                        <p style="font-weight:700">${w.profiles.full_name}${roleTags(w.profiles)}</p>
                         <p style="font-size:11px; color:var(--text-muted)">@${w.profiles.username}</p>
                     </td>
                     <td><b>₦${amount}</b></td>
@@ -334,7 +335,7 @@
                 card.innerHTML = `
                     <div class="wit-card-top">
                         <div>
-                            <div class="wit-user-name">${w.profiles.full_name}</div>
+                            <div class="wit-user-name">${w.profiles.full_name}${roleTags(w.profiles)}</div>
                             <div class="wit-username">@${w.profiles.username}</div>
                         </div>
                         <span class="status-badge status-${w.status}">${w.status}</span>

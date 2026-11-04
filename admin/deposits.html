@@ -134,6 +134,7 @@
     </div>
 
     <script type="module">
+        import { roleTags } from '../assets/js/roles.js';
         const SB_URL = import.meta.env.VITE_SUPABASE_URL;
         const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
         const supabase = window.supabase.createClient(SB_URL, SB_KEY);
@@ -173,7 +174,7 @@
         async function fetchDeposits() {
             const { data, error } = await supabase
                 .from('deposits')
-                .select('*, profiles!deposits_user_id_fkey(full_name, username, email)')
+                .select('*, profiles!deposits_user_id_fkey(full_name, username, email, is_admin, is_promoter)')
                 .order('created_at', { ascending: false });
 
             // FIX: previously any error here (RLS block, ambiguous/missing FK, etc.)
@@ -238,7 +239,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>
-                        <p style="font-weight:700">${d.profiles.full_name}</p>
+                        <p style="font-weight:700">${d.profiles.full_name}${roleTags(d.profiles)}</p>
                         <p style="font-size:11px; color:var(--text-muted)">@${d.profiles.username}</p>
                     </td>
                     <td><b>₦${amount}</b></td>
@@ -259,7 +260,7 @@
                 card.innerHTML = `
                     <div class="dep-card-top">
                         <div>
-                            <div class="dep-user-name">${d.profiles.full_name}</div>
+                            <div class="dep-user-name">${d.profiles.full_name}${roleTags(d.profiles)}</div>
                             <div class="dep-username">@${d.profiles.username}</div>
                         </div>
                         <span class="status-badge status-${d.status}">${d.status}</span>
