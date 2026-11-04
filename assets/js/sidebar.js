@@ -4,6 +4,7 @@
  * Desktop (>=960px): the sidebar is always visible and replaces the short left rail.
  */
 import { supabase } from '../../config/supabase.js';
+import logoUrl from '../img/logo.svg';
 
 const SECTIONS = [
     { title: 'Main', links: [
@@ -48,7 +49,7 @@ function build() {
     aside.setAttribute('aria-label', 'Main menu');
     aside.innerHTML = `
         <div class="user-sidebar-head">
-            <a href="dashboard.html" class="user-sidebar-brand"><img src="assets/img/logo.svg" alt="TOP"></a>
+            <a href="dashboard.html" class="user-sidebar-brand"><img src="${logoUrl}" alt="TOP"></a>
             <button type="button" class="icon-btn user-sidebar-close" aria-label="Close menu"><i class="fas fa-times"></i></button>
         </div>
         ${SECTIONS.map(sec => `

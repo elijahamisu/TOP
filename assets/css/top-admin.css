@@ -538,14 +538,14 @@ body:has(#sidebar.active) .admin-backdrop { opacity: 1; pointer-events: auto; }
 }
 
 /* ---------- admin bottom nav (5 buttons, below 1024px) ---------- */
-.admin-bottom-nav { z-index: 950; }
+.admin-bottom-nav { z-index: 950; grid-template-columns: repeat(6, 1fr); }
 .admin-bottom-nav button.nav-item { border: 0; background: none; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }
 .admin-body { padding-bottom: calc(var(--bottom-h) + env(safe-area-inset-bottom) + 12px); }
 @media (min-width: 960px) and (max-width: 1023px) {
   /* keep it a bottom bar on tablets instead of top.css's left rail */
   .admin-bottom-nav {
     top: auto; right: 0; width: auto; height: calc(var(--bottom-h) + env(safe-area-inset-bottom));
-    padding: 0 0 env(safe-area-inset-bottom); grid-template-columns: repeat(5, 1fr); grid-auto-rows: auto;
+    padding: 0 0 env(safe-area-inset-bottom); grid-template-columns: repeat(6, 1fr); grid-auto-rows: auto;
     border-top: 1px solid var(--line); border-right: 0; background: rgba(255,255,255,.96);
   }
   .admin-bottom-nav .nav-item { flex-direction: column; justify-content: center; gap: 5px; padding: 0; font-size: 10.5px; border-radius: 0; }
