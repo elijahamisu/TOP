@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Platform Settings | Monvexa Admin</title>
+    <title>Platform Settings | TOP Admin</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,9 +135,9 @@
         .spinner { width: 25px; height: 25px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
-    <link rel="stylesheet" href="../assets/css/monvexa.css">
+    <link rel="stylesheet" href="../assets/css/top.css">
     <meta name="theme-color" content="#071327">
-    <meta name="application-name" content="Monvexa">
+    <meta name="application-name" content="TOP">
 </head>
 <body>
 
@@ -147,7 +147,7 @@
 
     <!-- Sidebar -->
     <aside id="sidebar">
-        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">MONVEXA ADMIN</div>
+        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">TOP ADMIN</div>
         <nav style="flex:1">
             <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
@@ -203,8 +203,8 @@
                     <div class="settings-card">
                         <h3>General Settings</h3>
                         <div class="form-grid">
-                            <div class="form-group"><label>Platform Name</label><input type="text" name="app_name" class="form-control" placeholder="MONVEXA"></div>
-                            <div class="form-group"><label>Website URL</label><input type="url" name="app_url" class="form-control" placeholder="https://monvexa.com"></div>
+                            <div class="form-group"><label>Platform Name</label><input type="text" name="app_name" class="form-control" placeholder="TOP"></div>
+                            <div class="form-group"><label>Website URL</label><input type="url" name="app_url" class="form-control" placeholder="https://top.com"></div>
                             <div class="form-group"><label>Support Email</label><input type="email" name="support_email" class="form-control"></div>
                             <div class="form-group"><label>Telegram Community</label><input type="text" name="telegram_link" class="form-control"></div>
                         </div>
@@ -387,7 +387,7 @@
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = `monvexa_config_${Date.now()}.json`;
+            a.href = url; a.download = `top_config_${Date.now()}.json`;
             a.click();
         };
 

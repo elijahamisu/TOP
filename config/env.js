@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Environment Configuration
+ * TOP - Environment Configuration
  * This file serves as the single source of truth for all environment variables 
  * and provides global utility helpers for formatting and timezone management.
  */
@@ -17,7 +17,7 @@ const validateEnv = () => {
     const missing = requiredEnvVars.filter(key => !import.meta.env[key]);
     if (missing.length > 0) {
         console.warn(
-            `MONVEXA Warning: Missing required environment variables: ${missing.join(', ')}. ` +
+            `TOP Warning: Missing required environment variables: ${missing.join(', ')}. ` +
             `The platform may not function correctly until these are set in your .env file or Vercel dashboard.`
         );
         return false;
@@ -34,7 +34,7 @@ export const ENV = {
     SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || null,
 
     // Platform Identity
-    APP_NAME: import.meta.env.VITE_APP_NAME || 'MONVEXA',
+    APP_NAME: import.meta.env.VITE_APP_NAME || 'TOP',
     APP_URL: window.location.origin,
 
     // Financial Configuration
@@ -50,7 +50,7 @@ export const ENV = {
     TELEGRAM_CHANNEL_LINK: import.meta.env.VITE_TELEGRAM_CHANNEL_LINK || 'https://t.me/monvexachannel',
 
     // Bank Details (Kuda)
-    KUDA_NAME: import.meta.env.VITE_KUDA_ACCOUNT_NAME || 'MONVEXA ADMIN',
+    KUDA_NAME: import.meta.env.VITE_KUDA_ACCOUNT_NAME || 'TOP ADMIN',
     KUDA_NUMBER: import.meta.env.VITE_KUDA_ACCOUNT_NUMBER || '0000000000',
     KUDA_BANK: import.meta.env.VITE_KUDA_BANK_NAME || 'Kuda Bank'
 };

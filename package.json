@@ -1,9 +1,9 @@
 {
-  "name": "monvexa",
+  "name": "top",
   "version": "1.0.0",
   "private": true,
   "description": "Premium Nigerian Naira Investment Platform",
-  "author": "Monvexa Development Team",
+  "author": "TOP Development Team",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -37,12 +37,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/username/monvexa.git"
+    "url": "https://github.com/username/top.git"
   },
   "bugs": {
-    "url": "https://github.com/username/monvexa/issues"
+    "url": "https://github.com/username/top/issues"
   },
-  "homepage": "https://monvexa.vercel.app",
+  "homepage": "https://top.vercel.app",
   "browserslist": [
     ">0.5%",
     "last 2 versions",

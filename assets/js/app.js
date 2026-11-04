@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Core Application Controller
+ * TOP - Core Application Controller
  * Handles initialization, authentication guarding, global UI components,
  * and shared utility services.
  */

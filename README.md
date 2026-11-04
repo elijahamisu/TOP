@@ -1,6 +1,6 @@
-# MONVEXA
+# TOP
 
-**MONVEXA** is a premium Nigerian Naira (NGN) investment platform designed for security, speed, and simplicity. Built with a mobile-first philosophy, the platform provides a luxury dark-themed interface for users to grow their wealth through automated daily earnings and a robust referral system.
+**TOP** is a premium Nigerian Naira (NGN) investment platform designed for security, speed, and simplicity. Built with a mobile-first philosophy, the platform provides a luxury dark-themed interface for users to grow their wealth through automated daily earnings and a robust referral system.
 
 The application uses **Vite** for a high-performance frontend, **Supabase** for real-time database management and authentication, and is optimized for seamless deployment on **Vercel**.
 
@@ -40,7 +40,7 @@ The application uses **Vite** for a high-performance frontend, **Supabase** for 
 ## 📂 Project Structure
 
 ```text
-MONVEXA/
+TOP/
 ├── admin/              # Administrator portal pages (Dashboard, Users, Finance)
 ├── api/                # Modular JavaScript logic for Supabase interactions
 ├── assets/             # Global CSS styles, page-specific JS, and images
@@ -70,8 +70,8 @@ MONVEXA/
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/yourusername/monvexa.git
-    cd monvexa
+    git clone https://github.com/yourusername/top.git
+    cd top
     ```
 
 2.  **Install Dependencies:**
@@ -99,7 +99,7 @@ The project requires the following keys to be set in your `.env` file or deploym
 | :--- | :--- |
 | `VITE_SUPABASE_URL` | Your unique Supabase Project URL. |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase Public API Key. |
-| `VITE_APP_NAME` | MONVEXA |
+| `VITE_APP_NAME` | TOP |
 | `VITE_APP_TIMEZONE` | Africa/Lagos |
 | `VITE_WELCOME_BONUS` | 500 |
 | `VITE_KUDA_ACCOUNT_NUMBER`| Your registered Kuda account for deposits. |
@@ -109,7 +109,7 @@ The project requires the following keys to be set in your `.env` file or deploym
 
 ## ☁️ Supabase Setup
 
-The complete database definition is included at [`supabase/schema.sql`](supabase/schema.sql). Run this file in the Supabase SQL Editor to create the Monvexa schema, starter investment plans, platform settings, authentication trigger, transactional RPC functions, indexes, and Row Level Security policies.
+The complete database definition is included at [`supabase/schema.sql`](supabase/schema.sql). Run this file in the Supabase SQL Editor to create the TOP schema, starter investment plans, platform settings, authentication trigger, transactional RPC functions, indexes, and Row Level Security policies.
 
 Before enabling production traffic, replace the starter Kuda account details, review the welcome bonus and referral settings, and promote the first administrator by setting `profiles.is_admin = true` for the intended account.
 
@@ -159,4 +159,4 @@ This project is licensed under the **MIT License**.
 For technical assistance or business inquiries, please visit the **Support Center** within the platform or contact us via our **Telegram Community**.
 
 ---
-*© 2026 Monvexa. All Rights Reserved.*
+*© 2026 TOP. All Rights Reserved.*

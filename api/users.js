@@ -1,5 +1,5 @@
 /**
- * MONVEXA - User Management API
+ * TOP - User Management API
  * Handles User Profiles, Wallet Summaries, Dashboard Aggregation, 
  * and Administrative User Controls.
  */

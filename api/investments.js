@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Investment Management API
+ * TOP - Investment Management API
  * Handles creation, validation, daily earnings distribution, 
  * lifecycle updates, and real-time synchronization.
  */

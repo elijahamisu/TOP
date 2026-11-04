@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Notification Module
+ * TOP - Notification Module
  * Handles real-time alerts, read/unread state management, broadcast messages,
  * and global notification badge synchronization.
  */

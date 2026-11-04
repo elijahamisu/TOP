@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Investment Management | Monvexa Admin</title>
+    <title>Investment Management | TOP Admin</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -275,9 +275,9 @@
             .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         }
     </style>
-    <link rel="stylesheet" href="../assets/css/monvexa.css">
+    <link rel="stylesheet" href="../assets/css/top.css">
     <meta name="theme-color" content="#071327">
-    <meta name="application-name" content="Monvexa">
+    <meta name="application-name" content="TOP">
 </head>
 <body>
 
@@ -290,7 +290,7 @@
     <!-- Sidebar -->
     <aside id="sidebar">
         <div class="sidebar-header">
-            MONVEXA ADMIN
+            TOP ADMIN
             <i class="fas fa-times sidebar-close" onclick="closeSidebar()"></i>
         </div>
         <nav style="flex:1; overflow-y:auto;">
@@ -589,7 +589,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `monvexa_investments_${Date.now()}.csv`;
+            a.download = `top_investments_${Date.now()}.csv`;
             a.click();
         };
 

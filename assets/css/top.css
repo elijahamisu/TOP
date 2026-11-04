@@ -1,4 +1,4 @@
-/* MONVEXA visual system: midnight finance terminal with a red signal accent */
+/* TOP visual system: midnight finance terminal with a red signal accent */
 :root {
   --primary-bg: #071327 !important;
   --secondary-bg: #0b1d3a !important;
@@ -62,7 +62,7 @@ td { border-bottom-color: rgba(130,169,228,.12) !important; }
 .spinner { border-top-color: #f43f4f !important; }
 .toast { background: #0b1d3a !important; border-color: rgba(244,63,79,.35) !important; }
 .hero, .auth-wrapper { position: relative; overflow: hidden; }
-.hero::after, .auth-wrapper::after { content: 'MONVEXA'; position: absolute; right: -18px; bottom: -30px; color: rgba(255,255,255,.035); font-size: clamp(80px, 15vw, 190px); font-weight: 900; letter-spacing: -.08em; pointer-events: none; }
+.hero::after, .auth-wrapper::after { content: 'TOP'; position: absolute; right: -18px; bottom: -30px; color: rgba(255,255,255,.035); font-size: clamp(80px, 15vw, 190px); font-weight: 900; letter-spacing: -.08em; pointer-events: none; }
 .logo, .brand, .sidebar .logo { letter-spacing: .12em !important; font-weight: 900 !important; }
 .logo::before, .brand::before { content: '◆'; color: #f43f4f; margin-right: 8px; font-size: .72em; }
 @media (max-width: 768px) { body { background-size: 26px 26px, 26px 26px, auto, auto !important; } .glass-card, .card, .stat-card { border-radius: 16px !important; } }
@@ -76,19 +76,19 @@ td { border-bottom-color: rgba(130,169,228,.12) !important; }
 .plan-badge { background: rgba(244, 63, 79, .15) !important; border: 1px solid rgba(244, 63, 79, .28); }
 
 /* Explicit red brand lockup and investment plan title treatment */
-:root { --monvexa-red: #ff3048; --monvexa-red-deep: #d71935; }
+:root { --top-red: #ff3048; --top-red-deep: #d71935; }
 .logo, .brand, .site-logo, .navbar-brand, .footer-logo, .admin-logo, .sidebar .logo {
-  color: var(--monvexa-red) !important;
-  -webkit-text-fill-color: var(--monvexa-red) !important;
+  color: var(--top-red) !important;
+  -webkit-text-fill-color: var(--top-red) !important;
   text-shadow: 0 0 18px rgba(255, 48, 72, .22);
 }
 .logo::before, .brand::before, .site-logo::before, .navbar-brand::before, .footer-logo::before, .admin-logo::before, .sidebar .logo::before {
-  color: var(--monvexa-red) !important;
-  -webkit-text-fill-color: var(--monvexa-red) !important;
+  color: var(--top-red) !important;
+  -webkit-text-fill-color: var(--top-red) !important;
 }
 .plan-card h3, .plan-card h4, .plan-card .plan-title, .plan-card .plan-price, .plan-card .plan-price span, .plan-price, .plan-price span {
-  color: var(--monvexa-red) !important;
-  -webkit-text-fill-color: var(--monvexa-red) !important;
+  color: var(--top-red) !important;
+  -webkit-text-fill-color: var(--top-red) !important;
   text-shadow: 0 0 18px rgba(255, 48, 72, .26);
 }
 

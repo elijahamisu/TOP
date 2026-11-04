@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Global Utility Library
+ * TOP - Global Utility Library
  * Reusable helper functions for Validation, Formatting, UI, and Security.
  */
 
@@ -188,12 +188,12 @@ export const isOnline = () => navigator.onLine;
  */
 
 export const storage = {
-    set: (key, val) => localStorage.setItem(`monvexa_${key}`, JSON.stringify(val)),
+    set: (key, val) => localStorage.setItem(`top_${key}`, JSON.stringify(val)),
     get: (key) => {
-        const val = localStorage.getItem(`monvexa_${key}`);
+        const val = localStorage.getItem(`top_${key}`);
         try { return val ? JSON.parse(val) : null; } catch { return null; }
     },
-    remove: (key) => localStorage.removeItem(`monvexa_${key}`),
+    remove: (key) => localStorage.removeItem(`top_${key}`),
     clear: () => localStorage.clear()
 };
 

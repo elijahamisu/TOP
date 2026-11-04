@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Earnings Module
+ * TOP - Earnings Module
  * Handles daily profit tracking, performance analytics,
  * and the automated 12:00 AM (Lagos) countdown and refresh logic.
  */

@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Administrator Module
+ * TOP - Administrator Module
  * Handles high-privilege operations, financial approvals, platform analytics,
  * real-time monitoring, and system-wide settings management.
  */

@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Referral Management API
+ * TOP - Referral Management API
  * Handles referral link detection, relationship mapping, 
  * automated reward processing, and leaderboard analytics.
  */

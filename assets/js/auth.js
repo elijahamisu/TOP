@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Authentication Module
+ * TOP - Authentication Module
  * Manages User/Admin Auth flows, Referral detection, 
  * Validation, and Session synchronization.
  */
@@ -30,7 +30,7 @@ const handleReferralDetection = () => {
         refInput.value = refCode.toUpperCase();
         refInput.readOnly = true;
         refInput.style.opacity = '0.7';
-        console.log(`MONVEXA: Referral code ${refCode} detected and locked.`);
+        console.log(`TOP: Referral code ${refCode} detected and locked.`);
     }
 };
 

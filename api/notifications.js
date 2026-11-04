@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Notifications API
+ * TOP - Notifications API
  * Manages user alerts, administrative broadcasts, real-time synchronization,
  * and delivery statistics.
  */

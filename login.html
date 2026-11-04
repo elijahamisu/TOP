@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Monvexa - Premium Naira Investment</title>
+    <title>Login | TOP - Premium Naira Investment</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -320,16 +320,16 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="assets/css/monvexa.css">
+    <link rel="stylesheet" href="assets/css/top.css">
     <meta name="theme-color" content="#071327">
-    <meta name="application-name" content="Monvexa">
+    <meta name="application-name" content="TOP">
 </head>
 <body>
 
     <header>
         <div class="nav-container">
             <a href="index.html" class="logo">
-                <i class="fas fa-pie-chart"></i> MONVEXA
+                <i class="fas fa-pie-chart"></i> TOP
             </a>
             <a href="index.html" class="back-link">
                 <i class="fas fa-arrow-left"></i> Back to Home
@@ -342,7 +342,7 @@
             <div class="login-card">
                 <div class="welcome-text">
                     <h1>Welcome Back</h1>
-                    <p>Login to your MONVEXA account and continue growing your investments.</p>
+                    <p>Login to your TOP account and continue growing your investments.</p>
                 </div>
 
                 <div id="error-message"></div>
@@ -404,7 +404,7 @@
             <a href="support.html">Support</a>
             <a href="terms.html">Terms</a>
         </div>
-        <p>&copy; 2024 MONVEXA. All Rights Reserved.</p>
+        <p>&copy; 2024 TOP. All Rights Reserved.</p>
     </footer>
 
     <script type="module">
@@ -484,11 +484,11 @@
 
         function handleSuccessfulLogin() {
             // Check if Telegram popup was shown this session
-            const hasSeenPopup = sessionStorage.getItem('monvexa_telegram_shown');
+            const hasSeenPopup = sessionStorage.getItem('top_telegram_shown');
 
             if (!hasSeenPopup) {
                 telegramModal.style.display = 'flex';
-                sessionStorage.setItem('monvexa_telegram_shown', 'true');
+                sessionStorage.setItem('top_telegram_shown', 'true');
             } else {
                 window.location.href = 'dashboard.html';
             }

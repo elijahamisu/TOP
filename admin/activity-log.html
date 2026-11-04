@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Administrator Activity Log | Monvexa Admin</title>
+    <title>Administrator Activity Log | TOP Admin</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -151,9 +151,9 @@
             #modalPrintArea { position: absolute; left: 0; top: 0; width: 100%; color: black; background: white; padding: 40px; }
         }
     </style>
-    <link rel="stylesheet" href="../assets/css/monvexa.css">
+    <link rel="stylesheet" href="../assets/css/top.css">
     <meta name="theme-color" content="#071327">
-    <meta name="application-name" content="Monvexa">
+    <meta name="application-name" content="TOP">
 </head>
 <body>
 
@@ -163,7 +163,7 @@
 
     <!-- Sidebar -->
     <aside id="sidebar">
-        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">MONVEXA ADMIN</div>
+        <div style="padding: 30px 25px; font-size: 20px; font-weight: 800; color: var(--accent-color);">TOP ADMIN</div>
         <nav style="flex:1">
             <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="users.html" class="nav-item"><i class="fas fa-users"></i> Users</a>
@@ -427,7 +427,7 @@
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = `MONVEXA_Audit_Log_${Date.now()}.csv`;
+            a.href = url; a.download = `TOP_Audit_Log_${Date.now()}.csv`;
             a.click();
         };
 
@@ -435,7 +435,7 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             doc.setFontSize(16);
-            doc.text("MONVEXA - Administrator Audit Log", 14, 20);
+            doc.text("TOP - Administrator Audit Log", 14, 20);
             doc.setFontSize(10);
             doc.text(`Generated on ${new Date().toLocaleString()}`, 14, 28);
             
@@ -452,7 +452,7 @@
                 body: rows,
             });
 
-            doc.save(`MONVEXA_Audit_${Date.now()}.pdf`);
+            doc.save(`TOP_Audit_${Date.now()}.pdf`);
         };
 
         function setupEventListeners() {

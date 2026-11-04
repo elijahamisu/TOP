@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Daily Earnings API
+ * TOP - Daily Earnings API
  * Manages the automated 12:00 AM (Africa/Lagos) profit distribution,
  * validation, scheduler monitoring, and earnings history.
  */

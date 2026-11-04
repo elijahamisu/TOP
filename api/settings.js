@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Platform Settings API
+ * TOP - Platform Settings API
  * Manages global configurations, maintenance mode, financial limits,
  * and system-wide security policies.
  */
@@ -107,7 +107,7 @@ export const isMaintenanceMode = async () => {
  */
 export const resetPlatformSettings = async () => {
     const defaults = {
-        app_name: "MONVEXA",
+        app_name: "TOP",
         welcome_bonus_amount: 450,
         referral_percent: 20,
         min_withdrawal_amount: 450,

@@ -1,5 +1,5 @@
 /**
- * MONVEXA - Authentication API
+ * TOP - Authentication API
  * Handles User/Admin Registration, Login, Session Management, and Role Verification.
  * Integrates with Supabase Auth and Database.
  */
@@ -70,7 +70,7 @@ export const registerUser = async ({ email, password, fullName, username, phone,
             // 6. Create First Notification
             await supabase.from('notifications').insert([{
                 user_id: user.id,
-                title: 'Welcome to MONVEXA!',
+                title: 'Welcome to TOP!',
                 message: `Congratulations ${fullName}! Your account is active and ₦${BONUS_AMOUNT} has been credited to your wallet as a welcome bonus.`,
                 type: 'welcome'
             }]);
