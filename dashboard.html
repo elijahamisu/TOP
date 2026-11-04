@@ -4,535 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard | TOP - Premium Investment</title>
-    
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.5);
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 20px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            padding: 20px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            border: 2px solid var(--glass-border);
-            text-transform: uppercase;
-        }
-
-        .welcome-msg h2 {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .welcome-msg p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .icon-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .notification-dot {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 8px;
-            height: 8px;
-            background: var(--danger);
-            border-radius: 50%;
-            display: none;
-        }
-
-        .wallet-card {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            padding: 25px;
-            border-radius: 24px;
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .wallet-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-        }
-
-        .balance-label {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 5px;
-        }
-
-        .balance-amount {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
-
-        .wallet-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-        }
-
-        .w-stat h4 {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .w-stat p {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 25px 0;
-        }
-
-        .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: white;
-        }
-
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .action-icon:active {
-            transform: scale(0.9);
-            background: var(--accent-color);
-        }
-
-        .action-item span {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 18px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .stat-card i {
-            color: var(--accent-color);
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .stat-card h3 {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .stat-card p {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .section-header h3 {
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .view-all {
-            font-size: 13px;
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .investment-card {
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .inv-info h4 {
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .inv-info p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .inv-badge {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .promo-card {
-            background: linear-gradient(45deg, #0f172a, #1e293b);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid var(--accent-color);
-            margin: 25px 0;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .promo-card i {
-            font-size: 30px;
-            color: var(--gold);
-        }
-
-        .promo-content h4 {
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-
-        .promo-content p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(10px);
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border);
-            z-index: 1000;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item.active {
-            color: var(--accent-color);
-        }
-
-        .nav-item i {
-            font-size: 20px;
-        }
-
-        @media (min-width: 768px) {
-            body { padding-bottom: 40px; }
-            .bottom-nav { 
-                top: 0; left: 0; 
-                width: 250px; height: 100vh; 
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(5, 60px);
-                padding-top: 100px;
-                justify-content: start;
-            }
-            main { margin-left: 270px; }
-            .stats-grid { grid-template-columns: repeat(4, 1fr); }
-            .quick-actions { grid-template-columns: repeat(5, 130px); }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-state i {
-            font-size: 40px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        .dash-hero .balance-amount { margin-bottom: 18px; }
+        .dash-side { display: grid; gap: 16px; }
+        .qa-card { padding: 18px 12px; }
+        .ref-code { font-family: var(--f-display); font-size: 17px; color: var(--ink); letter-spacing: .02em; }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="user-info">
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="user-chip">
                 <div class="avatar" id="userAvatar">U</div>
-                <div class="welcome-msg">
+                <div class="hello">
                     <p>Welcome back,</p>
                     <h2 id="userName">User</h2>
                 </div>
             </div>
             <div class="header-actions">
-                <a href="notifications.html" class="icon-btn">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications">
                     <i class="fas fa-bell"></i>
                     <div class="notification-dot" id="notifDot"></div>
                 </a>
-                <button class="icon-btn" onclick="logout()">
+                <button class="icon-btn" onclick="logout()" aria-label="Log out">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Wallet Balance Card -->
-        <section class="wallet-card">
-            <p class="balance-label">Total Wallet Balance</p>
-            <h1 class="balance-amount" id="walletBalance">₦0.00</h1>
-            <div class="wallet-stats">
-                <div class="w-stat">
-                    <h4>Available</h4>
-                    <p id="availBalance">₦0.00</p>
+    <main class="container app-main">
+        <div class="split-2">
+            <!-- Wallet Balance Card -->
+            <section class="card-hero dash-hero fade-up">
+                <div class="balance-top">
+                    <p class="balance-label">Total Wallet Balance</p>
+                    <span class="balance-chip"><i class="fas fa-shield-halved"></i> NGN Wallet</span>
                 </div>
-                <div class="w-stat">
-                    <h4>Total Earnings</h4>
-                    <p id="totalEarnings">₦0.00</p>
+                <h1 class="balance-amount" id="walletBalance">&#8358;0.00</h1>
+                <div class="balance-split">
+                    <div class="split-item">
+                        <h4>Available</h4>
+                        <p id="availBalance">&#8358;0.00</p>
+                    </div>
+                    <div class="split-item">
+                        <h4>Total Earnings</h4>
+                        <p id="totalEarnings">&#8358;0.00</p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Quick Actions -->
-        <section class="quick-actions">
-            <a href="investment.html" class="action-item">
-                <div class="action-icon" style="color: #60a5fa;"><i class="fas fa-rocket"></i></div>
-                <span>Invest</span>
-            </a>
-            <a href="deposit.html" class="action-item">
-                <div class="action-icon" style="color: #34d399;"><i class="fas fa-plus-circle"></i></div>
-                <span>Deposit</span>
-            </a>
-            <a href="withdraw.html" class="action-item">
-                <div class="action-icon" style="color: #f87171;"><i class="fas fa-arrow-circle-down"></i></div>
-                <span>Withdraw</span>
-            </a>
-            <a href="giftcode.html" class="action-item">
-                <div class="action-icon" style="color: #fbbf24;"><i class="fas fa-gift"></i></div>
-                <span>Gift Code</span>
-            </a>
-            <a href="referrals.html" class="action-item">
-                <div class="action-icon" style="color: #a78bfa;"><i class="fas fa-user-friends"></i></div>
-                <span>Referral</span>
-            </a>
-        </section>
+            <div class="dash-side">
+                <!-- Quick Actions -->
+                <section class="card qa-card fade-up d1">
+                    <div class="quick-actions">
+                        <a href="investment.html" class="action-item">
+                            <div class="action-icon"><i class="fas fa-rocket"></i></div>
+                            <span>Invest</span>
+                        </a>
+                        <a href="deposit.html" class="action-item">
+                            <div class="action-icon"><i class="fas fa-plus"></i></div>
+                            <span>Deposit</span>
+                        </a>
+                        <a href="withdraw.html" class="action-item">
+                            <div class="action-icon"><i class="fas fa-arrow-down"></i></div>
+                            <span>Withdraw</span>
+                        </a>
+                        <a href="giftcode.html" class="action-item">
+                            <div class="action-icon"><i class="fas fa-gift"></i></div>
+                            <span>Gift Code</span>
+                        </a>
+                        <a href="referrals.html" class="action-item">
+                            <div class="action-icon"><i class="fas fa-user-friends"></i></div>
+                            <span>Referral</span>
+                        </a>
+                    </div>
+                </section>
 
-        <!-- Daily Earnings Timer Card -->
-        <div class="promo-card" style="border: 1px solid #10b981; background: rgba(16, 185, 129, 0.05);">
-            <i class="fas fa-calendar-check" style="color: #10b981;"></i>
-            <div class="promo-content">
-                <h4>Daily Profit Credit</h4>
-                <p>Next earnings at <b>12:00 AM (Lagos)</b></p>
-                <p id="todayEarnings" style="color: #10b981; font-weight: 700; margin-top: 4px;">Earned Today: ₦0.00</p>
+                <!-- Daily Earnings Timer Card -->
+                <div class="promo-card fade-up d2">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="promo-content">
+                        <h4>Daily Profit Credit</h4>
+                        <p>Next earnings at <b>12:00 AM (Lagos)</b></p>
+                        <p id="todayEarnings" class="text-success" style="font-weight: 700; margin-top: 4px;">Earned Today: &#8358;0.00</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Statistics -->
-        <section class="stats-grid">
+        <section class="grid grid-2c grid-4 fade-up d2">
             <div class="stat-card">
-                <i class="fas fa-chart-line"></i>
-                <h3 id="activeInvestments">0</h3>
-                <p>Active Plans</p>
+                <span class="stat-icon"><i class="fas fa-chart-line"></i></span>
+                <h3 class="stat-value" id="activeInvestments">0</h3>
+                <p class="stat-label">Active Plans</p>
             </div>
             <div class="stat-card">
-                <i class="fas fa-user-friends"></i>
-                <h3 id="totalReferrals">0</h3>
-                <p>Total Referrals</p>
+                <span class="stat-icon"><i class="fas fa-user-friends"></i></span>
+                <h3 class="stat-value" id="totalReferrals">0</h3>
+                <p class="stat-label">Total Referrals</p>
             </div>
             <div class="stat-card">
-                <i class="fas fa-wallet"></i>
-                <h3 id="referralEarnings">₦0</h3>
-                <p>Ref. Bonus</p>
+                <span class="stat-icon"><i class="fas fa-wallet"></i></span>
+                <h3 class="stat-value" id="referralEarnings">&#8358;0</h3>
+                <p class="stat-label">Ref. Bonus</p>
             </div>
             <div class="stat-card">
-                <i class="fas fa-history"></i>
-                <h3 id="compInvestments">0</h3>
-                <p>Completed</p>
+                <span class="stat-icon"><i class="fas fa-history"></i></span>
+                <h3 class="stat-value" id="compInvestments">0</h3>
+                <p class="stat-label">Completed</p>
             </div>
         </section>
 
-        <!-- Active Investments Section -->
-        <section>
-            <div class="section-header">
-                <h3>My Active Plans</h3>
-                <a href="investment.html" class="view-all">See All</a>
-            </div>
-            <div id="investmentList">
-                <div class="investment-card skeleton" style="height: 70px;"></div>
-            </div>
-        </section>
+        <div class="split-2" style="margin-top:24px;">
+            <!-- Active Investments Section -->
+            <section>
+                <div class="section-head">
+                    <h3>My Active Plans</h3>
+                    <a href="investment.html" class="view-all">See All</a>
+                </div>
+                <div id="investmentList">
+                    <div class="investment-card skeleton" style="height: 70px;"></div>
+                </div>
+            </section>
+
+            <!-- Recent Transactions -->
+            <section>
+                <div class="section-head">
+                    <h3>Recent Transactions</h3>
+                    <a href="transactions.html" class="view-all">View History</a>
+                </div>
+                <div id="transactionList">
+                    <div class="investment-card skeleton" style="height: 60px;"></div>
+                    <div class="investment-card skeleton" style="height: 60px;"></div>
+                </div>
+            </section>
+        </div>
 
         <!-- Referral Card -->
-        <section class="promo-card">
+        <section class="promo-card" style="margin-top:24px;">
             <i class="fas fa-share-alt"></i>
-            <div class="promo-content" style="flex: 1;">
-                <h4>Refer & Earn</h4>
-                <p>Referral Code: <b id="refCodeText">...</b></p>
+            <div class="promo-content">
+                <h4>Refer &amp; Earn</h4>
+                <p>Referral Code: <b id="refCodeText" class="ref-code">...</b></p>
             </div>
-            <button onclick="copyRef()" class="icon-btn" style="background: var(--accent-color); border: none;">
+            <button onclick="copyRef()" class="icon-btn icon-btn-red" aria-label="Copy referral code">
                 <i class="fas fa-copy"></i>
             </button>
         </section>
-
-        <!-- Recent Transactions -->
-        <section style="margin-top: 30px;">
-            <div class="section-header">
-                <h3>Recent Transactions</h3>
-                <a href="transactions.html" class="view-all">View History</a>
-            </div>
-            <div id="transactionList">
-                <div class="investment-card skeleton" style="height: 60px;"></div>
-                <div class="investment-card skeleton" style="height: 60px;"></div>
-            </div>
-        </section>
     </main>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item active">
             <i class="fas fa-th-large"></i>
             <span>Home</span>

@@ -5,532 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOP - Premium Naira Investment Platform</title>
     <meta name="description" content="Invest and earn daily profits in Naira with TOP. Join thousands of investors today.">
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="assets/css/top.css">
+    <meta name="theme-color" content="#E60000">
+    <meta name="application-name" content="TOP">
     <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --card-bg: #1f2937;
-            --gold: #f59e0b;
-            --success: #10b981;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* --- Global Components --- */
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        /* --- Navigation --- */
-        nav {
-            height: 80px;
-            display: flex;
-            align-items: center;
-            background: rgba(10, 14, 23, 0.95);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--accent-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            padding: 160px 0 80px;
-            text-align: center;
-            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent);
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #fff, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 40px;
-        }
-
-        .hero-btns {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        /* --- Statistics --- */
-        .stats {
-            padding: 60px 0;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .stat-card h3 {
-            font-size: 28px;
-            color: var(--accent-color);
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        /* --- Why Choose Us --- */
-        .why-us {
-            padding: 80px 0;
-            background: var(--secondary-bg);
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-title h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .section-title p {
-            color: var(--text-muted);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            background: var(--primary-bg);
-            padding: 40px;
-            border-radius: 20px;
-            transition: var(--transition);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border: 1px solid var(--accent-color);
-        }
-
-        .feature-card i {
-            font-size: 40px;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-        }
-
-        /* --- Investment Process --- */
-        .process {
-            padding: 80px 0;
-        }
-
-        .process-steps {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .step {
-            flex: 1;
-            min-width: 200px;
-            text-align: center;
-            position: relative;
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        /* --- Plans Preview --- */
-        .plans {
-            padding: 80px 0;
-            background: var(--secondary-bg);
-        }
-
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .plan-card {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            text-align: center;
-        }
-
-        .plan-card h3 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--gold);
-        }
-
-        .plan-price {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .plan-price span {
-            font-size: 32px;
-            font-weight: 800;
-        }
-
-        .plan-details {
-            margin-bottom: 30px;
-            list-style: none;
-            color: var(--text-muted);
-            font-size: 15px;
-        }
-
-        .plan-details li {
-            margin-bottom: 10px;
-        }
-
-        /* --- Welcome Bonus & Gift Code --- */
-        .promo-section {
-            padding: 80px 0;
-        }
-
-        .promo-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0a0e17 100%);
-            padding: 60px;
-            border-radius: 30px;
-            text-align: center;
-            border: 1px solid var(--accent-color);
-            margin-bottom: 40px;
-        }
-
-        /* --- FAQ --- */
-        .faq {
-            padding: 80px 0;
-        }
-
-        .faq-item {
-            background: var(--card-bg);
-            margin-bottom: 15px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-
-        .faq-answer {
-            padding: 0 20px;
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .faq-item.active .faq-answer {
-            padding: 0 20px 20px;
-            max-height: 200px;
-        }
-
-        /* --- Footer --- */
-        footer {
-            background: var(--secondary-bg);
-            padding: 80px 0 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 60px;
-        }
-
-        .footer-col h4 {
-            margin-bottom: 25px;
-            font-size: 18px;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-col ul li a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-col ul li a:hover {
-            color: var(--accent-color);
-            padding-left: 5px;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        /* --- Mobile Responsive --- */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .promo-card {
-                padding: 40px 20px;
-            }
-
-            .process-steps {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .step {
-                margin-bottom: 40px;
-            }
+        .hero-wrap { position: relative; overflow: hidden; padding: 36px 0 56px; background: radial-gradient(90% 70% at 85% 0%, #FFE9E9 0%, rgba(255,245,245,0) 60%), #fff; }
+        .hero-grid { display: grid; gap: 36px; align-items: center; }
+        .hero-copy .lead { margin: 18px 0 28px; max-width: 520px; }
+        .hero-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-btns .btn { flex: 1 1 160px; }
+        .hero-trust { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 26px; font-size: 13px; color: var(--ink-2); }
+        .hero-trust i { color: var(--red); margin-right: 6px; }
+        .flyer { max-width: 440px; width: 100%; justify-self: center; }
+        .flyer .big { font: 700 clamp(44px, 13vw, 64px)/1 var(--f-display); margin: 10px 0 4px; }
+        .flyer-rows { display: grid; gap: 10px; margin-top: 22px; }
+        .flyer-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); font-size: 13.5px; }
+        .flyer-row b { font-size: 15px; }
+        .section-title { text-align: center; max-width: 620px; margin: 0 auto 32px; }
+        .section-title .eyebrow { justify-content: center; }
+        .section-title h2 { font-size: clamp(28px, 6vw, 40px); margin: 10px 0 10px; }
+        .section-title p { color: var(--ink-2); }
+        .steps-grid { display: grid; gap: 12px; }
+        .steps-grid .step-card { display: flex; gap: 14px; align-items: flex-start; }
+        .steps-grid .step-no { margin: 0; flex-shrink: 0; }
+        @media (min-width: 640px) { .steps-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 960px) {
+            .hero-wrap { padding: 72px 0 96px; }
+            .hero-grid { grid-template-columns: 1.15fr .85fr; gap: 56px; }
+            .hero-btns .btn { flex: 0 0 auto; }
+            .steps-grid { grid-template-columns: repeat(5, 1fr); }
+            .steps-grid .step-card { display: block; }
+            .steps-grid .step-no { margin-bottom: 12px; }
         }
     </style>
-    <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
-    <meta name="application-name" content="TOP">
 </head>
 <body>
 
     <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-pie-chart"></i> TOP
-            </a>
-            <div class="nav-links">
+    <nav class="topnav">
+        <div class="container topnav-inner">
+            <a href="index.html" class="brand" aria-label="TOP home"><img src="assets/img/logo.svg" alt="TOP"></a>
+            <div class="topnav-links">
                 <a href="index.html">Home</a>
                 <a href="plans.html">Investment Plans</a>
                 <a href="#about">About</a>
                 <a href="#faq">FAQ</a>
                 <a href="support.html">Contact</a>
-                <a href="login.html" class="btn-outline" style="padding: 8px 20px;">Login</a>
-                <a href="register.html" class="btn-primary" style="padding: 8px 20px;">Register</a>
             </div>
-            <div class="mobile-menu-btn" id="mobileMenuTrigger">
-                <i class="fas fa-bars"></i>
+            <div class="topnav-cta">
+                <a href="login.html" class="btn btn-ghost btn-sm">Login</a>
+                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+                <details class="menu-drop">
+                    <summary class="icon-btn" aria-label="Menu"><i class="fas fa-bars"></i></summary>
+                    <div class="menu-panel">
+                        <a href="index.html">Home</a>
+                        <a href="plans.html">Investment Plans</a>
+                        <a href="#about">About</a>
+                        <a href="#faq">FAQ</a>
+                        <a href="support.html">Contact</a>
+                    </div>
+                </details>
+                <div class="mobile-menu-btn hidden" id="mobileMenuTrigger" aria-hidden="true"></div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Invest Smarter with TOP</h1>
-            <p>The most reliable and premium Naira investment platform. Earn daily profits and grow your wealth with ease.</p>
-            <div class="hero-btns">
-                <a href="register.html" class="btn btn-primary">Start Investing</a>
-                <a href="login.html" class="btn btn-outline">Login to Dashboard</a>
+    <section class="hero-wrap">
+        <div class="container hero-grid">
+            <div class="hero-copy fade-up">
+                <span class="eyebrow">Premium Naira Investment</span>
+                <h1 class="display" style="margin-top:14px;">Invest Smarter <br>with <em>TOP</em></h1>
+                <p class="lead">The most reliable and premium Naira investment platform. Earn daily profits and grow your wealth with ease.</p>
+                <div class="hero-btns">
+                    <a href="register.html" class="btn btn-primary btn-lg">Start Investing <i class="fas fa-arrow-right"></i></a>
+                    <a href="login.html" class="btn btn-outline btn-lg">Login to Dashboard</a>
+                </div>
+                <div class="hero-trust">
+                    <span><i class="fas fa-shield-halved"></i>Secure wallet</span>
+                    <span><i class="fas fa-clock"></i>Daily payouts at midnight</span>
+                    <span><i class="fas fa-gift"></i>&#8358;450 welcome bonus</span>
+                </div>
+            </div>
+            <div class="card-hero flyer fade-up d2">
+                <div class="row-between">
+                    <span class="badge badge-white"><i class="fas fa-crown"></i> Executive Plan</span>
+                    <img src="assets/img/logo-mark.svg" alt="" style="width:40px;height:40px;border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.35);">
+                </div>
+                <p class="balance-label" style="margin-top:22px;">Daily profit up to</p>
+                <div class="big">12%</div>
+                <p class="muted" style="font-size:14px;">Credited to your wallet every day at 12:00 AM (Lagos).</p>
+                <div class="flyer-rows">
+                    <div class="flyer-row"><span>Starter Plan</span><b>5% daily</b></div>
+                    <div class="flyer-row"><span>Professional Plan</span><b>8% daily</b></div>
+                    <div class="flyer-row"><span>Executive Plan</span><b>12% daily</b></div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Statistics -->
-    <section class="stats">
+    <section class="stats" style="margin-top:-28px; position:relative;">
         <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3 id="stat-investors">15,400+</h3>
-                    <p>Total Investors</p>
+            <div class="grid grid-2c grid-4">
+                <div class="stat-card fade-up d1">
+                    <span class="stat-icon"><i class="fas fa-users"></i></span>
+                    <h3 class="stat-value" id="stat-investors">15,400+</h3>
+                    <p class="stat-label">Total Investors</p>
                 </div>
-                <div class="stat-card">
-                    <h3 id="stat-investments">₦850M+</h3>
-                    <p>Total Investments</p>
+                <div class="stat-card fade-up d2">
+                    <span class="stat-icon"><i class="fas fa-chart-pie"></i></span>
+                    <h3 class="stat-value" id="stat-investments">&#8358;850M+</h3>
+                    <p class="stat-label">Total Investments</p>
                 </div>
-                <div class="stat-card">
-                    <h3 id="stat-withdrawals">₦420M+</h3>
-                    <p>Total Withdrawals</p>
+                <div class="stat-card fade-up d3">
+                    <span class="stat-icon"><i class="fas fa-money-bill-transfer"></i></span>
+                    <h3 class="stat-value" id="stat-withdrawals">&#8358;420M+</h3>
+                    <p class="stat-label">Total Withdrawals</p>
                 </div>
-                <div class="stat-card">
-                    <h3 id="stat-earnings">₦120M+</h3>
-                    <p>Total Earnings Paid</p>
+                <div class="stat-card is-hero fade-up d4">
+                    <span class="stat-icon"><i class="fas fa-sack-dollar"></i></span>
+                    <h3 class="stat-value" id="stat-earnings">&#8358;120M+</h3>
+                    <p class="stat-label">Total Earnings Paid</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Why Choose Us -->
-    <section class="why-us" id="about">
+    <section class="section" id="about">
         <div class="container">
             <div class="section-title">
-                <h2>Why Choose TOP?</h2>
+                <span class="eyebrow">Why TOP</span>
+                <h2>Why Choose <em class="accent">TOP</em>?</h2>
                 <p>We provide a secure and transparent way to grow your money.</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card">
+            <div class="grid grid-2 grid-4">
+                <div class="feature-card lift">
                     <i class="fas fa-shield-alt"></i>
                     <h3>Maximum Security</h3>
                     <p>Your funds and data are protected with industry-leading encryption.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card lift">
                     <i class="fas fa-bolt"></i>
                     <h3>Fast Withdrawals</h3>
                     <p>Get your earnings sent to your bank account quickly and without delay.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card lift">
                     <i class="fas fa-chart-line"></i>
                     <h3>Daily Earnings</h3>
                     <p>Profits are calculated and added to your wallet every single day at midnight.</p>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card lift">
                     <i class="fas fa-user-check"></i>
                     <h3>Trusted Platform</h3>
                     <p>Built by professionals to ensure a seamless investment experience.</p>
@@ -540,178 +171,155 @@
     </section>
 
     <!-- Investment Process -->
-    <section class="process">
+    <section class="section section-tint">
         <div class="container">
             <div class="section-title">
-                <h2>How It Works</h2>
+                <span class="eyebrow">How it works</span>
+                <h2>Five steps to <em class="accent">growth</em></h2>
                 <p>Start your journey to financial freedom in 5 simple steps.</p>
             </div>
-            <div class="process-steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h4>Register</h4>
-                    <p>Create your free account in seconds.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h4>Deposit</h4>
-                    <p>Fund your wallet using <b>Kuda Bank</b>.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h4>Invest</h4>
-                    <p>Choose a plan that fits your budget.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h4>Earn</h4>
-                    <p>Receive daily profits automatically.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <h4>Withdraw</h4>
-                    <p>Cash out your profits anytime.</p>
-                </div>
+            <div class="steps-grid">
+                <div class="step-card"><span class="step-no">1</span><div><h4>Register</h4><p>Create your free account in seconds.</p></div></div>
+                <div class="step-card"><span class="step-no">2</span><div><h4>Deposit</h4><p>Fund your wallet using <b>Kuda Bank</b>.</p></div></div>
+                <div class="step-card"><span class="step-no">3</span><div><h4>Invest</h4><p>Choose a plan that fits your budget.</p></div></div>
+                <div class="step-card"><span class="step-no">4</span><div><h4>Earn</h4><p>Receive daily profits automatically.</p></div></div>
+                <div class="step-card"><span class="step-no">5</span><div><h4>Withdraw</h4><p>Cash out your profits anytime.</p></div></div>
             </div>
         </div>
     </section>
 
     <!-- Plans Preview -->
-    <section class="plans">
+    <section class="section">
         <div class="container">
             <div class="section-title">
+                <span class="eyebrow">Plans</span>
                 <h2>Investment Plans</h2>
                 <p>Simple and profitable plans designed for everyone.</p>
             </div>
-            <div class="plans-grid">
-                <!-- Basic Plan -->
-                <div class="plan-card">
-                    <h3>Starter Plan</h3>
-                    <div class="plan-price">
-                        <span>₦5,000</span>
-                    </div>
-                    <ul class="plan-details">
+            <div class="grid grid-3">
+                <div class="plan-card lift">
+                    <span class="plan-name">Starter Plan</span>
+                    <div class="plan-price">&#8358;5,000</div>
+                    <span class="plan-price-sub">Minimum investment</span>
+                    <ul class="plan-list">
                         <li>Daily Profit: 5%</li>
                         <li>Duration: 30 Days</li>
-                        <li>Max Investment: ₦20,000</li>
+                        <li>Max Investment: &#8358;20,000</li>
                         <li>24/7 Support</li>
                     </ul>
-                    <a href="investment.html" class="btn btn-primary w-full">Invest Now</a>
+                    <a href="investment.html" class="btn btn-outline btn-block">Invest Now</a>
                 </div>
-                <!-- Premium Plan -->
-                <div class="plan-card" style="border: 1px solid var(--gold);">
-                    <h3 style="color: var(--accent-color);">Professional Plan</h3>
-                    <div class="plan-price">
-                        <span>₦50,000</span>
-                    </div>
-                    <ul class="plan-details">
+                <div class="plan-card is-featured">
+                    <span class="plan-ribbon">Most Popular</span>
+                    <span class="plan-name">Professional Plan</span>
+                    <div class="plan-price">&#8358;50,000</div>
+                    <span class="plan-price-sub">Minimum investment</span>
+                    <ul class="plan-list">
                         <li>Daily Profit: 8%</li>
                         <li>Duration: 45 Days</li>
-                        <li>Max Investment: ₦200,000</li>
+                        <li>Max Investment: &#8358;200,000</li>
                         <li>Priority Support</li>
                     </ul>
-                    <a href="investment.html" class="btn btn-primary">Invest Now</a>
+                    <a href="investment.html" class="btn btn-white btn-block">Invest Now</a>
                 </div>
-                <!-- Ultimate Plan -->
-                <div class="plan-card">
-                    <h3>Executive Plan</h3>
-                    <div class="plan-price">
-                        <span>₦500,000</span>
-                    </div>
-                    <ul class="plan-details">
+                <div class="plan-card lift">
+                    <span class="plan-name">Executive Plan</span>
+                    <div class="plan-price">&#8358;500,000</div>
+                    <span class="plan-price-sub">Minimum investment</span>
+                    <ul class="plan-list">
                         <li>Daily Profit: 12%</li>
                         <li>Duration: 60 Days</li>
                         <li>Max Investment: Unlimited</li>
                         <li>Account Manager</li>
                     </ul>
-                    <a href="investment.html" class="btn btn-primary">Invest Now</a>
+                    <a href="investment.html" class="btn btn-outline btn-block">Invest Now</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Welcome Bonus Card -->
-    <section class="promo-section">
-        <div class="container">
-            <div class="promo-card">
-                <h2 style="color: var(--gold); margin-bottom: 20px;">₦450 Welcome Bonus!</h2>
-                <p style="font-size: 20px; margin-bottom: 30px;">Every new user receives ₦450 instantly after successful registration.</p>
-                <a href="register.html" class="btn btn-primary">Claim My Bonus Now</a>
+    <!-- Welcome Bonus + Gift Code -->
+    <section class="section section-tint">
+        <div class="container grid grid-2">
+            <div class="card-hero card-pad-lg">
+                <span class="badge badge-white"><i class="fas fa-gift"></i> New members</span>
+                <h2 style="font-size:clamp(28px,7vw,40px); margin:16px 0 10px;">&#8358;450 Welcome Bonus!</h2>
+                <p class="muted" style="margin-bottom:24px;">Every new user receives &#8358;450 instantly after successful registration.</p>
+                <a href="register.html" class="btn btn-white">Claim My Bonus Now <i class="fas fa-arrow-right"></i></a>
             </div>
-
-            <!-- Gift Code Section -->
-            <div class="promo-card" style="background: var(--card-bg); border-color: #333;">
-                <h2>Have a Gift Code?</h2>
-                <p style="color: var(--text-muted); margin-bottom: 30px;">Redeem your gift codes here to receive special rewards and bonuses.</p>
+            <div class="card card-pad-lg">
+                <span class="feature-icon"><i class="fas fa-ticket"></i></span>
+                <h2 style="font-size:clamp(24px,6vw,32px); margin-bottom:10px;">Have a Gift Code?</h2>
+                <p class="muted" style="margin-bottom:24px;">Redeem your gift codes here to receive special rewards and bonuses.</p>
                 <a href="giftcode.html" class="btn btn-outline">Redeem Gift Code</a>
             </div>
         </div>
     </section>
 
     <!-- Referral Program -->
-    <section class="why-us">
-        <div class="container">
-            <div class="section-title">
-                <h2>Referral Program</h2>
-                <p>Earn more by inviting your friends and family.</p>
-            </div>
-            <div style="text-align: center; max-width: 700px; margin: 0 auto;">
-                <p style="margin-bottom: 30px;">Invite your friends to TOP and receive a percentage of their first deposit as a bonus reward. There is no limit to how much you can earn!</p>
+    <section class="section">
+        <div class="container-narrow">
+            <div class="card text-center card-pad-lg">
+                <span class="feature-icon" style="margin-left:auto;margin-right:auto;"><i class="fas fa-user-friends"></i></span>
+                <span class="eyebrow" style="justify-content:center; display:flex;">Referral Program</span>
+                <h2 style="font-size:clamp(26px,6vw,36px); margin:10px 0;">Earn more by inviting <em class="accent">friends</em></h2>
+                <p class="muted" style="margin-bottom:24px;">Invite your friends to TOP and receive a percentage of their first deposit as a bonus reward. There is no limit to how much you can earn!</p>
                 <a href="referrals.html" class="btn btn-primary">Learn More</a>
             </div>
         </div>
     </section>
 
     <!-- FAQ -->
-    <section class="faq" id="faq">
-        <div class="container">
+    <section class="section section-tint" id="faq">
+        <div class="container-narrow">
             <div class="section-title">
+                <span class="eyebrow">FAQ</span>
                 <h2>Frequently Asked Questions</h2>
             </div>
-            <div style="max-width: 800px; margin: 0 auto;">
-                <div class="faq-item">
-                    <div class="faq-question">What is TOP? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-answer">TOP is a premium Nigerian investment platform that allows you to invest your Naira and earn daily profits securely.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">How do I deposit money? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-answer">We currently accept deposits exclusively through Kuda Bank for speed and reliability. You will see the account details in your dashboard.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">When can I withdraw my earnings? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-answer">You can request a withdrawal once you reach the minimum withdrawal threshold. Payments are processed daily.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">Is the welcome bonus real? <i class="fas fa-chevron-down"></i></div>
-                    <div class="faq-answer">Yes! Every new user is automatically credited with ₦450 in their wallet immediately after signing up.</div>
-                </div>
+            <div class="faq-item">
+                <div class="faq-question">What is TOP? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">TOP is a premium Nigerian investment platform that allows you to invest your Naira and earn daily profits securely.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">How do I deposit money? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">We currently accept deposits exclusively through Kuda Bank for speed and reliability. You will see the account details in your dashboard.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">When can I withdraw my earnings? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">You can request a withdrawal once you reach the minimum withdrawal threshold. Payments are processed daily.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is the welcome bonus real? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Yes! Every new user is automatically credited with &#8358;450 in their wallet immediately after signing up.</div>
             </div>
         </div>
     </section>
 
     <!-- Contact / Telegram -->
-    <section class="promo-section">
-        <div class="container" style="text-align: center;">
-            <div class="section-title">
+    <section class="section">
+        <div class="container-narrow text-center">
+            <div class="section-title" style="margin-bottom:24px;">
+                <span class="eyebrow">Support</span>
                 <h2>Need Support?</h2>
                 <p>Our team is here to help you 24/7.</p>
             </div>
-            <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-primary" style="background: #229ED9;">
-                <i class="fab fa-telegram-plane"></i> Join Telegram Community
-            </a>
-            <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-primary" style="background: transparent; border: 1px solid #229ED9; color: #229ED9; margin-left: 10px;">
-                <i class="fab fa-telegram-plane"></i> Join Telegram Channel
-            </a>
+            <div class="cluster" style="justify-content:center;">
+                <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-primary">
+                    <i class="fab fa-telegram-plane"></i> Join Telegram Community
+                </a>
+                <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-outline">
+                    <i class="fab fa-telegram-plane"></i> Join Telegram Channel
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <footer class="site-footer dark">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <a href="index.html" class="logo" style="margin-bottom: 20px;">TOP</a>
-                    <p style="color: var(--text-muted); font-size: 14px;">The premium standard for Naira investments. Secure, fast, and reliable.</p>
+                    <a href="index.html" class="brand brand-lg" aria-label="TOP home"><img src="assets/img/logo-white.svg" alt="TOP"></a>
+                    <p style="margin-top:16px; max-width:320px; font-size:14px;">The premium standard for Naira investments. Secure, fast, and reliable.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Quick Links</h4>
@@ -725,7 +333,7 @@
                 <div class="footer-col">
                     <h4>Legal</h4>
                     <ul>
-                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="terms.html">Terms &amp; Conditions</a></li>
                         <li><a href="privacy.html">Privacy Policy</a></li>
                         <li><a href="support.html">Support</a></li>
                     </ul>
@@ -741,11 +349,11 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 TOP. All Rights Reserved.</p>
+                <p>Premium Naira Investment</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script>
         // FAQ Accordion Logic
         document.querySelectorAll('.faq-question').forEach(item => {

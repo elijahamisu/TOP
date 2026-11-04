@@ -4,256 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Terms & Conditions | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 800px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-            font-weight: 600;
-        }
-
-        /* --- Hero --- */
-        .hero {
-            padding: 40px 0;
-            text-align: center;
-        }
-        .hero h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
-        .hero p { color: var(--text-muted); font-size: 14px; }
-
-        /* --- Acceptance Card --- */
-        .acceptance-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(10, 14, 23, 0) 100%);
-            border: 1px solid var(--accent-color);
-            padding: 20px; border-radius: 20px; margin-bottom: 30px;
-            text-align: center;
-        }
-        .acceptance-card i { font-size: 24px; color: var(--accent-color); margin-bottom: 10px; }
-        .acceptance-card p { font-size: 14px; font-weight: 600; color: var(--text-main); }
-
-        /* --- Terms Content --- */
-        .terms-section {
-            background: var(--card-bg);
-            padding: 25px; border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-        .terms-section:hover { border-color: var(--accent-color); }
-        .terms-section h3 { font-size: 18px; color: var(--accent-color); margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
-        .terms-section h3 i { font-size: 16px; opacity: 0.8; }
-        .terms-section p { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
-        .terms-section ul { list-style: none; padding-left: 0; }
-        .terms-section ul li { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; position: relative; padding-left: 20px; }
-        .terms-section ul li::before { content: "•"; color: var(--accent-color); position: absolute; left: 0; font-weight: bold; }
-
-        /* --- Quick Links --- */
-        .quick-actions {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 40px 0;
-        }
-        .btn-link {
-            padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border);
-            background: var(--secondary-bg); color: white; text-decoration: none;
-            text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-link.primary { background: var(--accent-color); border-color: var(--accent-color); }
-
-        /* --- Footer --- */
-        footer {
-            padding: 40px 0; text-align: center;
-            border-top: 1px solid var(--glass-border);
-            background: var(--secondary-bg);
-        }
-        .footer-logo { font-size: 20px; font-weight: 800; color: var(--accent-color); margin-bottom: 15px; display: block; text-decoration: none; }
-        .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; }
-        .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
-
-        /* Desktop Adjustments */
-        @media (min-width: 768px) {
-            .hero h1 { font-size: 36px; }
-            .quick-actions { grid-template-columns: repeat(4, 1fr); }
-        }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        .terms-hero { margin: 16px 0 16px; }
+        .terms-hero h1 { font-size: clamp(30px, 8vw, 44px); margin: 12px 0 6px; }
+        .terms-section { margin-bottom: 12px; }
+        .terms-section h3 { display: flex; align-items: center; gap: 12px; font-size: 16px; margin-bottom: 12px; }
+        .terms-section p, .terms-list li { color: var(--ink-2); font-size: 14.5px; line-height: 1.7; }
+        .terms-list { list-style: none; display: grid; gap: 8px; }
+        .terms-list li { position: relative; padding-left: 18px; }
+        .terms-list li::before { content: ''; position: absolute; left: 2px; top: 10px; width: 6px; height: 6px; border-radius: 2px; transform: rotate(45deg); background: var(--red); }
+        .terms-section b { color: var(--ink); }
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="container header-flex">
-            <a href="index.html" class="back-btn"><i class="fas fa-home"></i> Home</a>
-            <div id="authLinks">
-                <a href="dashboard.html" class="back-btn" id="dashBtn"><i class="fas fa-th-large"></i> Dashboard</a>
+    <header class="topnav">
+        <div class="container topnav-inner">
+            <a href="index.html" class="brand" aria-label="TOP home"><img src="assets/img/logo.svg" alt="TOP"></a>
+            <div id="authLinks" class="cluster" style="gap:6px;">
+                <a href="index.html" class="btn btn-ghost btn-sm hide-mobile"><i class="fas fa-home"></i> Home</a>
+                <a href="dashboard.html" class="btn btn-primary btn-sm" id="dashBtn"><i class="fas fa-th-large"></i> Dashboard</a>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Terms & Conditions</h1>
-            <p>Last Updated: October 2024</p>
+    <main class="container-narrow" style="padding-bottom:48px;">
+        <section class="card-hero terms-hero fade-up">
+            <span class="badge badge-white"><i class="fas fa-scale-balanced"></i> Legal</span>
+            <h1>Terms &amp; Conditions</h1>
+            <p class="muted">Last Updated: October 2024</p>
         </section>
 
-        <div class="acceptance-card">
-            <i class="fas fa-user-check"></i>
-            <p>By creating an TOP account or using the platform, you agree to these Terms & Conditions.</p>
+        <div class="alert alert-info" style="display:flex; gap:12px; align-items:center;">
+            <i class="fas fa-user-check" style="color:var(--red); font-size:18px;"></i>
+            <p>By creating an TOP account or using the platform, you agree to these Terms &amp; Conditions.</p>
         </div>
 
-        <!-- 1. Introduction -->
-        <div class="terms-section">
-            <h3><i class="fas fa-info-circle"></i> 1. Introduction</h3>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-info-circle"></i></span> 1. Introduction</h3>
             <p>TOP is a premium Nigerian Naira investment platform designed to help users grow their wealth securely. These Terms and Conditions govern your use of our platform and services.</p>
-        </div>
-
-        <!-- 2. Account Registration -->
-        <div class="terms-section">
-            <h3><i class="fas fa-user-plus"></i> 2. Account Registration</h3>
-            <ul>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-user-plus"></i></span> 2. Account Registration</h3>
+            <ul class="terms-list">
                 <li>Users must provide accurate, current, and complete information during registration.</li>
                 <li>Each individual is allowed only one (1) account. Duplicate accounts will be suspended.</li>
                 <li>You are solely responsible for maintaining the confidentiality of your login credentials.</li>
             </ul>
-        </div>
-
-        <!-- 3. Investments -->
-        <div class="terms-section">
-            <h3><i class="fas fa-rocket"></i> 3. Investments</h3>
-            <ul>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-rocket"></i></span> 3. Investments</h3>
+            <ul class="terms-list">
                 <li>Users invest at their own discretion and choose from available plans clearly displayed on the platform.</li>
                 <li>Daily earnings are calculated based on the specific active investment plan.</li>
                 <li>Earnings are processed and credited automatically every day at <b>12:00 AM (Africa/Lagos)</b>.</li>
             </ul>
-        </div>
-
-        <!-- 4. Deposits -->
-        <div class="terms-section">
-            <h3><i class="fas fa-university"></i> 4. Deposits</h3>
-            <ul>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-university"></i></span> 4. Deposits</h3>
+            <ul class="terms-list">
                 <li>TOP supports deposits exclusively through <b>Kuda Bank</b>.</li>
                 <li>Deposits must be verified by our administrative team before they reflect in your wallet balance.</li>
                 <li>Always ensure you transfer the exact amount and keep your receipt for verification.</li>
             </ul>
-        </div>
-
-        <!-- 5. Withdrawals -->
-        <div class="terms-section">
-            <h3><i class="fas fa-wallet"></i> 5. Withdrawals</h3>
-            <ul>
-                <li>The minimum withdrawal amount is <b>₦450</b>.</li>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-wallet"></i></span> 5. Withdrawals</h3>
+            <ul class="terms-list">
+                <li>The minimum withdrawal amount is <b>&#8358;450</b>.</li>
                 <li>Withdrawal requests are reviewed for security purposes before approval and disbursement.</li>
                 <li>TOP is not responsible for funds sent to incorrect bank details provided by the user.</li>
             </ul>
-        </div>
-
-        <!-- 6. Referral Program -->
-        <div class="terms-section">
-            <h3><i class="fas fa-users"></i> 6. Referral Program</h3>
-            <ul>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-users"></i></span> 6. Referral Program</h3>
+            <ul class="terms-list">
                 <li>Every user is provided with a unique referral code and link.</li>
                 <li>Referral bonuses are credited when your referred friend completes a qualifying investment.</li>
                 <li>Fraudulent or self-referral activities will result in immediate disqualification and account suspension.</li>
             </ul>
-        </div>
-
-        <!-- 7. Gift Codes -->
-        <div class="terms-section">
-            <h3><i class="fas fa-gift"></i> 7. Gift Codes</h3>
-            <ul>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-gift"></i></span> 7. Gift Codes</h3>
+            <ul class="terms-list">
                 <li>Gift Codes are promotional tools and have no inherent cash value outside the platform.</li>
                 <li>Expired or invalid codes cannot be redeemed.</li>
                 <li>Usage limits may apply to specific codes (e.g., one-time use or total redemption caps).</li>
             </ul>
-        </div>
-
-        <!-- 8. Responsibilities -->
-        <div class="terms-section">
-            <h3><i class="fas fa-shield-alt"></i> 8. User Responsibilities</h3>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-shield-alt"></i></span> 8. User Responsibilities</h3>
             <p>Users must not attempt to hack, scrape, or interfere with the platform's security. Any attempt at unauthorized access or exploitation of system bugs will lead to permanent termination of the account.</p>
-        </div>
-
-        <!-- 9. Privacy -->
-        <div class="terms-section">
-            <h3><i class="fas fa-lock"></i> 9. Privacy</h3>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-lock"></i></span> 9. Privacy</h3>
             <p>Your personal and financial information is handled securely. We use your data only to operate the platform, process transactions, and improve our services. We do not sell user data to third parties.</p>
-        </div>
-
-        <!-- 10. Changes -->
-        <div class="terms-section">
-            <h3><i class="fas fa-edit"></i> 10. Changes to Terms</h3>
+        </article>
+        <article class="card terms-section">
+            <h3><span class="li-icon"><i class="fas fa-edit"></i></span> 10. Changes to Terms</h3>
             <p>TOP reserves the right to update these terms at any time. Significant changes will be announced via the Notifications center. Continued use of the platform constitutes acceptance of updated terms.</p>
-        </div>
+        </article>
 
         <!-- Quick Links -->
-        <div class="quick-actions">
-            <a href="index.html" class="btn-link"><i class="fas fa-home"></i> Home</a>
-            <a href="dashboard.html" class="btn-link primary"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="support.html" class="btn-link"><i class="fas fa-headset"></i> Support</a>
-            <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn-link" style="background: #229ED9; border:none;"><i class="fab fa-telegram"></i> Telegram Group</a>
-            <a href="https://t.me/monvexachannel" target="_blank" class="btn-link" style="background: transparent; border:1px solid #229ED9; color:#229ED9;"><i class="fab fa-telegram"></i> Telegram Channel</a>
+        <div class="grid grid-2c" style="margin-top:24px;">
+            <a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+            <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="support.html" class="btn btn-outline"><i class="fas fa-headset"></i> Support</a>
+            <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-outline"><i class="fab fa-telegram"></i> Group</a>
+            <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-ghost" style="grid-column:1/-1;"><i class="fab fa-telegram"></i> Telegram Channel</a>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <a href="index.html" class="footer-logo">TOP</a>
+    <footer class="site-footer" style="padding:28px 0;">
+        <div class="container text-center">
             <div class="footer-links">
                 <a href="index.html">Home</a>
                 <a href="dashboard.html">Dashboard</a>
                 <a href="support.html">Support</a>
                 <a href="terms.html">Terms</a>
             </div>
-            <p class="footer-copy">&copy; 2024 TOP. All Rights Reserved.</p>
+            <p class="text-xs muted" style="margin-top:12px;">&copy; 2024 TOP. All Rights Reserved.</p>
         </div>
     </footer>
 

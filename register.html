@@ -4,367 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | TOP - Premium Naira Investment</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --card-bg: rgba(31, 41, 55, 0.7);
-            --error: #ef4444;
-            --success: #10b981;
-            --gold: #f59e0b;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            width: 90%;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--accent-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-btns {
-            display: flex;
-            gap: 15px;
-        }
-
-        .nav-btn {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .nav-btn:hover {
-            color: var(--text-main);
-        }
-
-        /* --- Registration Section --- */
-        .reg-section {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 50px 0;
-            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.05), transparent);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 550px;
-            margin: 0 auto;
-        }
-
-        .reg-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .header-text {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header-text h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header-text p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .bonus-badge {
-            display: inline-block;
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--gold);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 10px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        /* --- Form Styling --- */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px 12px 42px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        .btn-reg {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-reg:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-reg:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .login-prompt {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .login-prompt a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* --- Feedback Messages --- */
-        #status-msg {
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            display: none;
-            text-align: center;
-        }
-
-        .msg-error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .msg-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        /* --- Telegram Modal --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-card {
-            background: var(--secondary-bg);
-            padding: 40px;
-            border-radius: 30px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            border: 1px solid var(--accent-color);
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-card i {
-            font-size: 60px;
-            color: #229ED9;
-            margin-bottom: 20px;
-        }
-
-        .modal-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 30px;
-        }
-
-        /* --- Footer --- */
-        footer {
-            padding: 30px 0;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* --- Spinner --- */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s infinite linear;
-            display: none;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: span 1; }
-            .reg-card { padding: 30px 20px; }
-        }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+        body { background: radial-gradient(80% 50% at 50% 0%, #FFEDED 0%, rgba(255,245,245,0) 70%), #fff; }
+        .btn .btn-text, .btn #btnText { display: block; }
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <i class="fas fa-pie-chart"></i> TOP
-            </a>
-            <div class="nav-btns">
-                <a href="index.html" class="nav-btn">Home</a>
-                <a href="login.html" class="nav-btn" style="color: var(--accent-color);">Login</a>
+    <header class="topnav">
+        <div class="container topnav-inner">
+            <a href="index.html" class="brand" aria-label="TOP home"><img src="assets/img/logo.svg" alt="TOP"></a>
+            <div class="cluster" style="gap:6px;">
+                <a href="index.html" class="btn btn-ghost btn-sm hide-mobile">Home</a>
+                <a href="login.html" class="btn btn-outline btn-sm">Login</a>
             </div>
         </div>
     </header>
 
-    <main class="reg-section">
+    <main class="auth-shell">
         <div class="container">
-            <div class="reg-card">
-                <div class="header-text">
+            <div class="auth-card wide fade-up" style="margin:0 auto;">
+                <div class="auth-head">
+                    <img src="assets/img/logo-mark.svg" alt="">
                     <h1>Create Your Account</h1>
                     <p>Start earning daily from your investments.</p>
-                    <div class="bonus-badge">
-                        <i class="fas fa-gift"></i> ₦450 WELCOME BONUS INCLUDED
-                    </div>
+                    <span class="badge badge-solid" style="margin-top:14px; padding:8px 14px;">
+                        <i class="fas fa-gift"></i> &#8358;450 WELCOME BONUS INCLUDED
+                    </span>
                 </div>
 
-                <div id="status-msg"></div>
+                <div id="status-msg" role="alert"></div>
 
                 <form id="regForm">
                     <div class="form-grid">
@@ -404,7 +82,7 @@
                             <label for="password">Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock"></i>
-                                <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                                <input type="password" id="password" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
                             </div>
                         </div>
 
@@ -412,7 +90,7 @@
                             <label for="confirmPassword">Confirm Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-shield-halved"></i>
-                                <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required>
+                                <input type="password" id="confirmPassword" class="form-control" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
                             </div>
                         </div>
 
@@ -425,13 +103,14 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="regBtn" class="btn-reg">
+                    <button type="submit" id="regBtn" class="btn btn-primary btn-lg btn-block btn-reg" style="margin-top:8px;">
                         <span id="btnText">Create My Account</span>
                         <div class="spinner" id="btnSpinner"></div>
                     </button>
+                    <p class="form-hint text-center" style="margin-top:12px;">By registering you agree to our <a href="terms.html">Terms &amp; Conditions</a>.</p>
                 </form>
 
-                <p class="login-prompt">
+                <p class="auth-foot login-prompt">
                     Already have an account? <a href="login.html">Login Here</a>
                 </p>
             </div>
@@ -442,32 +121,34 @@
     <div class="modal-overlay" id="welcomeModal">
         <div class="modal-card">
             <i class="fab fa-telegram"></i>
-            <h2 style="margin-bottom: 15px;">🎉 Welcome to TOP!</h2>
-            <p style="color: var(--text-muted); line-height: 1.6;">
-                Your account is ready and your <b>₦450 Welcome Bonus</b> has been credited! Join our Telegram community for updates, support, and special offers.
+            <h2>&#127881; Welcome to TOP!</h2>
+            <p>
+                Your account is ready and your <b>&#8358;450 Welcome Bonus</b> has been credited! Join our Telegram community for updates, support, and special offers.
             </p>
             <div class="modal-btns">
-                <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn-reg" id="joinTeleBtn">
+                <a href="https://t.me/+jBbRS6HqIjM2YmM8" target="_blank" class="btn btn-primary btn-block" id="joinTeleBtn">
                     Join Telegram Community
                 </a>
-                <a href="https://t.me/monvexachannel" target="_blank" class="btn-reg" style="background:transparent; border:1px solid #229ED9; color:#229ED9;" id="joinTeleChannelBtn">
+                <a href="https://t.me/monvexachannel" target="_blank" class="btn btn-outline btn-block" id="joinTeleChannelBtn">
                     Join Telegram Channel
                 </a>
-                <button class="nav-btn" style="background:none; border:none; cursor:pointer; margin-top:10px;" id="toDashboardBtn">
+                <button class="btn btn-ghost btn-block" id="toDashboardBtn">
                     Continue to Dashboard
                 </button>
             </div>
         </div>
     </div>
 
-    <footer>
-        <div style="margin-bottom: 15px;">
-            <a href="index.html" class="nav-btn" style="margin: 0 10px;">Home</a>
-            <a href="login.html" class="nav-btn" style="margin: 0 10px;">Login</a>
-            <a href="support.html" class="nav-btn" style="margin: 0 10px;">Support</a>
-            <a href="terms.html" class="nav-btn" style="margin: 0 10px;">Terms</a>
+    <footer class="site-footer" style="padding:28px 0;">
+        <div class="container text-center">
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="support.html">Support</a>
+                <a href="terms.html">Terms</a>
+            </div>
+            <p class="text-xs muted" style="margin-top:12px;">&copy; 2024 TOP. All Rights Reserved.</p>
         </div>
-        <p>&copy; 2024 TOP. All Rights Reserved.</p>
     </footer>
 
     <script type="module">

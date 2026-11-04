@@ -7,9 +7,10 @@
    TOKENS     --red #E60000 · --red-deep #B80000 · --red-dark #8F0000
               --red-bright #FF1717 · --white · --red-50 #FFF5F5
               --ink #171717 · --ink-2 #777777 · --grad-red · --shadow-*
-   LAYOUT     .container .container-narrow .section .stack .stack-sm
-              .stack-lg .cluster .row-between .grid .grid-2 .grid-3
-              .grid-4 (1 col on phones, grow at 640/960px)
+   LAYOUT     .container .container-narrow .section .section-tint .stack
+              .stack-sm .stack-lg .cluster .row-between .grid + .grid-2
+              .grid-3 .grid-4 (1 col on phones, grow at 640/960px)
+              .grid-2c (2 cols always) .split-2 (7/5 columns >=1100px)
    TYPE       .display .h1 .h2 .h3 .eyebrow .lead .muted .text-red
               .text-white .num .serif .text-center .accent (red word)
    BRAND      .brand (wraps <img src=logo.svg>) .brand-mark
@@ -146,7 +147,7 @@ a:hover { color: var(--red-deep); }
 p { margin: 0; }
 ul { margin: 0; padding: 0; }
 h1, h2, h3, h4, h5 { margin: 0; color: var(--ink); line-height: 1.15; letter-spacing: -.01em; }
-h1, h2, .display, .h1, .h2, .serif { font-family: var(--f-display); font-weight: 700; }
+h1, h2, .display, .h1, .h2, .serif { font-family: var(--f-display); font-weight: 700; font-variant-numeric: lining-nums; word-spacing: .03em; }
 h3, h4, h5, .h3 { font-family: var(--f-body); font-weight: 700; }
 ::selection { background: var(--red); color: #fff; }
 :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
@@ -173,6 +174,9 @@ h3, h4, h5, .h3 { font-family: var(--f-body); font-weight: 700; }
   .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+.split-2 { display: grid; gap: var(--s-5); grid-template-columns: 1fr; }
+@media (min-width: 1100px) { .split-2 { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start; } }
 
 /* ---------- type ---------- */
 .display { font-size: clamp(36px, 9vw, 64px); line-height: 1.05; letter-spacing: -.02em; }
@@ -240,6 +244,7 @@ em.accent, .display em, .h1 em, .h2 em { font-style: italic; color: var(--red); 
 .icon-btn:active { transform: scale(.94); }
 .icon-btn-red { background: var(--grad-red); color: #fff; border: 0; box-shadow: var(--shadow-red); }
 .icon-btn-red:hover { color: #fff; background: var(--grad-red); }
+.notification-dot { display: none; } /* JS reveals it */
 .icon-btn .dot, .notification-dot {
   position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%;
   background: var(--red-bright); box-shadow: 0 0 0 2px #fff;
@@ -371,6 +376,7 @@ em.accent, .display em, .h1 em, .h2 em { font-style: italic; color: var(--red); 
 .plan-card.is-featured .btn-white, .plan-card.is-featured .btn-white * { color: var(--red); }
 .step-card { position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); }
 .step-no {
+  font-variant-numeric: lining-nums;
   display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; margin-bottom: var(--s-3);
   font: 700 17px/1 var(--f-display); color: #fff; background: var(--grad-red); box-shadow: var(--shadow-red);
 }
@@ -517,7 +523,7 @@ select.form-control { background-image: linear-gradient(45deg, transparent 50%, 
 .hello h2 { font: 700 16px/1.25 var(--f-body); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
 .app-main { padding-top: var(--s-4); }
-.app-main > section + section, .app-main > .block + .block { margin-top: var(--s-6); }
+.app-main > * + * { margin-top: var(--s-6); }
 
 .bottom-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 950;
@@ -586,7 +592,7 @@ select.form-control { background-image: linear-gradient(45deg, transparent 50%, 
 .page-title { font: 700 clamp(24px, 6vw, 32px)/1.15 var(--f-display); color: var(--ink); }
 .page-sub { color: var(--ink-2); font-size: 14px; margin-top: 4px; }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-3); margin-bottom: var(--s-3); }
-.section-head h3 { font: 700 19px/1.2 var(--f-display); }
+.section-head h3 { font: 700 19px/1.2 var(--f-display); word-spacing: .06em; }
 .view-all { font-size: 13px; font-weight: 600; color: var(--red); white-space: nowrap; }
 .view-all::after { content: ' \2192'; }
 .divider { height: 1px; background: var(--line); border: 0; margin: var(--s-6) 0; }
