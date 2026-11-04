@@ -4,253 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Redeem Gift Code | TOP</title>
-    
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 600px; margin: 0 auto; }
-
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .mini-avatar {
-            width: 35px; height: 35px; border-radius: 50%;
-            background: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px;
-        }
-
-        .info-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 20px; border-radius: 20px; margin: 20px 0;
-            border: 1px solid var(--glass-border);
-            display: flex; gap: 15px; align-items: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .info-card i { font-size: 30px; color: var(--gold); }
-        .info-card h3 { font-size: 15px; margin-bottom: 4px; }
-        .info-card p { font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4; }
-
-        .redeem-section {
-            background: var(--secondary-bg); padding: 25px; border-radius: 24px;
-            border: 1px solid var(--glass-border); margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-
-        .input-box {
-            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 15px; display: flex; align-items: center;
-            gap: 12px;
-        }
-        .input-box i { color: var(--accent-color); font-size: 18px; }
-        .input-box input {
-            background: transparent; border: none; color: white; width: 100%;
-            font-size: 16px; font-weight: 700; outline: none; text-align: center;
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-        .input-box input::placeholder { letter-spacing: normal; text-transform: none; font-weight: 400; font-size: 14px; }
-
-        .btn-redeem {
-            width: 100%; padding: 16px; background: var(--accent-color);
-            color: white; border: none; border-radius: 15px; font-weight: 700;
-            font-size: 16px; cursor: pointer; transition: 0.3s;
-        }
-        .btn-redeem:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .btn-clear {
-            background: transparent; border: none; color: var(--text-muted);
-            margin-top: 15px; font-size: 13px; cursor: pointer;
-        }
-
-        .history-section h3 { font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        
-        .history-item {
-            background: var(--card-bg); padding: 15px; border-radius: 18px;
-            border: 1px solid var(--glass-border); margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .hist-info h5 { font-size: 14px; margin-bottom: 2px; }
-        .hist-info p { font-size: 11px; color: var(--text-muted); }
-        .hist-amount { text-align: right; }
-        .hist-amount h4 { font-size: 14px; font-weight: 700; color: var(--success); }
-        .hist-amount p { font-size: 10px; color: var(--text-muted); }
-
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-        .empty-state i { font-size: 40px; margin-bottom: 15px; opacity: 0.2; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; align-items: center;
-            justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: var(--secondary-bg); width: 100%; max-width: 400px;
-            padding: 30px; border-radius: 30px; border: 1px solid var(--accent-color);
-            text-align: center; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } }
-
-        .reward-icon {
-            width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1);
-            color: var(--success); border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;
-        }
-
-        .modal-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
-        .btn-modal { padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
-        .btn-modal-primary { background: var(--accent-color); color: white; }
-        .btn-modal-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--glass-border); }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; display: none; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.gift-head { display: flex; align-items: center; gap: 14px; }
+        .gift-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 18px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3); font-size: 22px; color: #fff; flex-shrink: 0; }
+        .gift-title { font-size: clamp(22px, 6vw, 28px); margin-top: 2px; }
+        .gift-title em { color: #fff; font-style: italic; opacity: .9; }
+        .code-input { text-transform: uppercase; letter-spacing: .12em; font-weight: 700; }
+        .reward-amount { margin: 16px 0 6px; font-size: 40px; color: var(--red); }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
-            <div class="profile-area">
-                <a href="notifications.html" style="color: white; font-size: 18px; margin-right: 12px;"><i class="fas fa-bell"></i></a>
-                <div class="mini-avatar" id="userAvatar">U</div>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Gift Code</h1>
+                    <p class="page-sub">Redeem promo rewards</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+                <div class="avatar avatar-sm" id="userAvatar">U</div>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <section class="info-card">
-            <i class="fas fa-gift"></i>
-            <div>
-                <h3>Promo Rewards</h3>
-                <p>Redeem special gift codes to receive instant wallet bonuses and promotional rewards. Codes can be found on our Telegram community.</p>
-            </div>
-        </section>
+    <main class="container app-main">
+        <div class="page-cols">
+            <div class="stack-col">
+                <section class="card-hero fade-up">
+                    <div class="gift-head">
+                        <span class="gift-icon"><i class="fas fa-gift"></i></span>
+                        <div>
+                            <p class="balance-label">Promo Rewards</p>
+                            <h2 class="gift-title">Unwrap instant <em>bonuses</em></h2>
+                        </div>
+                    </div>
+                    <p class="hero-sub" style="margin-top:12px;">Redeem special gift codes to receive instant wallet bonuses and promotional rewards. Codes can be found on our Telegram community.</p>
+                </section>
 
-        <section class="redeem-section">
-            <div class="form-group">
-                <label>Enter Gift Code</label>
-                <div class="input-box">
-                    <i class="fas fa-ticket-alt"></i>
-                    <input type="text" id="giftCodeInput" placeholder="EASY-XXXX-XXXX" maxlength="20">
+                <section class="card card-pad-lg redeem-section fade-up d1">
+                    <div class="form-group">
+                        <label for="giftCodeInput">Enter Gift Code</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-ticket-alt"></i>
+                            <input type="text" id="giftCodeInput" class="form-control code-input" placeholder="EASY-XXXX-XXXX" maxlength="20">
+                        </div>
+                    </div>
+
+                    <div class="btn-stack">
+                        <button class="btn btn-primary btn-lg btn-block" id="redeemBtn" onclick="redeemCode()">
+                            <span id="btnText">Redeem Gift Code</span>
+                            <div class="spinner" id="btnSpinner"></div>
+                        </button>
+                        <button class="btn btn-ghost btn-block" onclick="clearInput()">Clear Input</button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="history-section fade-up d2">
+                <div class="section-head"><h3>Redemption <em>History</em></h3></div>
+                <div id="redemptionList">
+                    <!-- Dynamic Content -->
                 </div>
-            </div>
-
-            <button class="btn-redeem" id="redeemBtn" onclick="redeemCode()">
-                <span id="btnText">Redeem Gift Code</span>
-                <div class="spinner" id="btnSpinner"></div>
-            </button>
-            <button class="btn-clear" onclick="clearInput()">Clear Input</button>
-        </section>
-
-        <section class="history-section">
-            <h3>Redemption History</h3>
-            <div id="redemptionList">
-                <!-- Dynamic Content -->
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
     <!-- Success Modal -->
     <div class="modal-overlay" id="successModal">
-        <div class="modal-content">
-            <div class="reward-icon"><i class="fas fa-check"></i></div>
-            <h2 id="rewardTitle" style="margin-bottom: 10px;">Reward Claimed!</h2>
-            <p style="font-size: 14px; color: var(--text-muted); line-height: 1.5;">Successfully redeemed <b id="rewardCode" style="color:var(--gold)">CODE</b>. Your wallet has been credited with:</p>
-            <h1 id="rewardAmount" style="margin: 20px 0; color: var(--success);">₦0.00</h1>
-            
-            <p id="rewardTime" style="font-size: 11px; color: var(--text-muted);"></p>
+        <div class="modal-card">
+            <i class="fas fa-check"></i>
+            <h2 id="rewardTitle">Reward Claimed!</h2>
+            <p>Successfully redeemed <b id="rewardCode" class="text-red">CODE</b>. Your wallet has been credited with:</p>
+            <h1 id="rewardAmount" class="reward-amount">₦0.00</h1>
+
+            <p id="rewardTime" class="text-xs"></p>
 
             <div class="modal-btns">
-                <button class="btn-modal btn-modal-primary" onclick="window.location.href='wallet.html'">Go to Wallet</button>
-                <button class="btn-modal btn-modal-outline" onclick="window.location.href='transactions.html'">View Transactions</button>
+                <button class="btn btn-primary btn-lg btn-block" onclick="window.location.href='wallet.html'">Go to Wallet</button>
+                <button class="btn btn-outline btn-lg btn-block" onclick="window.location.href='transactions.html'">View Transactions</button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
-        <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+        <a href="wallet.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
-        <a href="giftcode.html" class="nav-item active">
-            <i class="fas fa-gift"></i><span>Gift</span>
+        <a href="notifications.html" class="nav-item">
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 

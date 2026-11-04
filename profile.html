@@ -4,294 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Profile | TOP</title>
-    
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary-bg: #0a0e17;
-            --secondary-bg: #111827;
-            --accent-color: #3b82f6;
-            --card-bg: rgba(31, 41, 55, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --success: #10b981;
-            --danger: #ef4444;
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --nav-height: 70px;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 30px);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .container { width: 92%; max-width: 600px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
-            padding: 20px 0;
-            position: sticky; top: 0;
-            background: rgba(10, 14, 23, 0.8);
-            backdrop-filter: blur(15px);
-            z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-
-        .back-btn {
-            color: white; text-decoration: none; font-size: 14px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        /* --- Profile Header Card --- */
-        .profile-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-            padding: 30px 20px; border-radius: 24px; margin: 20px 0;
-            border: 1px solid var(--glass-border);
-            text-align: center; position: relative;
-        }
-
-        .avatar-container {
-            width: 100px; height: 100px; margin: 0 auto 15px;
-            position: relative;
-        }
-
-        .profile-img {
-            width: 100%; height: 100%; border-radius: 50%;
-            object-fit: cover; border: 4px solid var(--glass-border);
-            background: var(--secondary-bg);
-        }
-
-        .edit-avatar-btn {
-            position: absolute; bottom: 0; right: 0;
-            background: var(--accent-color); color: white;
-            width: 32px; height: 32px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 3px solid #1e3a8a; cursor: pointer; font-size: 12px;
-        }
-
-        .profile-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
-        .profile-card p { font-size: 13px; color: rgba(255,255,255,0.7); }
-        .status-badge {
-            display: inline-block; margin-top: 10px; padding: 4px 12px;
-            background: rgba(16, 185, 129, 0.2); color: var(--success);
-            border-radius: 20px; font-size: 11px; font-weight: 700;
-        }
-
-        /* --- Stats Grid --- */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px;
-        }
-        .stat-box {
-            background: var(--card-bg); padding: 15px 10px;
-            border-radius: 18px; border: 1px solid var(--glass-border);
-            text-align: center;
-        }
-        .stat-box p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
-        .stat-box h4 { font-size: 14px; font-weight: 700; color: var(--accent-color); }
-
-        /* --- Form Sections --- */
-        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .section-title i { color: var(--accent-color); }
-
-        .info-group {
-            background: var(--secondary-bg); padding: 20px; border-radius: 20px;
-            border: 1px solid var(--glass-border); margin-bottom: 25px;
-        }
-
-        .form-item { margin-bottom: 15px; }
-        .form-item:last-child { margin-bottom: 0; }
-        .form-item label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-        .form-item input {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.2);
-            border: 1px solid var(--glass-border); border-radius: 10px;
-            color: white; font-size: 14px; outline: none; transition: 0.3s;
-        }
-        .form-item input:focus { border-color: var(--accent-color); }
-        .form-item input:read-only { opacity: 0.6; cursor: not-allowed; }
-
-        /* --- Action Buttons --- */
-        .btn-save {
-            width: 100%; padding: 15px; background: var(--accent-color);
-            color: white; border: none; border-radius: 15px;
-            font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 10px;
-        }
-        .btn-logout {
-            width: 100%; padding: 15px; background: rgba(239, 68, 68, 0.1);
-            color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 15px; font-weight: 700; font-size: 15px;
-            cursor: pointer; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-
-        /* --- Quick Links Grid --- */
-        .quick-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px;
-        }
-        .quick-item {
-            background: var(--card-bg); padding: 15px 5px; border-radius: 15px;
-            text-align: center; text-decoration: none; color: white;
-            border: 1px solid var(--glass-border); transition: 0.3s;
-        }
-        .quick-item i { font-size: 18px; color: var(--accent-color); margin-bottom: 8px; display: block; }
-        .quick-item span { font-size: 11px; font-weight: 500; }
-
-        /* --- Modal --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; align-items: center;
-            justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: var(--secondary-bg); width: 100%; max-width: 400px;
-            padding: 30px; border-radius: 24px; border: 1px solid var(--glass-border);
-            text-align: center; animation: popIn 0.3s ease;
-        }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            height: var(--nav-height); background: rgba(17, 24, 39, 0.95);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            border-top: 1px solid var(--glass-border); z-index: 1000;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 4px; color: var(--text-muted);
-            text-decoration: none; font-size: 10px;
-        }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 18px; }
-
-        /* --- Loading Spinner --- */
-        .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; display: none; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .skeleton { height: 20px; background: #1f2937; border-radius: 4px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
-    </style>
     <link rel="stylesheet" href="assets/css/top.css">
-    <meta name="theme-color" content="#071327">
+    <link rel="stylesheet" href="assets/css/top-app.css">
+    <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+    <style>
+.profile-card { display: flex; align-items: center; gap: 20px; }
+        .avatar-container { position: relative; flex-shrink: 0; }
+        .profile-img { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 10px 26px rgba(0,0,0,.22); background: #fff; }
+        .edit-avatar-btn { position: absolute; right: -2px; bottom: 2px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--red); font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.2); transition: transform var(--t); }
+        .edit-avatar-btn:hover { transform: scale(1.08); }
+        .profile-id { min-width: 0; }
+        .profile-id h2 { font-size: clamp(22px, 6vw, 30px); line-height: 1.15; overflow-wrap: anywhere; }
+        .profile-id p { color: rgba(255,255,255,.8) !important; font-size: 14px; margin: 2px 0 10px; }
+        .stats-3 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .stats-3 > :first-child { grid-column: 1 / -1; background: var(--red-50); }
+        .stats-3 .stat-card { padding: 14px; }
+        .stats-3 .stat-icon { width: 32px; height: 32px; font-size: 13px; margin-bottom: 8px; }
+        .btn.btn-logout { color: var(--red-deep); }
+    </style>
 </head>
-<body>
+<body class="app-body">
 
-    <header>
-        <div class="container header-flex">
-            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
-            <a href="notifications.html" style="color: white; font-size: 18px;"><i class="fas fa-bell"></i></a>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <div class="head-left">
+                <a href="dashboard.html" class="back-btn" aria-label="Back to dashboard"><i class="fas fa-arrow-left"></i></a>
+                <div class="head-titles">
+                    <h1 class="page-title">Profile</h1>
+                    <p class="page-sub">Your account and settings</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="notifications.html" class="icon-btn" aria-label="Notifications"><i class="fas fa-bell"></i></a>
+            </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Profile Header -->
-        <section class="profile-card">
-            <div class="avatar-container">
-                <img src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff" id="avatarImg" class="profile-img" alt="Profile">
-                <label for="avatarUpload" class="edit-avatar-btn">
-                    <i class="fas fa-camera"></i>
-                    <input type="file" id="avatarUpload" hidden accept="image/*">
-                </label>
+    <main class="container app-main">
+        <div class="split-2">
+            <!-- Profile Header -->
+            <section class="card-hero profile-card fade-up">
+                <div class="avatar-container">
+                    <img src="https://ui-avatars.com/api/?name=User&background=E60000&color=fff" id="avatarImg" class="profile-img" alt="Profile">
+                    <label for="avatarUpload" class="edit-avatar-btn" aria-label="Change photo">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" id="avatarUpload" hidden accept="image/*">
+                    </label>
+                </div>
+                <div class="profile-id">
+                    <h2 id="cardFullName">Loading...</h2>
+                    <p id="cardUsername">@username</p>
+                    <span class="badge badge-white status-badge"><i class="fas fa-crown"></i> Active Investor</span>
+                </div>
+            </section>
+
+            <div class="stack-col">
+                <!-- Stats Grid -->
+                <section class="stats-3 fade-up d1">
+                    <div class="stat-card"><span class="stat-icon"><i class="fas fa-wallet"></i></span><h3 class="stat-value" id="statBalance">₦0</h3><p class="stat-label">Balance</p></div>
+                    <div class="stat-card"><span class="stat-icon"><i class="fas fa-chart-line"></i></span><h3 class="stat-value" id="statInvested">₦0</h3><p class="stat-label">Invested</p></div>
+                    <div class="stat-card"><span class="stat-icon"><i class="fas fa-coins"></i></span><h3 class="stat-value" id="statEarnings">₦0</h3><p class="stat-label">Earnings</p></div>
+                </section>
+
+                <!-- Quick Links -->
+                <section class="tiles cols-6 fade-up d2">
+                    <a href="wallet.html" class="tile"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+                    <a href="plans.html" class="tile"><i class="fas fa-layer-group"></i><span>Plans</span></a>
+                    <a href="transactions.html" class="tile"><i class="fas fa-list-ul"></i><span>History</span></a>
+                    <a href="referrals.html" class="tile"><i class="fas fa-users"></i><span>Referrals</span></a>
+                    <a href="giftcode.html" class="tile"><i class="fas fa-gift"></i><span>Gift Code</span></a>
+                    <a href="support.html" class="tile"><i class="fas fa-headset"></i><span>Support</span></a>
+                </section>
             </div>
-            <h2 id="cardFullName">Loading...</h2>
-            <p id="cardUsername">@username</p>
-            <div class="status-badge">Active Investor</div>
-        </section>
-
-        <!-- Stats Grid -->
-        <section class="stats-grid">
-            <div class="stat-box"><p>Balance</p><h4 id="statBalance">₦0</h4></div>
-            <div class="stat-box"><p>Invested</p><h4 id="statInvested">₦0</h4></div>
-            <div class="stat-box"><p>Earnings</p><h4 id="statEarnings">₦0</h4></div>
-        </section>
-
-        <!-- Quick Links -->
-        <div class="quick-grid">
-            <a href="wallet.html" class="quick-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
-            <a href="plans.html" class="quick-item"><i class="fas fa-layer-group"></i><span>Plans</span></a>
-            <a href="transactions.html" class="quick-item"><i class="fas fa-list-ul"></i><span>History</span></a>
-            <a href="referrals.html" class="quick-item"><i class="fas fa-users"></i><span>Referrals</span></a>
-            <a href="giftcode.html" class="quick-item"><i class="fas fa-gift"></i><span>Gift Code</span></a>
-            <a href="support.html" class="quick-item"><i class="fas fa-headset"></i><span>Support</span></a>
         </div>
 
-        <!-- Personal Info Form -->
-        <h3 class="section-title"><i class="fas fa-user-shield"></i> Personal Information</h3>
-        <section class="info-group">
-            <div class="form-item"><label>Full Name</label><input type="text" id="inputFullName"></div>
-            <div class="form-item"><label>Username</label><input type="text" id="inputUsername"></div>
-            <div class="form-item"><label>Phone Number</label><input type="tel" id="inputPhone"></div>
-            <div class="form-item"><label>Email Address (Read Only)</label><input type="email" id="inputEmail" readonly></div>
-            
-            <button class="btn-save" id="saveProfileBtn">
-                <span id="saveText">Save Profile Changes</span>
-                <div class="spinner" id="saveSpinner"></div>
-            </button>
-        </section>
+        <div class="page-cols">
+            <!-- Personal Info Form -->
+            <section class="card card-pad-lg info-group fade-up d2">
+                <h3 class="section-card-title"><i class="fas fa-user-shield"></i> Personal Information</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label for="inputFullName">Full Name</label><input type="text" id="inputFullName" class="form-control"></div>
+                    <div class="form-group"><label for="inputUsername">Username</label><input type="text" id="inputUsername" class="form-control"></div>
+                    <div class="form-group"><label for="inputPhone">Phone Number</label><input type="tel" id="inputPhone" class="form-control"></div>
+                    <div class="form-group"><label for="inputEmail">Email Address (Read Only)</label><input type="email" id="inputEmail" class="form-control" readonly></div>
+                </div>
 
-        <!-- Account Data -->
-        <h3 class="section-title"><i class="fas fa-database"></i> Account Metadata</h3>
-        <section class="info-group">
-            <div class="form-item"><label>Member ID</label><input type="text" id="metaId" readonly></div>
-            <div class="form-item"><label>Referral Code</label><input type="text" id="metaRef" readonly></div>
-            <div class="form-item"><label>Member Since</label><input type="text" id="metaDate" readonly></div>
-        </section>
+                <button class="btn btn-primary btn-lg btn-block" id="saveProfileBtn">
+                    <span id="saveText">Save Profile Changes</span>
+                    <div class="spinner" id="saveSpinner"></div>
+                </button>
+            </section>
 
-        <!-- Danger Zone -->
-        <button class="btn-logout" onclick="openLogoutModal()">
-            <i class="fas fa-sign-out-alt"></i> Logout from TOP
-        </button>
+            <div class="stack-col">
+                <!-- Account Data -->
+                <section class="card info-group fade-up d3">
+                    <h3 class="section-card-title"><i class="fas fa-database"></i> Account Metadata</h3>
+                    <div class="form-group"><label for="metaId">Member ID</label><input type="text" id="metaId" class="form-control" readonly></div>
+                    <div class="form-group"><label for="metaRef">Referral Code</label><input type="text" id="metaRef" class="form-control" readonly></div>
+                    <div class="form-group mb-0"><label for="metaDate">Member Since</label><input type="text" id="metaDate" class="form-control" readonly></div>
+                </section>
+
+                <!-- Danger Zone -->
+                <button class="btn btn-outline btn-lg btn-block btn-logout fade-up d4" onclick="openLogoutModal()">
+                    <i class="fas fa-sign-out-alt"></i> Logout from TOP
+                </button>
+            </div>
+        </div>
     </main>
 
     <!-- Logout Confirmation Modal -->
     <div class="modal-overlay" id="logoutModal">
-        <div class="modal-content">
-            <i class="fas fa-exclamation-circle" style="font-size: 50px; color: var(--danger); margin-bottom: 20px;"></i>
-            <h3>Confirm Logout</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin: 15px 0;">Are you sure you want to sign out of your TOP account?</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
-                <button class="btn-save" style="margin-top:0; background: var(--danger);" onclick="executeLogout()">Logout</button>
-                <button class="btn-save" style="margin-top:0; background: var(--secondary-bg); border: 1px solid var(--glass-border);" onclick="closeLogoutModal()">Cancel</button>
+        <div class="modal-card">
+            <i class="fas fa-right-from-bracket"></i>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to sign out of your TOP account?</p>
+            <div class="modal-btns btn-row">
+                <button class="btn btn-primary btn-lg" onclick="executeLogout()">Logout</button>
+                <button class="btn btn-outline btn-lg" onclick="closeLogoutModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
+    <!-- Bottom Nav (left rail on desktop) -->
     <nav class="bottom-nav">
+        <a href="dashboard.html" class="rail-brand" aria-label="TOP"><img src="assets/img/logo.svg" alt="TOP"></a>
         <a href="dashboard.html" class="nav-item">
-            <i class="fas fa-th-large"></i><span>Home</span>
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
         </a>
         <a href="plans.html" class="nav-item">
-            <i class="fas fa-layer-group"></i><span>Plans</span>
+            <i class="fas fa-layer-group"></i>
+            <span>Plans</span>
         </a>
         <a href="wallet.html" class="nav-item">
-            <i class="fas fa-wallet"></i><span>Wallet</span>
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
         </a>
         <a href="notifications.html" class="nav-item">
-            <i class="fas fa-bell"></i><span>Alerts</span>
+            <i class="fas fa-bell"></i>
+            <span>Alerts</span>
         </a>
         <a href="profile.html" class="nav-item active">
-            <i class="fas fa-user-circle"></i><span>Profile</span>
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
         </a>
     </nav>
 
