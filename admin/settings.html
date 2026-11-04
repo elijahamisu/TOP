@@ -122,6 +122,8 @@
                             <div class="form-group"><label>Earnings Credit Time (UTC) <i class="fas fa-lock"></i></label><input type="time" name="earnings_time" class="form-control" readonly disabled title="Locked: earnings are credited daily at 00:00 UTC (1:00 AM WAT)"></div>
                             <div class="form-group"><label>Min. Investment (₦)</label><input type="number" name="min_investment" class="form-control"></div>
                             <div class="form-group"><label>Max. Investment (₦)</label><input type="number" name="max_investment" class="form-control"></div>
+                            <div class="form-group"><label>Min. Deposit (₦)</label><input type="number" name="min_deposit_amount" class="form-control" min="0" step="1"></div>
+                            <div class="form-group"><label>Min. Withdrawal (₦)</label><input type="number" name="min_withdrawal_amount" class="form-control" min="0" step="1"></div>
                         </div>
                         <div class="toggle-group"><div class="toggle-info"><h4>Enable Daily Earnings</h4><p>Global switch for automated profit distribution.</p></div><label class="switch"><input type="checkbox" name="enable_earnings" checked><span class="slider"></span></label></div>
                     </div>

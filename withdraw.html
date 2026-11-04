@@ -77,7 +77,7 @@
                 <h3 class="section-card-title"><i class="fas fa-money-bill-transfer"></i> Request Withdrawal</h3>
                 <form id="withdrawForm">
                     <div class="form-group">
-                        <label for="withdrawAmount">Withdrawal Amount (Min ₦450)</label>
+                        <label for="withdrawAmount">Withdrawal Amount (Min ₦<span id="minWdLabel">450</span>)</label>
                         <div class="amount-field">
                             <span class="cur">₦</span>
                             <input type="number" id="withdrawAmount" class="form-control" placeholder="450" min="450" required>
@@ -206,6 +206,7 @@
         let withdrawableBalance = 0; // balance - totalPending -> what they're actually allowed to request now
 
         // NEW: platform-wide + per-user restrictions
+        let minWithdrawal = 450;         // from Admin > Settings (min_withdrawal_amount)
         let withdrawalsLocked = false;   // admin has locked all withdrawals platform-wide
         let hasActivePlan = false;       // user has at least one row in `investments` with status = 'active'
 
@@ -264,7 +265,7 @@
         // the user has an active investment
         async function checkRestrictions() {
             const [{ data: setting, error: settingErr }, { count, error: planErr }] = await Promise.all([
-                supabase.from('platform_settings').select('withdrawals_locked').order('id', { ascending: true }).limit(1).maybeSingle(),
+                supabase.from('platform_settings').select('withdrawals_locked, min_withdrawal_amount').order('id', { ascending: true }).limit(1).maybeSingle(),
                 supabase.from('investments').select('id', { count: 'exact', head: true }).eq('user_id', currentUser.id).eq('status', 'active')
             ]);
 
@@ -272,6 +273,11 @@
             if (planErr) console.error('checkRestrictions (plan):', planErr);
 
             withdrawalsLocked = setting?.withdrawals_locked === true;
+            if (setting && setting.min_withdrawal_amount != null) {
+                minWithdrawal = Number(setting.min_withdrawal_amount) || 0;
+                document.getElementById('minWdLabel').innerText = minWithdrawal.toLocaleString();
+                const a = document.getElementById('withdrawAmount'); a.min = minWithdrawal; a.placeholder = String(minWithdrawal);
+            }
             hasActivePlan = (count || 0) > 0;
 
             renderRestriction();
@@ -435,7 +441,7 @@
             const accName = document.getElementById('accountName').value.trim();
 
             // Validations
-            if (amount < 450) { alert('Minimum withdrawal is ₦450'); return; }
+            if (amount < minWithdrawal) { alert('Minimum withdrawal is ₦' + minWithdrawal.toLocaleString()); return; }
 
             if (withdrawableBalance <= 0) {
                 alert('You already have a pending withdrawal covering your full balance. Please wait for it to be processed, or add more funds before requesting another withdrawal.');
