@@ -358,5 +358,13 @@
 
         window.addEventListener('DOMContentLoaded', init);
     </script>
+    <!-- Admin bottom nav (phones/tablets) -->
+    <nav class="bottom-nav admin-bottom-nav" aria-label="Admin quick navigation">
+        <a href="index.html" class="nav-item"><i class="fas fa-th-large"></i><span>Home</span></a>
+        <a href="users.html" class="nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+        <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposits</span></a>
+        <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdrawals</span></a>
+        <button type="button" class="nav-item" onclick="document.getElementById('sidebar').classList.add('active');" aria-label="Open full menu"><i class="fas fa-bars"></i><span>Menu</span></button>
+    </nav>
 </body>
 </html>
