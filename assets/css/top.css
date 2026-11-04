@@ -672,3 +672,19 @@ select.form-control { background-image: linear-gradient(45deg, transparent 50%, 
 .text-gold, .text-gradient { color: var(--red); -webkit-text-fill-color: var(--red); background: none; }
 .progress-fill { background: var(--grad-red); }
 .toast { background: #fff; color: var(--ink); border: 1px solid var(--line-strong); box-shadow: var(--shadow-md); }
+
+/* ---------- user sidebar (all user pages) ---------- */
+.has-menu-btn { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.user-menu-btn { flex-shrink: 0; }
+.user-sidebar { display: flex; flex-direction: column; gap: 2px; z-index: 1001; padding-bottom: calc(var(--s-6) + env(safe-area-inset-bottom)); }
+.user-drawer-backdrop { z-index: 1000; }
+.user-sidebar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-4); }
+.user-sidebar-brand img { height: 32px; width: auto; display: block; }
+.user-sidebar-label { margin: 14px 14px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9A9A9A; }
+.user-sidebar .side-link { text-decoration: none; }
+.user-sidebar-logout { margin-top: var(--s-4); width: 100%; border: 0; background: none; cursor: pointer; font: inherit; color: var(--red); text-align: left; }
+@media (min-width: 960px) {
+  .user-sidebar { transform: none; width: var(--rail-w); max-width: none; box-shadow: none; z-index: 950; }
+  .user-sidebar-close, .user-menu-btn, .user-drawer-backdrop { display: none !important; }
+  .app-body .bottom-nav { display: none; }
+}

@@ -7,6 +7,7 @@
  * Exposes window.TOPSettings (a promise of the settings row).
  */
 import { supabase } from '../../config/supabase.js';
+import './sidebar.js';
 
 const COMMUNITY_LINK = /^https:\/\/t\.me\/\+/; // the "community / group" invite links
 const CHANNEL_LINK = /^https:\/\/t\.me\/monvexachannel\/?$/; // the default channel link
