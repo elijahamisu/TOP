@@ -185,7 +185,6 @@
                 id: p.id,
                 name: p.name,
                 min: parseFloat(p.min_amount),
-                max: parseFloat(p.max_amount),
                 daily: parseFloat(p.daily_profit_percent),
                 duration: p.duration_days
             }));
@@ -230,6 +229,7 @@
 
             plans.forEach(plan => {
                 const exampleDaily = dailyProfitAtMin(plan);
+                const exampleTotal = Math.round(exampleDaily * plan.duration * 100) / 100;
 
                 // Card
                 const card = document.createElement('div');
@@ -241,6 +241,7 @@
                     <div class="plan-specs">
                         <div class="spec-item"><p>Min Invest</p><h5>₦${plan.min.toLocaleString()}</h5></div>
                         <div class="spec-item"><p>Duration</p><h5>${plan.duration} Days</h5></div>
+                        <div class="spec-item" style="grid-column:1/-1;"><p>Total Return</p><h5>₦${exampleTotal.toLocaleString()}</h5></div>
                     </div>
                     <button class="btn-invest" onclick="openInvestModal('${plan.id}')">Invest Now</button>
                 `;
@@ -256,7 +257,7 @@
         window.openInvestModal = (id) => {
             selectedPlan = plans.find(p => p.id === id);
             document.getElementById('mPlanName').innerText = selectedPlan.name;
-            document.getElementById('limitText').innerText = `Limit: ₦${selectedPlan.min.toLocaleString()} - ₦${selectedPlan.max.toLocaleString()}`;
+            document.getElementById('limitText').innerText = `Minimum: ₦${selectedPlan.min.toLocaleString()}`;
             document.getElementById('investModal').style.display = 'flex';
             document.getElementById('investAmount').value = selectedPlan.min;
             updateCalc();
@@ -286,8 +287,8 @@
             const err = document.getElementById('errorMsg');
             err.style.display = 'none';
 
-            if (amount < selectedPlan.min || amount > selectedPlan.max) {
-                err.innerText = `Amount must be between ₦${selectedPlan.min.toLocaleString()} and ₦${selectedPlan.max.toLocaleString()}`;
+            if (amount < selectedPlan.min) {
+                err.innerText = `Minimum amount for this plan is ₦${selectedPlan.min.toLocaleString()}`;
                 err.style.display = 'block';
                 return;
             }

@@ -122,10 +122,6 @@
                         <label>Minimum Amount (₦)</label>
                         <input type="number" class="form-control" id="planMinAmount" placeholder="5000">
                     </div>
-                    <div class="form-group">
-                        <label>Maximum Amount (₦)</label>
-                        <input type="number" class="form-control" id="planMaxAmount" placeholder="500000">
-                    </div>
                 </div>
                 <div class="form-row two-col">
                     <div class="form-group">
@@ -262,7 +258,6 @@
                 const statusClass = p.is_available ? 'status-active-plan' : 'status-inactive-plan';
                 const statusLabel = p.is_available ? 'Active' : 'Inactive';
                 const minAmt = parseFloat(p.min_amount || 0).toLocaleString();
-                const maxAmt = parseFloat(p.max_amount || 0).toLocaleString();
                 const dailyNaira = dailyProfitNairaAtMin(p).toLocaleString();
 
                 // Desktop table row
@@ -271,7 +266,7 @@
                     <td>
                         <p style="font-weight:700">${p.name}</p>
                     </td>
-                    <td>₦${minAmt} - ₦${maxAmt}</td>
+                    <td>From ₦${minAmt}</td>
                     <td style="color:var(--success)">₦${dailyNaira} / day</td>
                     <td>${p.duration_days} days</td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
@@ -293,7 +288,7 @@
                         <span class="status-badge ${statusClass}">${statusLabel}</span>
                     </div>
                     <div class="plan-card-details">
-                        <div><span class="label">Amount Range</span>₦${minAmt} - ₦${maxAmt}</div>
+                        <div><span class="label">Minimum</span>₦${minAmt}</div>
                         <div><span class="label">Daily Profit</span><span class="rate">₦${dailyNaira}</span></div>
                         <div><span class="label">Duration</span>${p.duration_days} days</div>
                         <div><span class="label">Plan ID</span>${p.id.toString().slice(0,8)}</div>
@@ -346,7 +341,6 @@
             document.getElementById('planId').value = '';
             document.getElementById('planName').value = '';
             document.getElementById('planMinAmount').value = '';
-            document.getElementById('planMaxAmount').value = '';
             document.getElementById('planMultiplier').value = '';
             document.getElementById('planDuration').value = '';
             document.getElementById('planActive').checked = true;
@@ -362,7 +356,6 @@
             document.getElementById('planId').value = p.id;
             document.getElementById('planName').value = p.name || '';
             document.getElementById('planMinAmount').value = p.min_amount || '';
-            document.getElementById('planMaxAmount').value = p.max_amount || '';
             // Convert the stored daily percentage back into a total-income
             // multiplier for editing, matching what the admin originally typed:
             // multiplier = (daily_profit_percent / 100) x duration_days.
@@ -383,14 +376,13 @@
             const id = document.getElementById('planId').value;
             const name = document.getElementById('planName').value.trim();
             const minAmount = parseFloat(document.getElementById('planMinAmount').value);
-            const maxAmount = parseFloat(document.getElementById('planMaxAmount').value);
             const multiplier = parseFloat(document.getElementById('planMultiplier').value);
             const duration = parseInt(document.getElementById('planDuration').value, 10);
             const isActive = document.getElementById('planActive').checked;
 
             if (!name) { alert('Plan name is required.'); return; }
-            if (isNaN(minAmount) || isNaN(maxAmount) || minAmount < 0 || maxAmount <= minAmount) {
-                alert('Please enter a valid amount range (max must be greater than min).');
+            if (isNaN(minAmount) || minAmount <= 0) {
+                alert('Please enter a valid minimum amount.');
                 return;
             }
             if (isNaN(multiplier) || multiplier <= 0) { alert('Please enter a valid rate multiplier.'); return; }
@@ -406,7 +398,7 @@
             const payload = {
                 name,
                 min_amount: minAmount,
-                max_amount: maxAmount,
+                max_amount: null,
                 daily_profit_percent: dailyRatePercent,
                 duration_days: duration,
                 is_available: isActive
