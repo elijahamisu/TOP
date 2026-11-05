@@ -14,6 +14,14 @@
     <link rel="stylesheet" href="../assets/css/top-admin.css">
     <meta name="theme-color" content="#E60000">
     <meta name="application-name" content="TOP">
+<style>
+    .plan-state-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .btn-state-plan { flex:1; min-width:120px; border:1px solid #eee; background:#fff; border-radius:12px; padding:9px 12px; font-weight:700; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    .btn-state-plan.off { color:#c00; border-color:#f3c2c2; }
+    .btn-state-plan.on { color:#0a8f3c; border-color:#bfe8cf; }
+    .btn-state-plan.soon { color:#b26a00; border-color:#f3dcb4; }
+    .status-badge.status-soon-plan { background:#fff4e0; color:#b26a00; }
+</style>
 </head>
 <body class="admin-body page-plans">
 
@@ -255,8 +263,14 @@
             }
 
             filteredPlans.forEach(p => {
-                const statusClass = p.is_available ? 'status-active-plan' : 'status-inactive-plan';
-                const statusLabel = p.is_available ? 'Active' : 'Inactive';
+                const statusClass = p.coming_soon ? 'status-soon-plan' : (p.is_available ? 'status-active-plan' : 'status-inactive-plan');
+                const statusLabel = p.coming_soon ? 'Coming Soon' : (p.is_available ? 'Active' : 'Inactive');
+                const toggleBtn = p.is_available
+                    ? `<button class="btn-state-plan off" onclick="setPlanAvailable('${p.id}', false)"><i class="fas fa-ban"></i> Deactivate</button>`
+                    : `<button class="btn-state-plan on" onclick="setPlanAvailable('${p.id}', true)"><i class="fas fa-check"></i> Activate</button>`;
+                const soonBtn = p.coming_soon
+                    ? `<button class="btn-state-plan soon" onclick="setComingSoon('${p.id}', false)"><i class="fas fa-rotate-left"></i> Remove Coming Soon</button>`
+                    : `<button class="btn-state-plan soon" onclick="setComingSoon('${p.id}', true)"><i class="fas fa-clock"></i> Mark Coming Soon</button>`;
                 const minAmt = parseFloat(p.min_amount || 0).toLocaleString();
                 const dailyNaira = dailyProfitNairaAtMin(p).toLocaleString();
 
@@ -273,6 +287,7 @@
                     <td>
                         <button class="action-icon" onclick="openEditModal('${p.id}')" title="Edit"><i class="fas fa-pen"></i></button>
                         <button class="action-icon danger" onclick="deletePlan('${p.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                        <div class="plan-state-row">${toggleBtn}${soonBtn}</div>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -297,6 +312,7 @@
                         <button class="btn-edit-plan" onclick="openEditModal('${p.id}')"><i class="fas fa-pen"></i> Edit</button>
                         <button class="btn-delete-plan" onclick="deletePlan('${p.id}')"><i class="fas fa-trash"></i> Delete</button>
                     </div>
+                    <div class="plan-state-row">${toggleBtn}${soonBtn}</div>
                 `;
                 cardList.appendChild(card);
             });
@@ -371,6 +387,20 @@
         window.closePlanModal = () => {
             document.getElementById('planModal').style.display = 'none';
         };
+
+        async function updatePlanState(id, patch, msg) {
+            const { error } = await supabase.from('investment_plans').update(patch).eq('id', id);
+            if (error) { alert('Could not update plan: ' + error.message); return; }
+            const p = plansData.find(x => x.id === id); if (p) Object.assign(p, patch);
+            updateStats(); applyFilters();
+        }
+        window.setPlanAvailable = (id, on) => {
+            if (!on || confirm('Activate this plan? Users will be able to invest in it.')) {
+                if (!on && !confirm('Deactivate this plan? Users will see it as not available.')) return;
+                updatePlanState(id, on ? { is_available: true, coming_soon: false } : { is_available: false });
+            }
+        };
+        window.setComingSoon = (id, on) => updatePlanState(id, { coming_soon: on });
 
         window.savePlan = async () => {
             const id = document.getElementById('planId').value;
