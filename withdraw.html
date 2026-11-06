@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="fee-breakdown" id="feeBreakdown">
-                        <div class="fee-row"><span>Withdrawal Charge (15%)</span><span id="feeAmountText">₦0.00</span></div>
+                        <div class="fee-row"><span>Withdrawal Charge (<span id="feePctLabel">10</span>%)</span><span id="feeAmountText">₦0.00</span></div>
                         <div class="fee-row fee-row-total"><span>You'll Receive</span><span id="netAmountText">₦0.00</span></div>
                     </div>
 
@@ -210,7 +210,7 @@
         let withdrawalsLocked = false;   // admin has locked all withdrawals platform-wide
         let hasActivePlan = false;       // user has at least one row in `investments` with status = 'active'
 
-        const WITHDRAWAL_FEE_PERCENT = 15;
+        let WITHDRAWAL_FEE_PERCENT = 10;  // overwritten from platform_settings.withdrawal_fee_percent
 
         function updateFeeBreakdown() {
             const amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;
@@ -265,7 +265,7 @@
         // the user has an active investment
         async function checkRestrictions() {
             const [{ data: setting, error: settingErr }, { count, error: planErr }] = await Promise.all([
-                supabase.from('platform_settings').select('withdrawals_locked, min_withdrawal_amount').order('id', { ascending: true }).limit(1).maybeSingle(),
+                supabase.from('platform_settings').select('withdrawals_locked, min_withdrawal_amount, withdrawal_fee_percent').order('id', { ascending: true }).limit(1).maybeSingle(),
                 supabase.from('investments').select('id', { count: 'exact', head: true }).eq('user_id', currentUser.id).eq('status', 'active')
             ]);
 
@@ -277,6 +277,11 @@
                 minWithdrawal = Number(setting.min_withdrawal_amount) || 0;
                 document.getElementById('minWdLabel').innerText = minWithdrawal.toLocaleString();
                 const a = document.getElementById('withdrawAmount'); a.min = minWithdrawal; a.placeholder = String(minWithdrawal);
+            }
+            if (setting && setting.withdrawal_fee_percent != null) {
+                WITHDRAWAL_FEE_PERCENT = Number(setting.withdrawal_fee_percent);
+                document.getElementById('feePctLabel').innerText = WITHDRAWAL_FEE_PERCENT;
+                updateFeeBreakdown();
             }
             hasActivePlan = (count || 0) > 0;
 
