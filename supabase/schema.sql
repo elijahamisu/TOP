@@ -171,7 +171,7 @@ create table if not exists public.platform_settings (
   referral_percent numeric(6,2) not null default 20,
   enable_referrals boolean not null default true,
   min_withdrawal_amount numeric(14,2) not null default 450,
-  withdrawal_fee_percent numeric(6,2) not null default 15,
+  withdrawal_fee_percent numeric(6,2) not null default 10,
   withdrawals_locked boolean not null default false,
   enable_withdrawals boolean not null default true,
   min_deposit_amount numeric(14,2) not null default 0,
@@ -657,7 +657,7 @@ begin
   if p_amount > v_wallet.balance - v_pending then
     raise exception 'You have a pending withdrawal of ₦%. You can only request up to ₦% right now.', v_pending, greatest(v_wallet.balance - v_pending, 0); end if;
 
-  v_fee := round(p_amount * coalesce(s.withdrawal_fee_percent, 15) / 100, 2);
+  v_fee := round(p_amount * coalesce(s.withdrawal_fee_percent, 10) / 100, 2);
   v_net := p_amount - v_fee;
 
   insert into public.withdrawals (user_id, amount, fee_amount, net_amount, bank_name, account_number, account_name, status)
@@ -666,7 +666,7 @@ begin
 
   insert into public.transactions (user_id, amount, type, description, status, reference_id)
   values (v_uid, p_amount, 'withdrawal',
-    'Withdrawal request to ' || trim(p_bank_name) || ' (' || coalesce(s.withdrawal_fee_percent, 15) || '% charge, net payout ₦' || to_char(v_net, 'FM999,999,999,990.00') || ')',
+    'Withdrawal request to ' || trim(p_bank_name) || ' (' || coalesce(s.withdrawal_fee_percent, 10) || '% charge, net payout ₦' || to_char(v_net, 'FM999,999,999,990.00') || ')',
     'pending', v_id);
 
   insert into public.notifications (user_id, title, message, type)
